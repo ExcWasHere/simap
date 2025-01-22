@@ -1,61 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100">
-    <div class="min-h-screen flex items-center justify-center">
-        <div class="bg-white p-8 rounded-lg shadow-lg w-96">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-gray-800">Selamat Datang</h2>
-                <p class="text-gray-600">Silakan login untuk melanjutkan</p>
+@extends('layouts.main')
+
+@section('content')
+<section class="w-full min-h-screen flex">
+    <div class="w-1/2 h-screen relative hidden md:block">
+        <div class="absolute inset-0 bg-[#1a4167] opacity-80 z-10"></div>
+        
+        <div class="carousel relative w-full h-full">
+            <div class="carousel-inner w-full h-full">
+                <img src="{{ asset('images/template.jpg') }}" alt="Login Background 1" class="carousel-item w-full h-full object-cover absolute">
+                <img src="{{ asset('images/template2.jpg') }}" alt="Login Background 2" class="carousel-item w-full h-full object-cover absolute opacity-0">
+                <img src="{{ asset('images/template3.jpg') }}" alt="Login Background 3" class="carousel-item w-full h-full object-cover absolute opacity-0">
             </div>
-
-            @if ($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                @foreach ($errors->all() as $error)
-                    <p>{{ $error }}</p>
-                @endforeach
+            
+            <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
+                <button class="carousel-dot w-2 h-2 rounded-full bg-white opacity-50 hover:opacity-100 transition-opacity duration-200"></button>
+                <button class="carousel-dot w-2 h-2 rounded-full bg-white opacity-50 hover:opacity-100 transition-opacity duration-200"></button>
+                <button class="carousel-dot w-2 h-2 rounded-full bg-white opacity-50 hover:opacity-100 transition-opacity duration-200"></button>
             </div>
-            @endif
+        </div>
 
-            <form method="POST" action="{{ route('login') }}" class="space-y-6">
-                @csrf
-                <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
-                        NIP
-                    </label>
-                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="email" type="email" name="email" required autofocus>
-                </div>
-
-                <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                        Password
-                    </label>
-                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                        id="password" type="password" name="password" required>
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                        <label for="remember_me" class="ml-2 block text-sm text-gray-700">
-                            Ingat saya
-                        </label>
-                    </div>
-                </div>
-
-                <div>
-                    <button class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-                        Login
-                    </button>
-                </div>
-            </form>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-20">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo Bea Cukai" class="w-32 object-contain mx-auto mb-4">
+            <h2 class="text-white text-2xl font-bold">Direktorat Jenderal Bea dan Cukai</h2>
+            <p class="text-white mt-2">Kementerian Keuangan Republik Indonesia</p>
         </div>
     </div>
-</body>
-</html>
+
+    <div class="w-full md:w-1/2 bg-gray-50 flex items-center justify-center px-4">
+        <div class="w-full max-w-md px-8 py-6">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-[#1a4167]">Selamat Datang</h1>
+                <p class="text-gray-600 mt-2">Silahkan masuk ke akun anda</p>
+            </div>
+
+            <div class="space-y-6">
+                <form action="{{ route('login') }}" method="POST" class="space-y-4">
+                    @csrf
+                    
+                    <div class="mb-4">
+                        <label for="email" class="block text-gray-700 text-sm font-semibold mb-2">Email</label>
+                        <div class="relative">
+                            <input type="email" name="email" id="email"
+                                class="shadow-sm border-2 rounded-lg w-full py-2.5 px-4 text-gray-700 leading-tight focus:outline-none focus:border-[#1a4167] focus:ring-2 focus:ring-[#1a4167]/20 transition-all duration-200 @error('email') border-red-500 @enderror"
+                                value="{{ old('email') }}" 
+                                required autocomplete="email" autofocus>
+                            @error('email')
+                                <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="block text-gray-700 text-sm font-semibold mb-2">Password</label>
+                        <div class="relative">
+                            <input type="password" name="password" id="password"
+                                class="shadow-sm border-2 rounded-lg w-full py-2.5 px-4 text-gray-700 leading-tight focus:outline-none focus:border-[#1a4167] focus:ring-2 focus:ring-[#1a4167]/20 transition-all duration-200 @error('password') border-red-500 @enderror"
+                                required autocomplete="current-password">
+                            @error('password')
+                                <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center">
+                            <input type="checkbox" name="remember" id="remember" 
+                                class="w-4 h-4 rounded border-gray-300 text-[#1a4167] focus:ring-[#1a4167]/20"
+                                {{ old('remember') ? 'checked' : '' }}>
+                            <label for="remember" class="ml-2 text-sm text-gray-700">Ingat Saya</label>
+                        </div>
+                        <a href="/forgot-password" class="text-sm text-[#1a4167] hover:text-[#2c5c8f] transition-colors duration-200">
+                            Lupa Password?
+                        </a>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-[#1a4167] hover:bg-[#2c5c8f] text-white font-semibold py-2.5 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a4167]/50 transition-all duration-200 transform hover:scale-[1.02]">
+                        Login
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+@endsection
