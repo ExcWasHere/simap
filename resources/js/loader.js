@@ -1,6 +1,12 @@
 import { gsap } from 'gsap';
 
 const createLoaderAnimation = () => {
+    if (sessionStorage.getItem('loaderShown')) {
+        document.getElementById('loader').remove();
+        gsap.set('main', { autoAlpha: 1 });
+        return;
+    }
+
     gsap.set('main', { autoAlpha: 0 });
     
     const loaderTimeline = gsap.timeline({
@@ -9,6 +15,7 @@ const createLoaderAnimation = () => {
         },
         onComplete: () => {
             document.getElementById('loader').remove();
+            sessionStorage.setItem('loaderShown', true);
         }
     });
 

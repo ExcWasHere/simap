@@ -38,13 +38,13 @@
                     @csrf
                     
                     <div class="mb-4">
-                        <label for="email" class="block text-gray-700 text-sm font-semibold mb-2">NIP</label>
+                        <label for="NIP" class="block text-gray-700 text-sm font-semibold mb-2">NIP</label>
                         <div class="relative">
-                            <input type="email" name="email" id="email"
-                                class="shadow-sm border-2 rounded-lg w-full py-2.5 px-4 text-gray-700 leading-tight focus:outline-none focus:border-[#1a4167] focus:ring-2 focus:ring-[#1a4167]/20 transition-all duration-200 @error('email') border-red-500 @enderror"
-                                value="{{ old('email') }}" 
-                                required autocomplete="email" autofocus>
-                            @error('email')
+                            <input type="text" name="NIP" id="NIP"
+                                class="shadow-sm border-2 rounded-lg w-full py-2.5 px-4 text-gray-700 leading-tight focus:outline-none focus:border-[#1a4167] focus:ring-2 focus:ring-[#1a4167]/20 transition-all duration-200 @error('NIP') border-red-500 @enderror"
+                                value="{{ old('NIP') }}" 
+                                required autocomplete="NIP" autofocus>
+                            @error('NIP')
                                 <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
                             @enderror
                         </div>

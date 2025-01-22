@@ -2,14 +2,24 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Route;
 
-// Rute halaman login
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login')
-    ->middleware('guest');
+// Login routes
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])
+        ->name('login');
+        
+    Route::post('/login', [AuthController::class, 'login'])
+        ->middleware(['throttle:login']) 
+        ->name('login');
+});
 
-// Rute autentikasi
+// Protected routes
 Route::middleware('auth')->group(function () {
     Route::get('/', function () {
-        return view('welcome');
+        return view('dashboard.index');
     });
-    
+
+
+    Route::post('/logout', [AuthController::class, 'logout'])
+        ->name('logout');
 });
+
