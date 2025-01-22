@@ -7,9 +7,9 @@
         
         <div class="carousel relative w-full h-full">
             <div class="carousel-inner w-full h-full">
-                <img src="{{ asset('images/template.jpg') }}" alt="Login Background 1" class="carousel-item w-full h-full object-cover absolute">
-                <img src="{{ asset('images/template2.jpg') }}" alt="Login Background 2" class="carousel-item w-full h-full object-cover absolute opacity-0">
-                <img src="{{ asset('images/template3.jpg') }}" alt="Login Background 3" class="carousel-item w-full h-full object-cover absolute opacity-0">
+                <img src="{{ asset('images/Login3.jpg') }}" alt="Login Background 1" class="carousel-item w-full h-full object-cover absolute">
+                <img src="{{ asset('images/Login2.jpg') }}" alt="Login Background 2" class="carousel-item w-full h-full object-cover absolute opacity-0">
+                <img src="{{ asset('images/Login4.jpg') }}" alt="Login Background 3" class="carousel-item w-full h-full object-cover absolute opacity-0">
             </div>
             
             <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
@@ -22,7 +22,7 @@
         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-20">
             <img src="{{ asset('images/logo.png') }}" alt="Logo Bea Cukai" class="w-32 object-contain mx-auto mb-4">
             <h2 class="text-white text-2xl font-bold">Direktorat Jenderal Bea dan Cukai</h2>
-            <p class="text-white mt-2">Kementerian Keuangan Republik Indonesia</p>
+            <p class="text-white mt-2">Kantor Cabang Kota Blitar</p>
         </div>
     </div>
 
@@ -38,7 +38,7 @@
                     @csrf
                     
                     <div class="mb-4">
-                        <label for="email" class="block text-gray-700 text-sm font-semibold mb-2">Email</label>
+                        <label for="email" class="block text-gray-700 text-sm font-semibold mb-2">NIP</label>
                         <div class="relative">
                             <input type="email" name="email" id="email"
                                 class="shadow-sm border-2 rounded-lg w-full py-2.5 px-4 text-gray-700 leading-tight focus:outline-none focus:border-[#1a4167] focus:ring-2 focus:ring-[#1a4167]/20 transition-all duration-200 @error('email') border-red-500 @enderror"
