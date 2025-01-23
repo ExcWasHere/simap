@@ -12,8 +12,8 @@ export default {
         padding: '1rem'
       },
       fontFamily: {
-        'montserrat': ['Montserrat', 'sans-serif'],
-        'source-sans': ['"Source Sans 3"', 'sans-serif'],
+        'heading': ['Poppins', 'sans-serif'],
+        'body': ['Inter', 'sans-serif']
       }
     },
   },
