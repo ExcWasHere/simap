@@ -1,6 +1,6 @@
 <h1 align="center">Bea Cukai Blitar - Login System</h1>
 
-A secure authentication system built with Laravel 10, featuring a modern UI with Tailwind CSS and smooth animations powered by GSAP.
+A secure authentication system built with Laravel 11, featuring a modern UI with Tailwind CSS and smooth animations powered by GSAP.
 
 ## Features
 
@@ -14,15 +14,17 @@ A secure authentication system built with Laravel 10, featuring a modern UI with
 
 ## Tech Stack
 
--   **Framework:** Laravel 10
--   **Styling:** Tailwind CSS
--   **Animations:** GSAP
+-   **Framework:** Laravel 11
+-   **Styling:** Tailwind CSS v4
+-   **Animations:** GSAP 3.12
 -   **Database:** MySQL
--   **PHP Version:** 8.1+
+-   **PHP Version:** 8.2+
+-   **Build Tool:** Vite
+-   **HTTP Client:** Axios
 
 ## Prerequisites
 
--   PHP >= 8.1
+-   PHP >= 8.2
 -   Composer
 -   Node.js & NPM
 -   MySQL
@@ -32,8 +34,8 @@ A secure authentication system built with Laravel 10, featuring a modern UI with
 1. **Clone the repository:**
 
     ```bash
-    git clone <repository-url>
-    cd <project-folder>
+    git clone [<repository-url>](https://github.com/ExcWasHere/Project01.git)
+    cd [<project-folder>](Project01)
     ```
 
 2. **Install PHP dependencies:**
@@ -92,7 +94,7 @@ A secure authentication system built with Laravel 10, featuring a modern UI with
     php artisan serve
     ```
 
--   **Watch for asset changes:**
+-   **Also run this on another terminal and watch for asset changes:**
 
     ```bash
     npm run dev
@@ -105,6 +107,12 @@ A secure authentication system built with Laravel 10, featuring a modern UI with
 | NIP      | 1234567890      |
 | Email    | admin@gmail.com |
 | Password | password        |
+
+## Note
+If you have already migrated the database and want to reseed it, use this command:
+    ```bash
+    php artisan migrate:refresh seed
+    ```
 
 ## Contributing
 
