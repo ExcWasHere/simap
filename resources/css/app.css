@@ -24,15 +24,3 @@
         appearance: none;
     }
 }
-
-#loader {
-    transition: opacity 0.3s ease-in-out;
-}
-
-#loaderLogo {
-    will-change: transform, opacity;
-}
-
-main {
-    will-change: opacity, transform;
-}

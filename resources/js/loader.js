@@ -2,8 +2,7 @@ import { gsap } from 'gsap';
 
 const createLoaderAnimation = () => {
     if (sessionStorage.getItem('loaderShown')) {
-        const loader = document.getElementById('loader');
-        if (loader) loader.remove();
+        document.getElementById('loader').remove();
         gsap.set('main', { autoAlpha: 1 });
         return;
     }
@@ -15,9 +14,8 @@ const createLoaderAnimation = () => {
             ease: 'power2.inOut'
         },
         onComplete: () => {
-            const loader = document.getElementById('loader');
-            if (loader) loader.remove();
-            sessionStorage.setItem('loaderShown', 'true');
+            document.getElementById('loader').remove();
+            sessionStorage.setItem('loaderShown', true);
         }
     });
 
@@ -53,4 +51,6 @@ const createLoaderAnimation = () => {
         }, '-=0.4');
 };
 
-export default createLoaderAnimation;
+window.addEventListener('load', createLoaderAnimation);
+
+export default createLoaderAnimation; 
