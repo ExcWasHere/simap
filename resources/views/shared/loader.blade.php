@@ -1,7 +1,8 @@
-<section class="loader fixed inset-0 z-50 flex items-center justify-center bg-white">
+<div id="loader" class="fixed inset-0 z-50 flex items-center justify-center bg-white">
     <img
-        src="{{ asset('images/logo.png') }}"
-        alt="Sedang Memuat..."
-        class="relative h-32 w-32 object-contain"
+        id="loaderLogo"
+        src="{{ asset('img/logo-beacukai.png') }}"
+        alt=""
+        class="h-32 w-32 object-contain"
     />
-</section>
+</div>

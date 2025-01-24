@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [Admin::class, 'show'])->name('login');
-    Route::post('/login', [Admin::class, 'login'])->middleware(['throttle:login'])->name('login');
+    Route::post('/login', [Admin::class, 'login'])->name('login');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('/', function () {
-        return view('');
+        return view('pages.beranda');
     })->name('dashboard');
 
     Route::post('/logout', [Admin::class, 'logout'])->name('logout');

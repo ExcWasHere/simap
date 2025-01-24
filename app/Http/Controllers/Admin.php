@@ -16,45 +16,46 @@ class Admin extends Controller
         return view('pages.login');
     }
 
-    public function login(Request $request)
+    public function login(Request $request): RedirectResponse
     {
         try {
             $credentials = $request->validate([
-                'nip' => ['required', 'number'],
-                'password' => ['required', 'min:8'],
+                'NIP' => ['required', 'string', 'min:10', 'max:10'],
+                'password' => ['required', 'string', 'min:8'],
             ]);
+
             if (Auth::attempt($credentials, $request->filled('remember'))) {
                 $request->session()->regenerate();
-                Log::info('Proses login berhasil dilakukan.', ['nip' => $request->nip]);
-                return redirect()->intended()->with('success', 'Berhasil login!');
+                Log::info('Login successful', ['nip' => $request->NIP]);
+                
+                return redirect()->route('dashboard')
+                    ->with('success', 'Login berhasil!');
             }
-            Log::warning('Gagal login, periksa kembali data pribadi Anda.', ['nip' => $request->nip]);
+
+            Log::warning('Failed login attempt', ['nip' => $request->NIP]);
             return back()
-                ->withErrors(['nip' => 'NIP yang Anda loginkan salah!'])
+                ->withErrors(['NIP' => 'NIP atau password salah'])
                 ->withInput($request->except('password'));
-        } catch (ValidationException $validate) {
+
+        } catch (ValidationException $e) {
             return back()
-                ->withErrors($validate->errors())
+                ->withErrors($e->errors())
                 ->withInput($request->except('password'));
-        } catch (Exception $exception) {
-            Log::error('Terjadi kesalahan: ', ['error' => $exception->getMessage()]);
+        } catch (Exception $e) {
+            Log::error('Login error:', ['error' => $e->getMessage()]);
             return back()
-                ->withErrors(['error' => 'Terjadi kesalahan saat proses login, harap coba lagi nanti!'])
+                ->withErrors(['error' => 'Terjadi kesalahan sistem'])
                 ->withInput($request->except('password'));
         }
     }
 
     public function logout(Request $request): RedirectResponse
     {
-        try {
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-            return redirect('/login')->with('success', 'Pengguna berhasil logout dari akun.');
-        }
-        catch (Exception $exception) {
-            Log::error('Terjadi kesalahan: ', ['error' => $exception->getMessage()]);
-            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat logout.']);
-        }
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect()->route('login')
+            ->with('success', 'Berhasil logout!');
     }
 }
