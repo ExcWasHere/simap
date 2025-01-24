@@ -24,7 +24,7 @@
             <div class="overflow-x-auto">
                 <table class="w-full border-collapse">
                     <thead>
-                        <tr class="bg-white/10 text-sky-200">
+                        <tr class="bg-white/10 text-black">
                             <th class="px-3 py-3 text-left font-medium">No.</th>
                             <th class="px-3 py-3 text-left font-medium">No. SBP</th>
                             <th class="px-4 py-3 text-left font-medium">Tgl SBP</th>

@@ -19,11 +19,6 @@ Route::middleware('auth')->group(function () {
         return view('dashboard.index');
     });
 
-
-    Route::post('/logout', [AuthController::class, 'logout'])
-        ->name('logout');
-});
-
 // Penindakan routes
 Route::get('/penindakan', [PenindakanController::class, 'index'])
      ->name('penindakan.penindakan')
@@ -37,3 +32,13 @@ Route::get('/penyidikan/{noIntelijen}', function ($noIntelijen) {
 
 Route::get('/monitoring-bhp/{noIntelijen}', function ($noIntelijen) {
 })->name('monitoring.show');
+
+// Upload routes
+Route::get('/upload', [UploadController::class, 'index'])
+->name('upload.upload')
+->middleware('auth');
+
+    Route::post('/logout', [AuthController::class, 'logout'])
+        ->name('logout');
+});
+
