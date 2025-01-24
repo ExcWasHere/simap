@@ -1,12 +1,4 @@
 <main class="w-full min-h-screen flex relative">
-    <!-- background -->
-    <div class="absolute inset-0 z-10 bg-[#f8fafc]" style="background-image: 
-        linear-gradient(#1a4167 1px, transparent 1px),
-        linear-gradient(to right, #1a4167 1px, transparent 1px);
-        background-size: 40px 40px;
-        opacity: 0.1;">
-    </div>
-    <!-- end of background -->
 
     <section class="w-1/2 relative hidden lg:block z-10">
         <div class="absolute inset-0 bg-gradient-to-b from-[#1a4167]/80 to-[#1a4167]/40"></div>

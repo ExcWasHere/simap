@@ -30,7 +30,6 @@
 </head>
 
 <body class="min-h-screen bg-gray-100 flex flex-col">
-
     @if(!Route::is('login'))
         <header class="bg-white shadow-md">
             <nav class="container px-4 py-3 mx-auto">
@@ -75,7 +74,7 @@
                         <a href="/intelijen" class="mobile-nav-link text-gray-600 hover:text-gray-900 flex items-center gap-2 {{ request()->is('intelijen*') ? 'active' : '' }}">
                             Intelijen
                         </a>
-                        <a href="/penindakan" class="mobile-nav-link text-gray-600 hover:text-gray-900 flex items-center gap-2 {{ request()->is('penindakan*') ? 'active' : '' }}">
+                        <a href="{{ route('penindakan') }}" class="mobile-nav-link text-gray-600 hover:text-gray-900 flex items-center gap-2 {{ request()->is('penindakan*') ? 'active' : '' }}">
                             Penindakan
                         </a>
                         <div class="h-px w-full bg-gray-200"></div>
@@ -132,6 +131,7 @@
                 mobileMenu.classList.toggle('hidden');
             });
         }
+
     </script>
 </body>
 

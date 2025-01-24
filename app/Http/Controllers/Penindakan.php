@@ -28,7 +28,7 @@ class Penindakan extends Controller
             return stripos($value, $kueri_pencarian) !== false;
         })->all();
 
-        return view('', [
+        return view('pages.penindakan', [
             'data_penindakan' => $data_filter,
             'kueri_pencarian' => $kueri_pencarian,
         ]);

@@ -16,7 +16,7 @@ Route::middleware('auth')->group(function () {
         return view('pages.beranda');
     })->name('dashboard');
 
+    Route::get('/penindakan', [Penindakan::class, 'index'])->name('penindakan');
+
     Route::post('/logout', [Admin::class, 'logout'])->name('logout');
 });
-
-Route::get('/penindakan', [Penindakan::class, 'index'])->name('')->middleware('auth');

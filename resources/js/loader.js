@@ -53,24 +53,4 @@ const createLoaderAnimation = () => {
         }, '-=0.4');
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-    gsap.to('#loaderLogo', {
-        duration: 1,
-        scale: 1.2,
-        yoyo: true,
-        repeat: -1,
-        ease: 'power1.inOut'
-    });
-
-    window.addEventListener('load', () => {
-        gsap.to('#loader', {
-            duration: 0.5,
-            opacity: 0,
-            onComplete: () => {
-                document.getElementById('loader').style.display = 'none';
-            }
-        });
-    });
-});
-
-export default createLoaderAnimation; 
+export default createLoaderAnimation;

@@ -9,7 +9,7 @@
 
     <div class="bg-white rounded-lg shadow-md overflow-hidden">
         <div class="p-6">
-            <div class="flex items-center gap-6">
+            <div class="flex flex-col sm:flex-row items-center gap-6">
                 <div class="flex-shrink-0 bg-gray-100 rounded-full p-4">
                     <i class="fas fa-user-circle text-5xl text-[#1a4167] hover:text-gray-600 transition-colors"></i>
                 </div>
