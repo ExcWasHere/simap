@@ -1,44 +1,22 @@
 <?php
-namespace App\Http\Controllers;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PenindakanController;
 
-// Login routes
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Admin;
+use App\Http\Controllers\Penindakan;
+use Illuminate\Support\Facades\Route;
+
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])
-        ->name('login');
-        
-    Route::post('/login', [AuthController::class, 'login'])
-        ->middleware(['throttle:login']) 
-        ->name('login');
+    Route::get('/login', [Admin::class, 'show'])->name('login');
+    Route::post('/login', [Admin::class, 'login'])->middleware(['throttle:login'])->name('login');
 });
 
-// Protected routes
 Route::middleware('auth')->group(function () {
     Route::get('/', function () {
-        return view('dashboard.index');
-    });
+        return view('');
+    })->name('dashboard');
 
-// Penindakan routes
-Route::get('/penindakan', [PenindakanController::class, 'index'])
-     ->name('penindakan.penindakan')
-     ->middleware('auth');
-
-Route::get('/intelijen/{noIntelijen}', function ($noIntelijen) {
-})->name('intelijen.show');
-
-Route::get('/penyidikan/{noIntelijen}', function ($noIntelijen) {
-})->name('penyidikan.show');
-
-Route::get('/monitoring-bhp/{noIntelijen}', function ($noIntelijen) {
-})->name('monitoring.show');
-
-// Upload routes
-Route::get('/upload', [UploadController::class, 'index'])
-->name('upload.upload')
-->middleware('auth');
-
-    Route::post('/logout', [AuthController::class, 'logout'])
-        ->name('logout');
+    Route::post('/logout', [Admin::class, 'logout'])->name('logout');
 });
 
+Route::get('/penindakan', [Penindakan::class, 'index'])->name('')->middleware('auth');

@@ -1,33 +1,31 @@
-# Bea Cukai Blitar - Login System
+<h1 align="center">Bea Cukai Blitar - Login System</h1>
 
 A secure authentication system built with Laravel 10, featuring a modern UI with Tailwind CSS and smooth animations powered by GSAP.
 
 ## Features
 
-- 🔐 Secure authentication with NIP (Employee ID Number)
-- 🎨 Modern UI with Tailwind CSS
-- ✨ Smooth animations using GSAP
-- 🔄 Image carousel on login page
-- 📱 Fully responsive design
-- ⚡ Rate limiting for login attempts
-- 🔍 Comprehensive error logging
+-   🔐 Secure authentication with NIP (Employee ID Number)
+-   🎨 Modern UI with Tailwind CSS
+-   ✨ Smooth animations using GSAP
+-   🔄 Image carousel on login page
+-   📱 Fully responsive design
+-   ⚡ Rate limiting for login attempts
+-   🔍 Comprehensive error logging
 
 ## Tech Stack
 
-- **Framework:** Laravel 10
-- **Styling:** Tailwind CSS
-- **Animations:** GSAP
-- **Database:** MySQL
-- **PHP Version:** 8.1+
+-   **Framework:** Laravel 10
+-   **Styling:** Tailwind CSS
+-   **Animations:** GSAP
+-   **Database:** MySQL
+-   **PHP Version:** 8.1+
 
 ## Prerequisites
 
-- PHP >= 8.1
-- Composer
-- Node.js & NPM
-- MySQL
-
-## Installation
+-   PHP >= 8.1
+-   Composer
+-   Node.js & NPM
+-   MySQL
 
 ## Installation
 
@@ -102,11 +100,11 @@ A secure authentication system built with Laravel 10, featuring a modern UI with
 
 ## Default Login Credentials
 
-| Field    | Value             |
-| -------- | ----------------- |
-| NIP      | 1234567890        |
-| Email    | admin@gmail.com   |
-| Password | password          |
+| Field    | Value           |
+| -------- | --------------- |
+| NIP      | 1234567890      |
+| Email    | admin@gmail.com |
+| Password | password        |
 
 ## Contributing
 
@@ -118,16 +116,19 @@ We welcome contributions! Here's how you can contribute:
     ```bash
     git checkout -b feature/amazing-feature
     ```
+
 3. **Commit your changes:**
 
     ```bash
     git commit -m 'Add some amazing feature'
     ```
+
 4. **Push to the branch:**
 
     ```bash
     git push origin feature/amazing-feature
     ```
+
 5. **Open a Pull Request**
 
 ## License
@@ -142,6 +143,3 @@ We extend our gratitude to the following:
 -   The Tailwind CSS Team
 -   The GSAP Team
 -   Direktorat Jenderal Bea dan Cukai
-
-
-
