@@ -110,9 +110,10 @@ A secure authentication system built with Laravel 11, featuring a modern UI with
 
 ## Note
 If you have already migrated the database and want to reseed it, use this command:
-    ```bash
-    php artisan migrate:refresh seed
-    ```
+
+```bash
+php artisan migrate:refresh --seed
+```
 
 ## Contributing
 
