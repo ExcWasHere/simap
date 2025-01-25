@@ -18,5 +18,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/penindakan', [Penindakan::class, 'index'])->name('penindakan');
 
+    Route::get('/intelijen', [Intelijen::class, 'index'])->name('intelijen');
+
+    Route::get('/penyidikan', [Penyidikan::class, 'index'])->name('penyidikan');
+
     Route::post('/logout', [Admin::class, 'logout'])->name('logout');
 });

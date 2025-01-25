@@ -1,6 +1,6 @@
 <div class="container mx-auto px-4 py-6">
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Data Penindakan</h1>
+        <h1 class="text-2xl font-bold text-gray-900">Data Intelijen</h1>
         <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
             <i class="fas fa-plus"></i>
             Tambah Data
@@ -12,7 +12,7 @@
             <div class="flex-1">
                 <div class="relative">
                     <input type="search" 
-                           placeholder="Cari data penindakan..." 
+                           placeholder="Cari data intelijen..." 
                            class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                 </div>
@@ -35,14 +35,12 @@
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No SBP</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tgl SBP</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lokasi Penindakan</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pelaku</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uraian BHP</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jmlh</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Perkiraan Nilai Barang</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Potensi Kurang Bayar</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No NHI</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tgl NHI</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tempat</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah Barang</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                 </tr>
             </thead>
@@ -52,11 +50,9 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">123456</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">22-09-2024</td>
                     <td class="px-6 py-4 text-sm text-gray-900">DSN DOKO RT 01 RW 01, KALIANYAR, KEC. KALIANYAR, KAB. BLITAR</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">AGUS RIMBA</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">ROKOK SMTH ILEGAL</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">20 (DUA PULUH) BAL</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">10.000.000 (SEPULUH JUTA RUPIAH)</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">-</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Berhasil Diamankan</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <div class="flex gap-2">
                             <a href="/intelijendocument" 
@@ -74,7 +70,7 @@
                                title="Akses Modul Monitoring">
                                 <i class="fas fa-chart-line"></i>
                             </a>
-                            <a href="/penindakandocument" 
+                            <a href="penindakandocument" 
                                class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-700 transition-colors duration-200" 
                                title="Akses Modul Penindakan">
                                 <i class="fas fa-gavel"></i>
