@@ -35,11 +35,15 @@
 
     @include('shared.navigation.header')
 
-    <main class="flex-grow @if(!Route::is('login') && !Route::is('lupa-kata-sandi')) container mx-auto px-4 py-6 @endif">
+    <main class="flex-grow @if(!Route::is('login') && !Route::is('lupa-kata-sandi') && !Route::is('reset-kata-sandi')) container mx-auto px-4 py-6 @endif">
         {{ $slot }}
     </main>
 
     @include('shared.navigation.footer')
+
+    <!-- Modal -->
+    @include('shared.ui.modal-detail')
+    @include('shared.ui.modal-tambah')
 
     <script src="{{ asset('js/app.js') }}"></script>
 </body>

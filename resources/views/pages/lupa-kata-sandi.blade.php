@@ -1,5 +1,5 @@
 @component('layouts.main', [
-    'judul' => 'Lupa Kata Sandi',
+    'judul' => 'Reset Kata Sandi',
     'deskripsi' => '',
 ])
     @include('components.autentikasi.lupa-kata-sandi')

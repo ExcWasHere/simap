@@ -42,6 +42,12 @@
                                title="Akses Modul Penindakan">
                                 <i class="fas fa-gavel"></i>
                             </a>
+                            <button 
+                                onclick="openModal('modalDetail')"
+                                class="w-8 h-8 flex items-center justify-center rounded-lg bg-yellow-100 text-yellow-600 hover:bg-yellow-200 hover:text-yellow-700 transition-colors duration-200" 
+                                title="Lihat Detail">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
                     </td>
                 </tr>

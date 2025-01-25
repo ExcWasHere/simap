@@ -1,4 +1,4 @@
-@if(!Route::is('login') && !Route::is('lupa-kata-sandi'))
+@auth
     <footer class="w-full px-4 py-3 bg-white shadow-md">
         <div class="mx-auto container flex items-center justify-between">
             <section class="flex items-center font-semibold gap-2 text-gray-600">
@@ -15,4 +15,4 @@
             </section>
         </div>
     </footer>
-@endif
+@endauth

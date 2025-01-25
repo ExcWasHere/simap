@@ -1,13 +1,6 @@
 <main class="w-full min-h-screen flex relative">
-    <section class="w-1/2 relative hidden lg:block z-10">
-        <span class="absolute inset-0 bg-gradient-to-b from-[#1a4167]/80 to-[#1a4167]/40"></span>
-        <img src="{{ asset('img/login-1.jpg') }}" alt="Background" class="w-full h-full object-cover bg-white">
-        <div class="absolute bottom-8 left-8 text-white">
-            <img src="{{ asset('img/logo-beacukai.png') }}" alt="Logo Bea Cukai" class="w-16 mb-4">
-            <h2 class="text-2xl font-bold">Direktorat Jenderal Bea dan Cukai</h2>
-            <p class="text-sm mt-2">Kantor Pengawasan dan Pelayanan Bea dan Cukai TMP C Blitar</p>
-        </div>
-    </section>
+    @include('shared.ui.image')
+
     <section class="w-full flex flex-col items-center justify-center text-black bg-slate-50 lg:w-1/2 lg:px-4">
         <header class="mb-6 cursor-default text-center">
             <h3 class="font-bold text-3xl text-[#1a4167]">Selamat Datang</h3>

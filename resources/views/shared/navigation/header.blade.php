@@ -1,4 +1,4 @@
-@if(!Route::is('login') && !Route::is('lupa-kata-sandi'))
+@auth
     <header class="w-full px-4 py-3 bg-white shadow-md">
         <div class="mx-auto container flex items-center justify-between">
             <a href="/" class="flex items-center gap-5 transition-opacity text-xl font-bold text-[#1a4167] hover:opacity-80">
@@ -34,4 +34,4 @@
             @include('shared.navigation.mobile-menu')
         </div>
     </header>
-@endif
+@endauth

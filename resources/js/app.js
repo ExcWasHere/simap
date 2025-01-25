@@ -1,4 +1,5 @@
 import "./bootstrap";
+import "./modal";
 import createLoaderAnimation from "./loader";
 
 document.addEventListener("DOMContentLoaded", () => {
