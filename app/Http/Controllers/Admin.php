@@ -26,25 +26,24 @@ class Admin extends Controller
 
             if (Auth::attempt($credentials, $request->filled('remember'))) {
                 $request->session()->regenerate();
-                Log::info('Login successful', ['nip' => $request->NIP]);
-                
-                return redirect()->route('dashboard')
-                    ->with('success', 'Login berhasil!');
+                Log::info('Login successful.', ['nip' => $request->NIP]);
+                return redirect()
+                    ->route('dashboard')
+                    ->with('success', 'Berhasil masuk ke akun Anda!');
             }
 
             Log::warning('Failed login attempt', ['nip' => $request->NIP]);
             return back()
-                ->withErrors(['NIP' => 'NIP atau password salah'])
+                ->withErrors(['NIP' => 'NIP atau kata sandi salah!'])
                 ->withInput($request->except('password'));
-
         } catch (ValidationException $e) {
             return back()
                 ->withErrors($e->errors())
                 ->withInput($request->except('password'));
         } catch (Exception $e) {
-            Log::error('Login error:', ['error' => $e->getMessage()]);
+            Log::error('Error:', ['error' => $e->getMessage()]);
             return back()
-                ->withErrors(['error' => 'Terjadi kesalahan sistem'])
+                ->withErrors(['error' => 'Terjadi kesalahan sistem!'])
                 ->withInput($request->except('password'));
         }
     }
@@ -55,7 +54,8 @@ class Admin extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         
-        return redirect()->route('login')
-            ->with('success', 'Berhasil logout!');
+        return redirect()
+            ->route('login')
+            ->with('success', 'Berhasil keluar dari akun Anda!');
     }
 }

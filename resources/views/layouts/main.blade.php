@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
-    class="max-[8192px]:opacity-0 max-[3120px]:opacity-100 max-[3120px]:m-0 max-[3120px]:p-0 max-[3120px]:box-border max-[3120px]:[font-family:'Plus_Jakarta_Sans',Times,sans-serif,serif] max-[324px]:hidden">
+<html
+    lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+    class="max-[8192px]:opacity-0 max-[3120px]:opacity-100 max-[3120px]:m-0 max-[3120px]:p-0 max-[3120px]:box-border max-[3120px]:[font-family:'Plus_Jakarta_Sans',Times,sans-serif,serif] max-[324px]:hidden"
+>
 
 <head>
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
@@ -21,11 +23,8 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
-        rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     @vite('resources/js/app.js')
     @vite('resources/css/app.css')
 </head>
@@ -33,25 +32,15 @@
 <body class="min-h-screen bg-gray-100 flex flex-col">
     @include('shared.ui.loader')
 
-    @include('shared.layouts.header')
+    @include('shared.navigation.header')
 
-    <main class="flex-grow @if(!Route::is('login')) container mx-auto px-4 py-6 @endif">
+    <main class="flex-grow @if(!Route::is('login') && !Route::is('lupa-kata-sandi')) container mx-auto px-4 py-6 @endif">
         {{ $slot }}
     </main>
 
-    @include('shared.layouts.footer')
+    @include('shared.navigation.footer')
 
-    <script>
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        if (mobileMenuButton && mobileMenu) {
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-
-    </script>
+    <script src="{{ asset('js/app.js') }}"></script>
 </body>
 
 </html>

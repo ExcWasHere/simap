@@ -1,5 +1,5 @@
 <div class="container mx-auto px-4 py-6">
-    @include('shared.layouts.content-header', ['title' => 'Data Intelijen'])
+    @include('shared.navigation.content-header', ['title' => 'Data Intelijen'])
 
     @include('shared.navigation.search', ['placeholder' => 'Cari data intelijen...'])
 

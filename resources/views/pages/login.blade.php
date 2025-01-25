@@ -1,6 +1,6 @@
-@component("layouts.main", [
-    "judul" => "Login",
-    "deskripsi" => "",
+@component('layouts.main', [
+    'judul' => 'Login',
+    'deskripsi' => '',
 ])
-@include("components.autentikasi.login")
+    @include('components.autentikasi.login')
 @endcomponent
