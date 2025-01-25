@@ -1,19 +1,22 @@
 @if(!Route::is('login') && !Route::is('lupa-kata-sandi'))
     <header class="w-full px-4 py-3 bg-white shadow-md">
         <div class="mx-auto container flex items-center justify-between">
-            <section class="flex cursor-default items-center gap-5 transition-opacity text-xl font-bold text-[#1a4167] hover:opacity-80">
+            <a href="/" class="flex items-center gap-5 transition-opacity text-xl font-bold text-[#1a4167] hover:opacity-80">
                 <img src="{{ asset('img/logo-beacukai.png') }}" alt="Logo" class="w-8 h-8">
                 SIMAP
-            </section>
+            </a>
             <nav class="hidden items-center gap-6 lg:flex">
-                <a href="/" class="text-gray-600 hover:text-gray-900 {{ request()->is('/') ? 'active' : '' }}">
-                    Dashboard
-                </a>
-                <a href="/intelijen" class="text-gray-600 hover:text-gray-900 {{ request()->is('intelijen*') ? 'active' : '' }}">
+                <a href="/intelijen" class="text-gray-600 hover:text-gray-900 {{ request()->is('/') ? 'active' : '' }}">
                     Intelijen
                 </a>
-                <a href="/penindakan" class="text-gray-600 hover:text-gray-900 {{ request()->is('penindakan*') ? 'active' : '' }}">
+                <a href="/penindakan" class="text-gray-600 hover:text-gray-900 {{ request()->is('intelijen*') ? 'active' : '' }}">
                     Penindakan
+                </a>
+                <a href="/penyidikan" class="text-gray-600 hover:text-gray-900 {{ request()->is('intelijen*') ? 'active' : '' }}">
+                    Penyidikan
+                </a>
+                <a href="/monitoring-bhp" class="text-gray-600 hover:text-gray-900 {{ request()->is('penindakan*') ? 'active' : '' }}">
+                    Monitoring BHP
                 </a>
                 <span class="h-6 w-px bg-gray-200"></span>
                 <form method="POST" action="{{ route('logout') }}" class="inline">

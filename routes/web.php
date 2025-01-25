@@ -24,12 +24,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/penindakan', [Penindakan::class, 'index'])->name('penindakan');
     Route::get('/intelijen', [Intelijen::class, 'index'])->name('intelijen');
     Route::get('/penyidikan', [Penyidikan::class, 'index'])->name('penyidikan');
-<<<<<<< HEAD
     Route::get('/monitoring-bhp', [MonitoringBHP::class, 'show'])->name('monitoring');
-=======
-
-    Route::get('/monitoring', [Monitoring::class, 'index'])->name('monitoring');
-
->>>>>>> f5807be794e587c6d58b9f947ea41930b40e602f
     Route::post('/logout', [Admin::class, 'logout'])->name('logout');
 });
