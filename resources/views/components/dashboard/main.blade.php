@@ -86,11 +86,11 @@
                     <i class="fas fa-chart-line text-2xl text-purple-600"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Monitoring BHP</h3>
-                    <p class="text-sm text-gray-600">Pengawasan Barang Hasil Penindakan</p>
+                    <h3 class="text-lg font-semibold text-gray-900">Monitoring</h3>
+                    <p class="text-sm text-gray-600">Pengawasan Data</p>
                 </div>
             </div>
-            <a href="/monitoring-bhp" class="mt-4 inline-block w-full text-center py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors">
+            <a href="/monitoring" class="mt-4 inline-block w-full text-center py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors">
                 Akses Menu
             </a>
         </div>

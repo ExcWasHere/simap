@@ -22,5 +22,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/penyidikan', [Penyidikan::class, 'index'])->name('penyidikan');
 
+    Route::get('/monitoring', [Monitoring::class, 'index'])->name('monitoring');
+
     Route::post('/logout', [Admin::class, 'logout'])->name('logout');
 });
