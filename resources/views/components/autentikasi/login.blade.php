@@ -1,6 +1,5 @@
 <main class="w-full min-h-screen flex relative">
     @include('shared.ui.image')
-
     <section class="w-full flex flex-col items-center justify-center text-black bg-slate-50 lg:w-1/2 lg:px-4">
         <header class="mb-6 cursor-default text-center">
             <h3 class="font-bold text-3xl text-[#1a4167]">Selamat Datang</h3>
@@ -27,7 +26,7 @@
                         autofocus
                         required
                     />
-                    @error('nip')
+                    @error('NIP')
                         <h6 class="mt-1 text-xs italic text-red-500">{{ $message }}</h6>
                     @enderror
                 </div>
@@ -66,7 +65,7 @@
             </div>
             <button
                 type="submit"
-                class="mt-6 cursor-pointer w-full py-2.5 px-4 rounded-lg bg-[#1a4167] text-white font-semibold transition-all duration-200 transform focus:outline-none focus:ring-2 focus:ring-[#1a4167]/50 hover:scale-[1.02] hover:bg-[#2c5c8f]"
+                class="mt-6 cursor-pointer w-full p-4 rounded-lg bg-[#1a4167] text-white font-semibold transition-all duration-200 transform focus:outline-none focus:ring-2 focus:ring-[#1a4167]/50 hover:scale-[1.02] hover:bg-[#2c5c8f]"
             >
                 Login
             </button>

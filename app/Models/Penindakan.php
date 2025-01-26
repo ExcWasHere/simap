@@ -13,7 +13,7 @@ class Penindakan extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'penindakan';
-    
+
     protected $fillable = [
         'no_sbp',
         'tanggal_sbp',
@@ -46,4 +46,4 @@ class Penindakan extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
-} 
+}

@@ -12,7 +12,7 @@ class Intelijen extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'intelijen';
-    
+
     protected $fillable = [
         'no_nhi',
         'tanggal_nhi',
@@ -37,4 +37,4 @@ class Intelijen extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
-} 
+}

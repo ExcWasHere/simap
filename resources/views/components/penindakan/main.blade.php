@@ -1,8 +1,6 @@
 <div class="container mx-auto px-4 py-6">
     @include('shared.navigation.content-header', ['title' => 'Data Penindakan'])
-
     @include('shared.navigation.search', ['placeholder' => 'Cari data penindakan...'])
-
     @include('shared.tables.table', [
         'headers' => [
             'No',
@@ -13,7 +11,7 @@
             'Uraian BHP',
             'Jmlh',
             'Perkiraan Nilai Barang',
-            'Potensi Kurang Bayar'
+            'Potensi Kurang Bayar',
         ],
         'rows' => [
             [
@@ -25,11 +23,9 @@
                 'ROKOK SMTH ILEGAL',
                 '20 (DUA PULUH) BAL',
                 '10.000.000 (SEPULUH JUTA RUPIAH)',
-                '-'
-            ]
-        ]
+                '-',
+            ],
+        ],
     ])
-
     @include('shared.navigation.pagination')
 </div>
-
