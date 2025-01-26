@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/penyidikan', [Penyidikan::class, 'index'])->name('penyidikan');
     Route::get('/monitoring-bhp', [MonitoringBHP::class, 'show'])->name('monitoring');
     Route::get('/intelijen/document', [IntelijenDok::class, 'show'])->name('intelijen.document');
-    
+    Route::get('/penyidikan/document', [PenyidikanDok::class, 'show'])->name('penyidikan.document');
+
     Route::post('/logout', [Admin::class, 'logout'])->name('logout');
 });
