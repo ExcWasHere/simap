@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/intelijen/document', [IntelijenDok::class, 'show'])->name('intelijen.document');
     Route::get('/penyidikan/document', [PenyidikanDok::class, 'show'])->name('penyidikan.document');
     Route::get('/monitoring/document', [MonitoringDok::class, 'show'])->name('monitoring.document');
+    Route::get('/dokumen/upload', [UploadDok::class, 'show'])->name('upload.dokumen');
 
     Route::post('/logout', [Admin::class, 'logout'])->name('logout');
 });
