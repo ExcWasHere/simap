@@ -4,7 +4,7 @@ A secure authentication system built with Laravel 11, featuring a modern UI with
 
 ## Features
 
--   🔐 Secure authentication with nip (Employee ID Number)
+-   🔐 Secure authentication with NIP (Employee ID Number)
 -   🎨 Modern UI with Tailwind CSS
 -   ✨ Smooth animations using GSAP
 -   🔄 Image carousel on login page
