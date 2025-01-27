@@ -1,4 +1,4 @@
-<main class="container mx-auto px-4 py-6">
+<main class="container mx-auto">
     @include('shared.ui.penjelasan', [
         'title' => 'Intelijen',
         'description' => 'Halaman ini digunakan untuk mengelola dan memantau kegiatan intelijen, termasuk pengumpulan informasi dan analisis data pengawasan.'

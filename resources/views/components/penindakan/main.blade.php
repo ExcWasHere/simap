@@ -1,4 +1,4 @@
-<main class="container mx-auto px-4 py-6">
+<main class="container mx-auto">
     @include('shared.ui.penjelasan', [
         'title' => 'Penindakan',
         'description' => 'Halaman ini digunakan untuk mengelola data penindakan terhadap pelanggaran, termasuk pencatatan barang hasil penindakan dan proses hukum.'
