@@ -1,21 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class Intelijen extends Controller
+class Penyidikan extends Controller
 {
     public function index(Request $request): View
     {
         $data_penindakan = [
             'no' => '1',
-            'no_nhi' => '123456',
-            'tanggal_nhi' => '22-09-2024',
-            'tempat' => 'DSN DOKO RT 01 RW 01, KALIANYAR, KEC. KALIANYAR, KAB. BLITAR',
-            'jenis_barang' => 'ROKOK SMTH ILEGAL',
-            'jumlah_barang' => '20 (DUA PULUH) BAL',
+            'no_spdp' => '123456',
+            'tanggal_spdp' => '22-09-2024',
+            'pelaku' => 'AGUS RIMBA',
             'keterangan' => 'BERHASIL DIAMANKAN',
         ];
 
@@ -25,8 +23,8 @@ class Intelijen extends Controller
             return stripos($value, $kueri_pencarian) !== false;
         })->all();
 
-        return view('pages.intelijen', [
-            'data_intelijen' => $data_filter,
+        return view('pages.penyidikan', [
+            'data_penyidikan' => $data_filter,
             'kueri_pencarian' => $kueri_pencarian,
         ]);
     }

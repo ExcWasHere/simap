@@ -1,4 +1,4 @@
-<div class="container mx-auto px-4 py-6">
+<main class="container mx-auto px-4 py-6">
     @include('shared.navigation.content-header', ['title' => 'Data Penindakan'])
     @include('shared.navigation.search', ['placeholder' => 'Cari data penindakan...'])
     @include('shared.tables.table', [
@@ -28,4 +28,4 @@
         ],
     ])
     @include('shared.navigation.pagination')
-</div>
+</main>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Controllers;
 
 use Exception;
 use Illuminate\Support\Facades\Request;
@@ -14,7 +14,8 @@ class MonitoringBHP extends Controller
 
     public function monitoring()
     {
-        try {}
-        catch (Exception $exception) {}
+        try {
+        } catch (Exception $exception) {
+        }
     }
 }

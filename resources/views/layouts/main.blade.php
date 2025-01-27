@@ -25,15 +25,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    @vite('resources/js/app.js')
-    @vite('resources/css/app.css')
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js" integrity="sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    @vite('resources/js/app.js')
+    @vite('resources/css/app.css')
 </head>
 
 <body class="min-h-screen bg-gray-100 flex flex-col">
     @include('shared.ui.loader')
-
     @include('shared.navigation.header')
 
     <main class="flex-grow @if(!Route::is('login') && !Route::is('lupa-kata-sandi') && !Route::is('reset-kata-sandi')) container mx-auto px-4 py-6 @endif">
@@ -41,12 +40,10 @@
     </main>
 
     @include('shared.navigation.footer')
-
-    <!-- Modal -->
     @include('shared.ui.modal-detail')
     @include('shared.ui.modal-tambah')
 
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script type="module" src="{{ asset('js/app.js') }}"></script>
 </body>
 
 </html>

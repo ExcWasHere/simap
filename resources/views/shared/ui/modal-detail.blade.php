@@ -1,5 +1,5 @@
 @component('shared.ui.modal-base', [
-    'modalId' => 'modalDetail',
+    'id_modal' => 'modal_detail',
     'title' => 'Detail Data'
 ])
     @include('shared.ui.navigation', [

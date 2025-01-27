@@ -1,36 +1,36 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Controllers;
 
-use App\Http\Controllers\Admin;
-use App\Http\Controllers\ForgotPassword;
-use App\Http\Controllers\Intelijen;
-use App\Http\Controllers\MonitoringBHP;
-use App\Http\Controllers\Penindakan;
-use App\Http\Controllers\Penyidikan;
-use App\Http\Controllers\ResetPassword;
+use App\Controllers\Autentikasi;
+use App\Controllers\Intelijen;
+use App\Controllers\MonitoringBHP;
+use App\Controllers\Penindakan;
+use App\Controllers\Penyidikan;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [Admin::class, 'show'])->name('login');
-    Route::post('/login', [Admin::class, 'login']);
-    Route::get('/lupa-kata-sandi', [ForgotPassword::class, 'show'])->name('lupa-kata-sandi');
-    Route::get('/reset-kata-sandi', [ResetPassword::class, 'show'])->name('reset-kata-sandi');
+    Route::get('/login', [Autentikasi::class, 'halaman_login'])->name('login');
+    Route::get('/lupa-kata-sandi', [Autentikasi::class, 'halaman_lupa_kata_sandi'])->name('lupa-kata-sandi');
+    Route::get('/reset-kata-sandi', [Autentikasi::class, 'halaman_reset_kata_sandi'])->name('reset-kata-sandi');
+    
+    Route::post('/login', [Autentikasi::class, 'login']);
+    Route::post('/lupa-kata-sandi', [Autentikasi::class, 'lupa_kata_sandi']);
+    Route::post('/reset-kata-sandi', [Autentikasi::class, 'reset_kata_sandi']);
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', function () {
-        return view('pages.beranda');
-    })->name('dashboard');
-
-    Route::get('/penindakan', [Penindakan::class, 'index'])->name('penindakan');
+    Route::get('/', [Autentikasi::class, 'halaman_beranda'])->name('dashboard');
     Route::get('/intelijen', [Intelijen::class, 'index'])->name('intelijen');
-    Route::get('/penyidikan', [Penyidikan::class, 'index'])->name('penyidikan');
     Route::get('/monitoring-bhp', [MonitoringBHP::class, 'show'])->name('monitoring');
-    Route::get('/intelijen/document', [IntelijenDok::class, 'show'])->name('intelijen.document');
-    Route::get('/penyidikan/document', [PenyidikanDok::class, 'show'])->name('penyidikan.document');
-    Route::get('/monitoring/document', [MonitoringDok::class, 'show'])->name('monitoring.document');
-    Route::get('/dokumen/upload', [UploadDok::class, 'show'])->name('upload.dokumen');
-
-    Route::post('/logout', [Admin::class, 'logout'])->name('logout');
+    Route::get('/penindakan', [Penindakan::class, 'index'])->name('penindakan');
+    Route::get('/penyidikan', [Penyidikan::class, 'index'])->name('penyidikan');
+    Route::get('/dokumen/upload', [Dokumen::class, 'halaman_unggah_dokumen'])->name('upload.dokumen');
+    Route::get('/intelijen/dokumen', [Dokumen::class, 'halaman_intelijen'])->name('intelijen.dokumen');
+    Route::get('/monitoring-bhp/dokumen', [Dokumen::class, 'halaman_monitoring_bhp'])->name('monitoring_bhp.dokumen');
+    Route::get('/penindakan/dokumen', [Dokumen::class, 'halaman_penindakan'])->name('penindakan.dokumen');
+    Route::get('/penyidikan/dokumen', [Dokumen::class, 'halaman_penyidikan'])->name('penyidikan.dokumen');
+    
+    Route::post('/intelijen', [Dokumen::class, 'intelijen'])->name('');
+    Route::post('/logout', [Autentikasi::class, 'logout'])->name('logout');
 });

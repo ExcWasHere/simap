@@ -2,5 +2,5 @@
     'judul' => 'Upload Dokumen',
     'deskripsi' => '',
 ])
-    @include('components.uploadDokumen.main')
+    @include('components.unggah-dokumen.main')
 @endcomponent

@@ -17,15 +17,15 @@
                     </span>
                     <input
                         type="text"
-                        name="NIP"
-                        id="NIP"
+                        name="nip"
+                        id="nip"
                         class="w-full rounded-lg border-2 pl-12 pr-4 py-3 text-gray-700 focus:outline-none focus:border-[#1a4167] focus:ring-2 focus:ring-[#1a4167]/20 transition-all duration-200 @error('nip') border-red-500 @enderror"
-                        value="{{ old('NIP') }}"
+                        value="{{ old('nip') }}"
                         placeholder="Masukkan NIP Anda"
                         autocomplete="off"
                         required
                     />
-                    @error('NIP')
+                    @error('nip')
                         <h6 class="mt-1 text-xs italic text-red-500">{{ $message }}</h6>
                     @enderror
                 </div>
