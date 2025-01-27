@@ -7,6 +7,9 @@ use App\Controllers\Intelijen;
 use App\Controllers\MonitoringBHP;
 use App\Controllers\Penindakan;
 use App\Controllers\Penyidikan;
+use App\Http\Controllers\PenindakanController;
+use App\Http\Controllers\PenyidikanController;
+use App\Http\Controllers\IntelijenController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -21,10 +24,10 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [Autentikasi::class, 'halaman_beranda'])->name('dashboard');
-    Route::get('/intelijen', [Intelijen::class, 'index'])->name('intelijen');
+    Route::get('/intelijen', [IntelijenController::class, 'index'])->name('intelijen');
     Route::get('/monitoring-bhp', [MonitoringBHP::class, 'show'])->name('monitoring');
-    Route::get('/penindakan', [Penindakan::class, 'index'])->name('penindakan');
-    Route::get('/penyidikan', [Penyidikan::class, 'index'])->name('penyidikan');
+    Route::get('/penindakan', [PenindakanController::class, 'index'])->name('penindakan');
+    Route::get('/penyidikan', [PenyidikanController::class, 'index'])->name('penyidikan');
     Route::get('/dokumen/upload', [Dokumen::class, 'halaman_unggah_dokumen'])->name('upload.dokumen');
     Route::get('/intelijen/dokumen', [Dokumen::class, 'halaman_intelijen'])->name('intelijen.dokumen');
     Route::get('/monitoring-bhp/dokumen', [Dokumen::class, 'halaman_monitoring_bhp'])->name('monitoring_bhp.dokumen');

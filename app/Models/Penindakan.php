@@ -22,7 +22,7 @@ class Penindakan extends Model
         'uraian_bhp',
         'jumlah',
         'kemasan',
-        'nilai_barang',
+        'perkiraan_nilai_barang',
         'potensi_kurang_bayar',
         'created_by',
         'updated_by'

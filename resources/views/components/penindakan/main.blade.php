@@ -1,5 +1,8 @@
 <main class="container mx-auto px-4 py-6">
-    @include('shared.navigation.content-header', ['title' => 'Data Penindakan'])
+    @include('shared.ui.penjelasan', [
+        'title' => 'Penindakan',
+        'description' => 'Halaman ini digunakan untuk mengelola data penindakan terhadap pelanggaran, termasuk pencatatan barang hasil penindakan dan proses hukum.'
+    ])
     @include('shared.navigation.search', ['placeholder' => 'Cari data penindakan...'])
     @include('shared.tables.table', [
         'headers' => [
@@ -13,19 +16,7 @@
             'Perkiraan Nilai Barang',
             'Potensi Kurang Bayar',
         ],
-        'rows' => [
-            [
-                '1',
-                '123456',
-                '22-09-2024',
-                'DSN DOKO RT 01 RW 01, KALIANYAR, KEC. KALIANYAR, KAB. BLITAR',
-                'AGUS RIMBA',
-                'ROKOK SMTH ILEGAL',
-                '20 (DUA PULUH) BAL',
-                '10.000.000 (SEPULUH JUTA RUPIAH)',
-                '-',
-            ],
-        ],
+        'rows' => $rows
     ])
-    @include('shared.navigation.pagination')
+    {{ $penindakan->links() }}
 </main>
