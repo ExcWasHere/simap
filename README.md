@@ -104,7 +104,7 @@ A secure authentication system built with Laravel 11, featuring a modern UI with
 
 | Field    | Value           |
 | -------- | --------------- |
-| nip      | 1234567890      |
+| NIP      | 1234567890      |
 | Email    | admin@gmail.com |
 | Password | password        |
 
