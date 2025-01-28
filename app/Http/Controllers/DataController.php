@@ -18,6 +18,24 @@ class DataController
             DB::transaction(function () use ($request, $entityType) {
                 $validated = $this->validateData($request, $entityType);
                 
+                // Handle pelaku 
+                if ($entityType === 'penindakan') {
+                    $validated['pelaku'] = $validated['penindakan_pelaku'];
+                    unset($validated['penindakan_pelaku']);
+                } elseif ($entityType === 'penyidikan') {
+                    $validated['pelaku'] = $validated['penyidikan_pelaku'];
+                    unset($validated['penyidikan_pelaku']);
+                }
+                
+                // Handle keterangan 
+                if ($entityType === 'penyidikan' && isset($validated['penyidikan_keterangan'])) {
+                    $validated['keterangan'] = $validated['penyidikan_keterangan'];
+                    unset($validated['penyidikan_keterangan']);
+                } elseif ($entityType === 'intelijen' && isset($validated['intelijen_keterangan'])) {
+                    $validated['keterangan'] = $validated['intelijen_keterangan'];
+                    unset($validated['intelijen_keterangan']);
+                }
+                
                 $model = match ($entityType) {
                     'penindakan' => new Penindakan(),
                     'penyidikan' => new Penyidikan(),
@@ -44,19 +62,23 @@ class DataController
             ]);
             
             return redirect()->back()
-                ->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data.'])
+                ->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()])
                 ->withInput();
         }
     }
 
     private function validateData(Request $request, string $entityType)
     {
-        $validated = $request->validate($this->validationRules($entityType));
-        
-        $validated['created_by'] = auth()->id();
-        $validated['updated_by'] = auth()->id();
+        try {
+            $validated = $request->validate($this->validationRules($entityType));
+            
+            $validated['created_by'] = auth()->id();
+            $validated['updated_by'] = auth()->id();
 
-        return $validated;
+            return $validated;
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
+        }
     }
 
     private function validationRules(string $entityType): array
@@ -70,7 +92,7 @@ class DataController
                 'no_sbp' => 'required|string|max:255|unique:penindakan',
                 'tanggal_sbp' => 'required|date',
                 'lokasi_penindakan' => 'required|string|max:255',
-                'pelaku' => 'required|string|max:255',
+                'penindakan_pelaku' => 'required|string|max:255',
                 'uraian_bhp' => 'required|string|max:255',
                 'jumlah' => 'required|integer|min:1',
                 'perkiraan_nilai_barang' => 'required|numeric|min:0',
@@ -79,8 +101,8 @@ class DataController
             'penyidikan' => [
                 'no_spdp' => 'required|string|max:255|unique:penyidikan',
                 'tanggal_spdp' => 'required|date',
-                'pelaku' => 'required|string|max:255',
-                'keterangan' => 'nullable|string',
+                'penyidikan_pelaku' => 'required|string|max:255',
+                'penyidikan_keterangan' => 'nullable|string',
                 'penindakan_id' => 'required|exists:penindakan,id'
             ],
             'intelijen' => [
@@ -89,7 +111,7 @@ class DataController
                 'tempat' => 'required|string|max:255',
                 'jenis_barang' => 'required|string|max:255',
                 'jumlah_barang' => 'required|integer|min:1',
-                'keterangan' => 'nullable|string',
+                'intelijen_keterangan' => 'nullable|string',
             ],
             default => [],
         };

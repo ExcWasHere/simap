@@ -52,9 +52,9 @@
             ])
             @include('shared.forms.input', [
                 'label' => 'Pelaku',
-                'name' => 'pelaku',
+                'name' => 'penindakan_pelaku',
                 'type' => 'text',
-                'data_required' => true
+                'data_required' => true,
             ])
             @include('shared.forms.textarea', [
                 'label' => 'Uraian BHP',
@@ -97,7 +97,7 @@
                 ])
                 @include('shared.forms.input', [
                     'label' => 'Pelaku',
-                    'name' => 'pelaku',
+                    'name' => 'penyidikan_pelaku',
                     'type' => 'text',
                     'data_required' => true
                 ])
@@ -109,7 +109,7 @@
                 ])
                 @include('shared.forms.textarea', [
                     'label' => 'Keterangan',
-                    'name' => 'keterangan',
+                    'name' => 'penyidikan_keterangan',
                     'rows' => 3
                 ])
             </div>
@@ -150,7 +150,7 @@
                 ])
                 @include('shared.forms.textarea', [
                     'label' => 'Keterangan',
-                    'name' => 'keterangan',
+                    'name' => 'intelijen_keterangan',
                     'rows' => 2
                 ])
             </div>

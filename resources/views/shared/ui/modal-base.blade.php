@@ -31,3 +31,25 @@
         </footer>
     </section>
 </figure>
+
+<script>
+document.getElementById('formulir-tambah-data').addEventListener('submit', function(e) {
+    const activeTab = document.querySelector('.tab-content:not(.hidden)');
+    const requiredFields = activeTab.querySelectorAll('[data-required="true"]');
+    
+    let isValid = true;
+    requiredFields.forEach(field => {
+        if (!field.value) {
+            isValid = false;
+            field.classList.add('border-red-500');
+        } else {
+            field.classList.remove('border-red-500');
+        }
+    });
+    
+    if (!isValid) {
+        e.preventDefault();
+        alert('Mohon lengkapi semua field yang wajib diisi');
+    }
+});
+</script>
