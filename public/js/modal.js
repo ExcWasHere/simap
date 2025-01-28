@@ -3,6 +3,18 @@ export const open_modal = (id_modal) => {
     modal.classList.remove("hidden");
     modal.classList.add("modal-active");
     document.body.style.overflow = "hidden";
+
+    const activeTab = modal.querySelector('.tab-button.active').getAttribute('data-tab');
+    const form = modal.querySelector("#formulir-tambah-data");
+    
+    if (form) {
+        form.querySelectorAll('input, textarea, select').forEach(field => {
+            const parentSection = field.closest('.tab-content');
+            if (parentSection) {
+                field.required = parentSection.id === `${activeTab}-content` && field.hasAttribute('data-required');
+            }
+        });
+    }
 }
 
 export const close_modal = (id_modal) => {
@@ -41,8 +53,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 button.classList.add("active", "border-blue-500", "text-blue-600");
                 button.classList.remove("text-gray-500");
+                
                 const data_tab = button.getAttribute("data-tab");
-                modal.querySelector(`#${data_tab}-content`).classList.remove("hidden");
+                const activeContent = modal.querySelector(`#${data_tab}-content`);
+                activeContent.classList.remove("hidden");
+
+                const form = modal.querySelector("#formulir-tambah-data");
+                if (form) {
+                    const entityTypeInput = form.querySelector('#entity_type');
+                    entityTypeInput.value = data_tab;
+
+                    form.querySelectorAll('input, textarea, select').forEach(field => {
+                        const parentSection = field.closest('.tab-content');
+                        if (parentSection) {
+                            field.required = parentSection.id === `${data_tab}-content` && field.hasAttribute('data-required');
+                        }
+                    });
+                }
             });
         });
     });

@@ -1,4 +1,4 @@
-<nav class="mb-4 border-b flex space-x-8">
+<nav class="mb-4 flex space-x-8">
     @foreach ($tabs as $tab)
         <button
             type="button"

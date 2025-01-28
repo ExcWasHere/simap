@@ -1,8 +1,11 @@
 import { gsap } from "gsap";
 
 const createLoaderAnimation = () => {
+    const loader = document.getElementById("loader");
+    if (!loader) return;
+
     if (sessionStorage.getItem("loaderShown")) {
-        document.getElementById("loader").remove();
+        loader.remove();
         gsap.set("main", { autoAlpha: 1 });
         return;
     }

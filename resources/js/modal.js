@@ -33,17 +33,29 @@ document.addEventListener("DOMContentLoaded", function () {
         tab_button.forEach((button) => {
             button.addEventListener("click", () => {
                 tab_button.forEach(btn => {
-                    btn.classList.remove("active", "border-blue-500", "text-blue-600");
+                    btn.classList.remove("active", "border-b-2", "border-blue-500", "text-blue-600");
                     btn.classList.add("text-gray-500");
                 });
-
+        
                 tab_content.forEach(content => content.classList.add("hidden"));
-
-                button.classList.add("active", "border-blue-500", "text-blue-600");
+        
+                button.classList.add("border-b-2", "border-blue-500", "text-blue-600");
                 button.classList.remove("text-gray-500");
                 const data_tab = button.getAttribute("data-tab");
                 modal.querySelector(`#${data_tab}-content`).classList.remove("hidden");
+
+                const form = document.getElementById('formulir-tambah-data');
+                if (form) {
+                    const entityTypeInput = form.querySelector('#entity_type');
+                    if (entityTypeInput) {
+                        entityTypeInput.value = data_tab;
+                    }
+                }
             });
         });
     });
+});
+
+document.addEventListener('modal-activated', function(e) {
+    initTabHandlers();
 });

@@ -27,8 +27,55 @@
     'label' => 'Rekap Tahunan'
 ])
     </div>
-    <button
+    <button id="download-excel-btn"
         class="mt-4 cursor-pointer w-full py-3 rounded-lg transition-colors bg-emerald-600 text-emerald-50 hover:bg-emerald-500">
         Unduh Excel
     </button>
-    </>
+</figure>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const radioButtons = document.querySelectorAll('input[name="data-excel"]');
+        const downloadBtn = document.getElementById('download-excel-btn');
+
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', function () {
+                if (this.checked) {
+                    downloadBtn.classList.remove('cursor-not-allowed', 'opacity-50');
+                    downloadBtn.removeAttribute('disabled');
+                }
+            });
+        });
+
+        downloadBtn.addEventListener('click', async function () {
+            e.preventDefault();
+
+            const selectedOption = document.querySelector('input[name="data-excel"]:checked');
+
+            try {
+                const response = await fetch(`/monitoring-bhp/export/${selectedOption}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `monitoring-bhp-${selectedOption}.xlsx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                } else {
+                    throw new Error('Export failed');
+                }
+            } catch (error) {
+                alert('Gagal mengunduh file Excel. Silahkan coba lagi.');
+            }
+        });
+    });
+
+</script>

@@ -11,6 +11,8 @@ use App\Http\Controllers\MonitoringBHPController;
 use App\Http\Controllers\PenindakanController;
 use App\Http\Controllers\PenyidikanController;
 use App\Http\Controllers\IntelijenController;
+use App\Http\Controllers\DataController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -24,19 +26,42 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    // Dashboard
     Route::get('/', [Autentikasi::class, 'halaman_beranda'])->name('dashboard');
-    Route::get('/intelijen', [IntelijenController::class, 'index'])->name('intelijen');
-    Route::get('/monitoring-bhp', [MonitoringBHP::class, 'show'])->name('monitoring');
-    Route::get('/penindakan', [PenindakanController::class, 'index'])->name('penindakan');
-    Route::get('/penyidikan', [PenyidikanController::class, 'index'])->name('penyidikan');
-    Route::get('/dokumen/upload', [Dokumen::class, 'halaman_unggah_dokumen'])->name('upload.dokumen');
-    Route::get('/intelijen/dokumen', [Dokumen::class, 'halaman_intelijen'])->name('intelijen.dokumen');
-    Route::get('/monitoring-bhp', [MonitoringBHP::class, 'show'])->name('monitoring_bhp');
-    Route::get('/monitoring-bhp/dokumen', [Dokumen::class, 'halaman_monitoring_bhp'])->name('monitoring_bhp.dokumen');
-    Route::get('/monitoring-bhp/chart', [MonitoringBHPController::class, 'showChart'])->name('monitoring_bhp.chart');
-    Route::get('/penindakan/dokumen', [Dokumen::class, 'halaman_penindakan'])->name('penindakan.dokumen');
-    Route::get('/penyidikan/dokumen', [Dokumen::class, 'halaman_penyidikan'])->name('penyidikan.dokumen');
 
-    Route::post('/intelijen', [Dokumen::class, 'intelijen'])->name('');
+    // Intelijen
+    Route::prefix('intelijen')->group(function() {
+        Route::get('/', [IntelijenController::class, 'index'])->name('intelijen');
+        Route::get('/dokumen', [Dokumen::class, 'halaman_intelijen'])->name('intelijen.dokumen');
+        Route::post('/', [Dokumen::class, 'intelijen']);
+    });
+
+    //  Monitoring BHP
+    Route::prefix('monitoring-bhp')->group(function() {
+        Route::get('/', [MonitoringBHP::class, 'show'])->name('monitoring_bhp');
+        Route::get('/dokumen', [Dokumen::class, 'halaman_monitoring_bhp'])->name('monitoring_bhp.dokumen');
+        Route::get('/chart', [MonitoringBHPController::class, 'showChart'])->name('monitoring_bhp.chart');
+        Route::get('/export/{type}', [MonitoringBHPController::class, 'exportExcel'])->name('monitoring_bhp.export');
+    });
+
+    //  Penindakan
+    Route::prefix('penindakan')->group(function() {
+        Route::get('/', [PenindakanController::class, 'index'])->name('penindakan');
+        Route::post('/', [PenindakanController::class, 'store'])->name('penindakan.store');
+        Route::get('/dokumen', [Dokumen::class, 'halaman_penindakan'])->name('penindakan.dokumen');
+    });
+
+    //  Penyidikan
+    Route::prefix('penyidikan')->group(function() {
+        Route::get('/', [PenyidikanController::class, 'index'])->name('penyidikan');
+        Route::post('/', [PenyidikanController::class, 'store'])->name('penyidikan.store');
+        Route::get('/dokumen', [Dokumen::class, 'halaman_penyidikan'])->name('penyidikan.dokumen');
+    });
+
+    //  Upload Dokumen
+    Route::get('/dokumen/upload', [Dokumen::class, 'halaman_unggah_dokumen'])->name('upload.dokumen');
+
+    //  Data & Authentication
+    Route::post('/data/store', [DataController::class, 'store'])->name('data.store');
     Route::post('/logout', [Autentikasi::class, 'logout'])->name('logout');
 });

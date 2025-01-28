@@ -5,6 +5,7 @@
         id="{{ $id }}" 
         class="cursor-pointer" 
         {{ $attributes ?? '' }}
+        {{ $checked ?? false ? 'checked' : '' }}
     />
     <label 
         for="{{ $id }}" 
