@@ -18,22 +18,19 @@ class DataController
             DB::transaction(function () use ($request, $entityType) {
                 $validated = $this->validateData($request, $entityType);
                 
-                // Handle pelaku 
                 if ($entityType === 'penindakan') {
                     $validated['pelaku'] = $validated['penindakan_pelaku'];
                     unset($validated['penindakan_pelaku']);
                 } elseif ($entityType === 'penyidikan') {
-                    $validated['pelaku'] = $validated['penyidikan_pelaku'];
-                    unset($validated['penyidikan_pelaku']);
-                }
-                
-                // Handle keterangan 
-                if ($entityType === 'penyidikan' && isset($validated['penyidikan_keterangan'])) {
-                    $validated['keterangan'] = $validated['penyidikan_keterangan'];
-                    unset($validated['penyidikan_keterangan']);
-                } elseif ($entityType === 'intelijen' && isset($validated['intelijen_keterangan'])) {
-                    $validated['keterangan'] = $validated['intelijen_keterangan'];
-                    unset($validated['intelijen_keterangan']);
+                    // Get pelaku from related penindakan
+                    $penindakan = Penindakan::findOrFail($validated['penindakan_id']);
+                    $validated['pelaku'] = $penindakan->pelaku;
+                    
+                    // Handle keterangan
+                    if (isset($validated['penyidikan_keterangan'])) {
+                        $validated['keterangan'] = $validated['penyidikan_keterangan'];
+                        unset($validated['penyidikan_keterangan']);
+                    }
                 }
                 
                 $model = match ($entityType) {
@@ -101,7 +98,6 @@ class DataController
             'penyidikan' => [
                 'no_spdp' => 'required|string|max:255|unique:penyidikan',
                 'tanggal_spdp' => 'required|date',
-                'penyidikan_pelaku' => 'required|string|max:255',
                 'penyidikan_keterangan' => 'nullable|string',
                 'penindakan_id' => 'required|exists:penindakan,id'
             ],

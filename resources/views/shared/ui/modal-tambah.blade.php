@@ -95,12 +95,7 @@
                     'type' => 'date',
                     'data_required' => true
                 ])
-                @include('shared.forms.input', [
-                    'label' => 'Pelaku',
-                    'name' => 'penyidikan_pelaku',
-                    'type' => 'text',
-                    'data_required' => true
-                ])
+
                 @include('shared.forms.select', [
                     'label' => 'Penindakan Terkait',
                     'name' => 'penindakan_id',
