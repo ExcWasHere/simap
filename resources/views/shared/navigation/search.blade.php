@@ -17,7 +17,7 @@
         <i class="fas fa-filter"></i>
         <h5 class="hidden lg:inline">Filter</h5>
     </button>
-    <button
+    <button id="download-btn" data-section="{{ $section ?? '' }}"
         class="flex cursor-pointer items-center gap-2 px-4 py-3 border rounded-lg transition-colors duration-300 border-gray-300 text-gray-600 hover:bg-gray-50">
         <i class="fas fa-download"></i>
         <h5 class="hidden lg:inline">Download</h5>

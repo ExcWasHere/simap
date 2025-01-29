@@ -12,6 +12,7 @@ use App\Http\Controllers\PenindakanController;
 use App\Http\Controllers\PenyidikanController;
 use App\Http\Controllers\IntelijenController;
 use App\Http\Controllers\DataController;
+use App\Http\Controllers\ExportController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -64,4 +65,7 @@ Route::middleware('auth')->group(function () {
     //  Data & Authentication
     Route::post('/data/store', [DataController::class, 'store'])->name('data.store');
     Route::post('/logout', [Autentikasi::class, 'logout'])->name('logout');
+
+    //  Export
+    Route::get('/export/{section}', [ExportController::class, 'export'])->name('export');
 });

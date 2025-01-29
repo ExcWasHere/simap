@@ -42,6 +42,20 @@
     @include('shared.ui.modal-detail')
     @include('shared.ui.modal-tambah')
     @include('shared.ui.modal-filter')
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const downloadBtn = document.getElementById('download-btn');
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', function() {
+                const section = this.dataset.section;
+                if (section) {
+                    window.location.href = `/export/${section}`;
+                }
+            });
+        }
+    });
+    </script>
 </body>
 
 </html>

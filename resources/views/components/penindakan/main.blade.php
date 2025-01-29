@@ -3,7 +3,10 @@
         'title' => 'Penindakan',
         'description' => 'Halaman ini digunakan untuk mengelola data penindakan terhadap pelanggaran, termasuk pencatatan barang hasil penindakan dan proses hukum.'
     ])
-    @include('shared.navigation.search', ['placeholder' => 'Cari data penindakan...'])
+    @include('shared.navigation.search', [
+        'placeholder' => 'Cari data penindakan...',
+        'section' => 'penindakan'
+    ])
     @include('shared.tables.table', [
         'headers' => [
             'No',
