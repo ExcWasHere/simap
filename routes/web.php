@@ -32,8 +32,8 @@ Route::middleware('auth')->group(function () {
     // Intelijen
     Route::prefix('intelijen')->group(function() {
         Route::get('/', [IntelijenController::class, 'index'])->name('intelijen');
-        Route::get('/dokumen', [Dokumen::class, 'halaman_intelijen'])->name('intelijen.dokumen');
         Route::post('/', [Dokumen::class, 'intelijen']);
+        Route::get('/dokumen', [Dokumen::class, 'halaman_intelijen'])->name('intelijen.dokumen');
     });
 
     //  Monitoring BHP

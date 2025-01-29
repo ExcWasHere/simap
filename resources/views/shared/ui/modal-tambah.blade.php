@@ -1,5 +1,5 @@
 @php
-    $activeTab = old('entity_type', 'penindakan');
+    $activeTab = old('entity_type', 'intelijen');
 @endphp
 
 @component('shared.ui.modal-base', [
@@ -8,15 +8,15 @@
 ])
     <form id="formulir-tambah-data" class="space-y-6" method="POST" 
         action="{{ route('data.store') }}"
-        x-data="{ entityType: '{{ old('entity_type', 'penindakan') }}' }"
+        x-data="{ entityType: '{{ old('entity_type', 'intelijen') }}' }"
         x-ref="form">
         @csrf
-        <input type="hidden" name="entity_type" id="entity_type" value="{{old('entity_type', 'penindakan')}}">
+        <input type="hidden" name="entity_type" id="entity_type" value="{{old('entity_type', 'intelijen')}}">
         @include('shared.ui.navigation', [
             'tabs' => [
-                ['id' => 'penindakan', 'label' => 'Penindakan', 'active' => true],
+                ['id' => 'intelijen', 'label' => 'Intelijen', 'active' => true],
+                ['id' => 'penindakan', 'label' => 'Penindakan'],
                 ['id' => 'penyidikan', 'label' => 'Penyidikan'],
-                ['id' => 'intelijen', 'label' => 'Intelijen'],
             ],
         ])
 
@@ -30,88 +30,8 @@
             </div>
         @endif
 
-        {{-- Penindakan --}}    
-        <section class="tab-content active grid grid-cols-1 gap-6" id="penindakan-content">
-            @include('shared.forms.input', [
-                'label' => 'No. SBP',
-                'name' => 'no_sbp',
-                'type' => 'text',
-                'data_required' => true
-            ])
-            @include('shared.forms.input', [
-                'label' => 'Tanggal SBP',
-                'name' => 'tanggal_sbp',
-                'type' => 'date',
-                'data_required' => true
-            ])
-            @include('shared.forms.textarea', [
-                'label' => 'Lokasi Penindakan',
-                'name' => 'lokasi_penindakan',
-                'rows' => 3,
-                'data_required' => true
-            ])
-            @include('shared.forms.input', [
-                'label' => 'Pelaku',
-                'name' => 'penindakan_pelaku',
-                'type' => 'text',
-                'data_required' => true,
-            ])
-            @include('shared.forms.textarea', [
-                'label' => 'Uraian BHP',
-                'name' => 'uraian_bhp',
-                'rows' => 2,
-                'data_required' => true
-            ])
-            @include('shared.forms.input', [
-                'label' => 'Jumlah',
-                'name' => 'jumlah',
-                'type' => 'number',
-                'data_required' => true
-            ])
-            @include('shared.forms.currency-input', [
-                'label' => 'Perkiraan Nilai Barang',
-                'name' => 'perkiraan_nilai_barang',
-                'data_required' => true
-            ])
-            @include('shared.forms.currency-input', [
-                'label' => 'Potensi Kurang Bayar',
-                'name' => 'potensi_kurang_bayar',
-                'data_required' => true
-            ])
-        </section>
-
-        {{-- Penyidikan --}}
-        <section class="tab-content hidden" id="penyidikan-content">
-            <div class="grid grid-cols-1 gap-6">
-                @include('shared.forms.input', [
-                    'label' => 'No. SPDP',
-                    'name' => 'no_spdp',
-                    'type' => 'text',
-                    'data_required' => true
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Tanggal SPDP',
-                    'name' => 'tanggal_spdp',
-                    'type' => 'date',
-                    'data_required' => true
-                ])
-
-                @include('shared.forms.select', [
-                    'label' => 'Penindakan Terkait',
-                    'name' => 'penindakan_id',
-                    'options' => App\Models\Penindakan::pluck('no_sbp', 'id'),
-                    'data_required' => true
-                ])
-                @include('shared.forms.textarea', [
-                    'label' => 'Keterangan',
-                    'name' => 'penyidikan_keterangan',
-                    'rows' => 3
-                ])
-            </div>
-        </section>
-
         {{-- Intelijen --}}
-        <section class="tab-content hidden" id="intelijen-content">
+        <section class="tab-content active" id="intelijen-content">
             <div class="grid grid-cols-1 gap-6">
                 @include('shared.forms.input', [
                     'label' => 'No. NHI',
@@ -147,6 +67,93 @@
                     'label' => 'Keterangan',
                     'name' => 'intelijen_keterangan',
                     'rows' => 2
+                ])
+            </div>
+        </section>
+
+        {{-- Penindakan --}}    
+        <section class="tab-content hidden" id="penindakan-content">
+            <div class="grid grid-cols-1 gap-6">
+                @include('shared.forms.select', [
+                    'label' => 'Intelijen Terkait',
+                    'name' => 'intelijen_id',
+                    'options' => App\Models\Intelijen::where('status', 'open')->pluck('no_nhi', 'id'),
+                    'data_required' => true
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'No. SBP',
+                    'name' => 'no_sbp',
+                    'type' => 'text',
+                    'data_required' => true
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Tanggal SBP',
+                    'name' => 'tanggal_sbp',
+                    'type' => 'date',
+                    'data_required' => true
+                ])
+                @include('shared.forms.textarea', [
+                    'label' => 'Lokasi Penindakan',
+                    'name' => 'lokasi_penindakan',
+                    'rows' => 3,
+                    'data_required' => true
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Pelaku',
+                    'name' => 'penindakan_pelaku',
+                    'type' => 'text',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.textarea', [
+                    'label' => 'Uraian BHP',
+                    'name' => 'uraian_bhp',
+                    'rows' => 2,
+                    'data_required' => true
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Jumlah',
+                    'name' => 'jumlah',
+                    'type' => 'number',
+                    'data_required' => true
+                ])
+                @include('shared.forms.currency-input', [
+                    'label' => 'Perkiraan Nilai Barang',
+                    'name' => 'perkiraan_nilai_barang',
+                    'data_required' => true
+                ])
+                @include('shared.forms.currency-input', [
+                    'label' => 'Potensi Kurang Bayar',
+                    'name' => 'potensi_kurang_bayar',
+                    'data_required' => true
+                ])
+            </div>
+        </section>
+
+        {{-- Penyidikan --}}
+        <section class="tab-content hidden" id="penyidikan-content">
+            <div class="grid grid-cols-1 gap-6">
+                @include('shared.forms.select', [
+                    'label' => 'Penindakan Terkait',
+                    'name' => 'penindakan_id',
+                    'options' => App\Models\Penindakan::where('status', '=', 'open')->pluck('no_sbp', 'id'),
+                    'data_required' => true
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'No. SPDP',
+                    'name' => 'no_spdp',
+                    'type' => 'text',
+                    'data_required' => true
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Tanggal SPDP',
+                    'name' => 'tanggal_spdp',
+                    'type' => 'date',
+                    'data_required' => true
+                ])
+                @include('shared.forms.textarea', [
+                    'label' => 'Keterangan',
+                    'name' => 'penyidikan_keterangan',
+                    'rows' => 3
                 ])
             </div>
         </section>

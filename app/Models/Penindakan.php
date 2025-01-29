@@ -24,13 +24,23 @@ class Penindakan extends Model
         'kemasan',
         'perkiraan_nilai_barang',
         'potensi_kurang_bayar',
+        'intelijen_id',
+        'status',
         'created_by',
         'updated_by'
     ];
 
     protected $casts = [
         'tanggal_sbp' => 'date',
+        'status' => 'string',
+        'perkiraan_nilai_barang' => 'integer',
+        'potensi_kurang_bayar' => 'integer'
     ];
+
+    public function intelijen(): BelongsTo
+    {
+        return $this->belongsTo(Intelijen::class);
+    }
 
     public function penyidikan(): HasOne
     {
@@ -45,5 +55,16 @@ class Penindakan extends Model
     public function updater(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function isProcessable(): bool
+    {
+        return $this->status === 'open';
+    }
+
+    public function markAsProcessed(): void
+    {
+        $this->status = 'processed';
+        $this->save();
     }
 }

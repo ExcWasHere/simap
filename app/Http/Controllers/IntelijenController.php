@@ -17,7 +17,7 @@ class IntelijenController
                 $q->where('no_nhi', 'like', "%{$search}%")
                   ->orWhere('tempat', 'like', "%{$search}%")
                   ->orWhere('jenis_barang', 'like', "%{$search}%")
-                  ->orWhere('keterangan', 'like', "%{$search}%");
+                  ->orWhere('intelijen_keterangan', 'like', "%{$search}%");
             });
         }
 
@@ -31,7 +31,7 @@ class IntelijenController
                 $item->tempat,
                 $item->jenis_barang,
                 $item->jumlah_barang,
-                $item->keterangan,
+                $item->intelijen_keterangan,
             ];
         })->toArray();
 

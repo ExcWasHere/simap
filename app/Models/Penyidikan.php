@@ -24,7 +24,7 @@ class Penyidikan extends Model
     ];
 
     protected $casts = [
-        'tanggal_spdp' => 'date',
+        'tanggal_spdp' => 'date'
     ];
 
     public function penindakan(): BelongsTo
@@ -40,5 +40,18 @@ class Penyidikan extends Model
     public function updater(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($penyidikan) {
+            if ($penyidikan->penindakan) {
+                $penyidikan->penindakan->markAsProcessed();
+                
+                if ($penyidikan->penindakan->intelijen) {
+                    $penyidikan->penindakan->intelijen->markAsClosed();
+                }
+            }
+        });
     }
 }

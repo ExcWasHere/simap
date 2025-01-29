@@ -15,102 +15,121 @@ class DataController
         $entityType = $request->input('entity_type');
 
         try {
-            DB::transaction(function () use ($request, $entityType) {
+            return DB::transaction(function () use ($request, $entityType) {
                 $validated = $this->validateData($request, $entityType);
                 
-                if ($entityType === 'penindakan') {
-                    $validated['pelaku'] = $validated['penindakan_pelaku'];
-                    unset($validated['penindakan_pelaku']);
-                } elseif ($entityType === 'penyidikan') {
-                    // Get pelaku from related penindakan
-                    $penindakan = Penindakan::findOrFail($validated['penindakan_id']);
-                    $validated['pelaku'] = $penindakan->pelaku;
-                    
-                    // Handle keterangan
-                    if (isset($validated['penyidikan_keterangan'])) {
-                        $validated['keterangan'] = $validated['penyidikan_keterangan'];
-                        unset($validated['penyidikan_keterangan']);
-                    }
+                switch ($entityType) {
+                    case 'intelijen':
+                        $model = new Intelijen();
+                        if (isset($validated['intelijen_keterangan'])) {
+                            $validated['keterangan'] = $validated['intelijen_keterangan'];
+                            unset($validated['intelijen_keterangan']);
+                        }
+                        break;
+                    case 'penindakan':
+                        $model = new Penindakan();
+                        $validated['pelaku'] = $validated['penindakan_pelaku'];
+                        unset($validated['penindakan_pelaku']);
+                        
+                        if (isset($validated['intelijen_id'])) {
+                            $intelijen = Intelijen::findOrFail($validated['intelijen_id']);
+                            $intelijen->status = 'processed';
+                            $intelijen->save();
+                        }
+                        break;
+                    case 'penyidikan':
+                        $model = new Penyidikan();
+                        
+                        if (isset($validated['penindakan_id'])) {
+                            $penindakan = Penindakan::findOrFail($validated['penindakan_id']);
+                            $validated['pelaku'] = $penindakan->pelaku;
+                            
+                            $penindakan->status = 'processed';
+                            $penindakan->save();
+                            
+                            if ($penindakan->intelijen) {
+                                $penindakan->intelijen->status = 'closed';
+                                $penindakan->intelijen->save();
+                            }
+                        }
+                        
+                        if (isset($validated['penyidikan_keterangan'])) {
+                            $validated['keterangan'] = $validated['penyidikan_keterangan'];
+                            unset($validated['penyidikan_keterangan']);
+                        }
+                        break;
+                    default:
+                        throw new \Exception('Invalid entity type');
                 }
-                
-                $model = match ($entityType) {
-                    'penindakan' => new Penindakan(),
-                    'penyidikan' => new Penyidikan(),
-                    'intelijen' => new Intelijen(),
-                    default => throw new \InvalidArgumentException('Invalid entity type')
-                };
 
                 $model->fill($validated);
                 $model->created_by = auth()->id();
                 $model->save();
 
-                // For Penyidikan, handle the relationship with Penindakan
-                if ($entityType === 'penyidikan' && isset($validated['penindakan_id'])) {
-                    $model->penindakan()->associate($validated['penindakan_id']);
-                    $model->save();
-                }
+                return redirect()
+                    ->route($entityType)
+                    ->with('success', 'Data berhasil disimpan');
             });
-
-            return redirect()->back()->with('success', 'Data berhasil disimpan');
         } catch (\Exception $e) {
             \Log::error('Error saving data:', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
             
-            return redirect()->back()
+            return redirect()
+                ->back()
                 ->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()])
                 ->withInput();
         }
     }
 
-    private function validateData(Request $request, string $entityType)
+    private function validateData(Request $request, string $entityType): array
     {
-        try {
-            $validated = $request->validate($this->validationRules($entityType));
-            
-            $validated['created_by'] = auth()->id();
-            $validated['updated_by'] = auth()->id();
-
-            return $validated;
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            throw $e;
-        }
+        $rules = $this->getValidationRules($entityType);
+        return $request->validate($rules);
     }
 
-    private function validationRules(string $entityType): array
+    private function getValidationRules(string $entityType): array
     {
         $baseRules = [
-            'entity_type' => 'required|in:penindakan,penyidikan,intelijen'
+            'entity_type' => ['required', 'string', 'in:intelijen,penindakan,penyidikan'],
         ];
 
-        $typeRules = match($entityType) {
-            'penindakan' => [
-                'no_sbp' => 'required|string|max:255|unique:penindakan',
-                'tanggal_sbp' => 'required|date',
-                'lokasi_penindakan' => 'required|string|max:255',
-                'penindakan_pelaku' => 'required|string|max:255',
-                'uraian_bhp' => 'required|string|max:255',
-                'jumlah' => 'required|integer|min:1',
-                'perkiraan_nilai_barang' => 'required|numeric|min:0',
-                'potensi_kurang_bayar' => 'required|numeric|min:0',
-            ],
-            'penyidikan' => [
-                'no_spdp' => 'required|string|max:255|unique:penyidikan',
-                'tanggal_spdp' => 'required|date',
-                'penyidikan_keterangan' => 'nullable|string',
-                'penindakan_id' => 'required|exists:penindakan,id'
-            ],
-            'intelijen' => [
-                'no_nhi' => 'required|digits:15',
-                'tanggal_nhi' => 'required|date',
-                'tempat' => 'required|string|max:255',
-                'jenis_barang' => 'required|string|max:255',
-                'jumlah_barang' => 'required|integer|min:1',
-                'intelijen_keterangan' => 'nullable|string',
-            ],
-            default => [],
-        };
+        $typeRules = [];
+        switch ($entityType) {
+            case 'intelijen':
+                $typeRules = [
+                    'no_nhi' => ['required', 'string', 'unique:intelijen,no_nhi'],
+                    'tanggal_nhi' => ['required', 'date'],
+                    'tempat' => ['required', 'string'],
+                    'jenis_barang' => ['required', 'string'],
+                    'jumlah_barang' => ['required', 'integer', 'min:1'],
+                    'intelijen_keterangan' => ['nullable', 'string'],
+                ];
+                break;
+            case 'penindakan':
+                $typeRules = [
+                    'intelijen_id' => ['required', 'exists:intelijen,id'],
+                    'no_sbp' => ['required', 'string', 'unique:penindakan,no_sbp'],
+                    'tanggal_sbp' => ['required', 'date'],
+                    'lokasi_penindakan' => ['required', 'string'],
+                    'penindakan_pelaku' => ['required', 'string'],
+                    'uraian_bhp' => ['required', 'string'],
+                    'jumlah' => ['required', 'integer', 'min:1'],
+                    'kemasan' => ['nullable', 'string'],
+                    'perkiraan_nilai_barang' => ['required', 'integer', 'min:0'],
+                    'potensi_kurang_bayar' => ['required', 'integer', 'min:0'],
+                ];
+                break;
+            case 'penyidikan':
+                $typeRules = [
+                    'penindakan_id' => ['required', 'exists:penindakan,id'],
+                    'no_spdp' => ['required', 'string', 'unique:penyidikan,no_spdp'],
+                    'tanggal_spdp' => ['required', 'date'],
+                    'penyidikan_keterangan' => ['nullable', 'string'],
+                ];
+                break;
+        }
 
         return array_merge($baseRules, $typeRules);
     }
