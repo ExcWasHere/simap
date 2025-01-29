@@ -17,10 +17,9 @@ class IntelijenController
                 $q->where('no_nhi', 'like', "%{$search}%")
                   ->orWhere('tempat', 'like', "%{$search}%")
                   ->orWhere('jenis_barang', 'like', "%{$search}%")
-                  ->orWhere('intelijen_keterangan', 'like', "%{$search}%");
+                  ->orWhere('keterangan', 'like', "%{$search}%");
             });
         }
-
 
         if ($dateFrom = $request->input('date_from')) {
             $query->whereDate('tanggal_nhi', '>=', $dateFrom);
@@ -40,7 +39,7 @@ class IntelijenController
                 $item->tempat,
                 $item->jenis_barang,
                 $item->jumlah_barang,
-                $item->intelijen_keterangan,
+                $item->keterangan,
             ];
         })->toArray();
 
