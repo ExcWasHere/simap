@@ -21,8 +21,8 @@
             ], 
             [
                 'ikon' => 'fa-solid fa-chart-line',
-                'judul' => 'Monitoring BHP',
-                'deskripsi' => 'Pengawasan Barang Hasil Penindakan',
+                'judul' => 'Monitoring',
+                'deskripsi' => 'Pengawasan Data Hasil Penindakan',
                 'warna' => 'purple',
             ],
         ];
