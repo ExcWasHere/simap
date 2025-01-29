@@ -21,7 +21,16 @@ class IntelijenController
             });
         }
 
-        $intelijen = $query->latest()->paginate(10);
+
+        if ($dateFrom = $request->input('date_from')) {
+            $query->whereDate('tanggal_nhi', '>=', $dateFrom);
+        }
+
+        if ($dateTo = $request->input('date_to')) {
+            $query->whereDate('tanggal_nhi', '<=', $dateTo);
+        }
+
+        $intelijen = $query->latest()->paginate(10)->withQueryString();
 
         $rows = $intelijen->map(function ($item, $index) use ($intelijen) {
             return [
@@ -36,8 +45,8 @@ class IntelijenController
         })->toArray();
 
         return view('pages.intelijen', [
-            'intelijen' => $intelijen,
             'rows' => $rows,
+            'intelijen' => $intelijen,
         ]);
     }
 }

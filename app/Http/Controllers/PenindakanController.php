@@ -21,7 +21,15 @@ class PenindakanController
             });
         }
 
-        $penindakan = $query->latest()->paginate(10);
+        if ($dateFrom = $request->input('date_from')) {
+            $query->whereDate('tanggal_sbp', '>=', $dateFrom);
+        }
+
+        if ($dateTo = $request->input('date_to')) {
+            $query->whereDate('tanggal_sbp', '<=', $dateTo);
+        }
+
+        $penindakan = $query->latest()->paginate(10)->withQueryString();
 
         $rows = $penindakan->map(function ($item, $index) use ($penindakan) {
             return [

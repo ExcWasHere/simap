@@ -18,10 +18,17 @@
 
         <div class="h-px bg-gray-200 w-[90%] mx-auto"></div>
         <footer class="flex justify-end gap-3 px-6 py-4">
-            <button type="submit" form="formulir-tambah-data"
-                class="cursor-pointer px-4 py-2 rounded-lg transition-colors duration-300 bg-blue-600 text-white hover:bg-blue-700">
-                Simpan
-            </button>
+            @if($id_modal === 'modal_tambah')
+                <button type="submit" form="formulir-tambah-data"
+                    class="cursor-pointer px-4 py-2 rounded-lg transition-colors duration-300 bg-blue-600 text-white hover:bg-blue-700">
+                    Simpan
+                </button>
+            @elseif($id_modal === 'modal_filter')
+                <button type="submit" form="formulir-filter"
+                    class="cursor-pointer px-4 py-2 rounded-lg transition-colors duration-300 bg-blue-600 text-white hover:bg-blue-700">
+                    Terapkan Filter
+                </button>
+            @endif
             <button type="button"
                 class="cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-300 bg-gray-100 text-gray-700 hover:bg-gray-200"
                 onclick="close_modal('{{ $id_modal }}')">
@@ -32,6 +39,7 @@
     </section>
 </figure>
 
+@if($id_modal === 'modal_tambah')
 <script>
 document.getElementById('formulir-tambah-data').addEventListener('submit', function(e) {
     const activeTab = document.querySelector('.tab-content:not(.hidden)');
@@ -53,3 +61,4 @@ document.getElementById('formulir-tambah-data').addEventListener('submit', funct
     }
 });
 </script>
+@endif

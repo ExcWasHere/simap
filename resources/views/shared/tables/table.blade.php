@@ -23,7 +23,7 @@
                         @endforeach
                         <td class="flex items-center justify-center gap-2 px-6 py-4 text-sm text-gray-900">
                             <a
-                                href="/intelijen/dokumen"
+                                href="{{ route('intelijen.dokumen') }}"
                                 class="h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-700"
                                 title="Akses Modul Intelijen"
                             >

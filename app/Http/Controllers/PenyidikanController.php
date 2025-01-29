@@ -20,7 +20,15 @@ class PenyidikanController
             });
         }
 
-        $penyidikan = $query->latest()->paginate(10);
+        if ($dateFrom = $request->input('date_from')) {
+            $query->whereDate('tanggal_spdp', '>=', $dateFrom);
+        }
+
+        if ($dateTo = $request->input('date_to')) {
+            $query->whereDate('tanggal_spdp', '<=', $dateTo);
+        }
+
+        $penyidikan = $query->latest()->paginate(10)->withQueryString();
 
         $rows = $penyidikan->map(function ($item, $index) use ($penyidikan) {
             return [

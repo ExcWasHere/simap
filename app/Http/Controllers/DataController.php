@@ -21,10 +21,8 @@ class DataController
                 switch ($entityType) {
                     case 'intelijen':
                         $model = new Intelijen();
-                        if (isset($validated['intelijen_keterangan'])) {
-                            $validated['keterangan'] = $validated['intelijen_keterangan'];
-                            unset($validated['intelijen_keterangan']);
-                        }
+                        $validated['keterangan'] = $validated['intelijen_keterangan'] ?? null;
+                        unset($validated['intelijen_keterangan']);
                         break;
                     case 'penindakan':
                         $model = new Penindakan();

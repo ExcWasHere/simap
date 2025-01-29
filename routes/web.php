@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [Autentikasi::class, 'halaman_beranda'])->name('dashboard');
 
     // Intelijen
-    Route::prefix('intelijen')->group(function() {
+    Route::prefix('intelijen')->middleware(['auth', 'document.access'])->group(function() {
         Route::get('/', [IntelijenController::class, 'index'])->name('intelijen');
         Route::post('/', [Dokumen::class, 'intelijen']);
         Route::get('/dokumen', [Dokumen::class, 'halaman_intelijen'])->name('intelijen.dokumen');
