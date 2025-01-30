@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('dokumen', function (Blueprint $table) {
             $table->id();
-            $table->string('judul');
             $table->string('tipe');
-            $table->text('deskripsi');
+            $table->string('sub_tipe');
+            $table->text('deskripsi')->nullable();
             $table->string('file_path');
+            $table->string('reference_id')->nullable();
             $table->foreignId('uploaded_by')->constrained('users');
             $table->timestamps();
         });

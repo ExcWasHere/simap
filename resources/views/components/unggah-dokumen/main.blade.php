@@ -23,68 +23,94 @@
             </div>
         @endif
 
-        <form action="{{ route('upload.dokumen') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-            @csrf
-            <div>
-                <label for="judul" class="block text-sm font-medium text-gray-700 mb-1">
-                    Judul Dokumen
-                </label>
-                <input type="text" name="judul" id="judul"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Masukkan judul dokumen" required>
-            </div>
+        @php
+            $currentSection = request()->segment(1) ?: 'intelijen';
+            
+            $referenceParam = match($currentSection) {
+                'intelijen' => 'no_nhi',
+                'monitoring' => 'id',
+                'penindakan' => 'no_sbp',
+                'penyidikan' => 'no_spdp',
+                default => null
+            };
+            
+            $referenceId = $reference_id ?? request()->query($referenceParam);
+            
+            $uploadRoute = match($currentSection) {
+                'intelijen' => 'intelijen.upload.dokumen',
+                'monitoring' => 'monitoring.upload.dokumen',
+                'penindakan' => 'penindakan.upload.dokumen',
+                'penyidikan' => 'penyidikan.upload.dokumen',
+                default => 'intelijen.upload.dokumen'
+            };
 
+            \Log::info('Upload form data:', [
+                'section' => $currentSection,
+                'reference_param' => $referenceParam,
+                'reference_id' => $referenceId,
+                'upload_route' => $uploadRoute
+            ]);
+        @endphp
+
+        <form action="{{ route($uploadRoute, [$referenceParam => $referenceId]) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            @csrf
+            <input type="hidden" name="tipe" value="{{ $currentSection }}">
             <div>
                 <label for="tipe" class="block text-sm font-medium text-gray-700 mb-1">
                     Tipe Dokumen
                 </label>
-                <select name="tipe" id="tipe"
+                <select name="sub_tipe" id="tipe"
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     required>
                     <option value="">Pilih Tipe Dokumen</option>
 
-                    <optgroup label="Intelijen">
-                        <option value="ST-I">ST-I</option>
-                        <option value="LPTI">LPTI</option>
-                        <option value="LPPI">LPPI</option>
-                        <option value="LKAI">LKAI</option>
-                        <option value="NHI">NHI</option>
-                        <option value="NI">NI</option>
-                    </optgroup>
+                    @switch($currentSection)
+                        @case('intelijen')
+                            <option value="ST-I">ST-I</option>
+                            <option value="LPTI">LPTI</option>
+                            <option value="LPPI">LPPI</option>
+                            <option value="LKAI">LKAI</option>
+                            <option value="NHI">NHI</option>
+                            <option value="NI">NI</option>
+                            @break
 
-                    <optgroup label="Penyidikan">
-                        <option value="LK">LK</option>
-                        <option value="SPTP">SPTP</option>
-                        <option value="SPDP">SPDP</option>
-                        <option value="TAP SITA">TAP SITA</option>
-                        <option value="P2I">P2I</option>
-                    </optgroup>
+                        @case('penyidikan')
+                            <option value="LK">LK</option>
+                            <option value="SPTP">SPTP</option>
+                            <option value="SPDP">SPDP</option>
+                            <option value="TAP SITA">TAP SITA</option>
+                            <option value="P2I">P2I</option>
+                            @break
 
-                    <optgroup label="Monitoring">
-                        <option value="KEP-BDN">KEP-BDN</option>
-                        <option value="KEP-BMN">KEP-BMN</option>
-                        <option value="KEP-UR">KEP-UR</option>
-                        <option value="STCK">STCK</option>
-                    </optgroup>
+                        @case('monitoring')
+                            <option value="KEP-BDN">KEP-BDN</option>
+                            <option value="KEP-BMN">KEP-BMN</option>
+                            <option value="KEP-UR">KEP-UR</option>
+                            <option value="STCK">STCK</option>
+                            @break
 
-                    <optgroup label="Penindakan">
-                        <option value="PRIN">PRIN</option>
-                        <option value="ST">ST</option>
-                        <option value="BA-Pemeriksaan">BA-Pemeriksaan</option>
-                        <option value="BA-Penegahan">BA-Penegahan</option>
-                        <option value="BAST">BAST</option>
-                        <option value="BA-Dokumentasi">BA-Dokumentasi</option>
-                        <option value="BA-Pencacahan">BA-Pencacahan</option>
-                        <option value="BA-Penyegelan">BA-Penyegelan</option>
-                        <option value="SBP">SBP</option>
-                        <option value="LPHP">LPHP</option>
-                        <option value="LP/LP1">LP/LP1</option>
-                        <option value="LPP">LPP</option>
-                        <option value="LPF">LPF</option>
-                        <option value="SPLIT">SPLIT</option>
-                        <option value="LHP">LHP</option>
-                        <option value="LRP">LRP</option>
-                    </optgroup>
+                        @case('penindakan')
+                            <option value="PRIN">PRIN</option>
+                            <option value="ST">ST</option>
+                            <option value="BA-Pemeriksaan">BA-Pemeriksaan</option>
+                            <option value="BA-Penegahan">BA-Penegahan</option>
+                            <option value="BAST">BAST</option>
+                            <option value="BA-Dokumentasi">BA-Dokumentasi</option>
+                            <option value="BA-Pencacahan">BA-Pencacahan</option>
+                            <option value="BA-Penyegelan">BA-Penyegelan</option>
+                            <option value="SBP">SBP</option>
+                            <option value="LPHP">LPHP</option>
+                            <option value="LP/LP1">LP/LP1</option>
+                            <option value="LPP">LPP</option>
+                            <option value="LPF">LPF</option>
+                            <option value="SPLIT">SPLIT</option>
+                            <option value="LHP">LHP</option>
+                            <option value="LRP">LRP</option>
+                            @break
+
+                        @default
+                            {{ "Current section not matched: " . $currentSection }}
+                    @endswitch
                 </select>
             </div>
 
@@ -94,7 +120,7 @@
                 </label>
                 <textarea name="deskripsi" id="deskripsi" rows="4"
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Masukkan deskripsi dokumen" required></textarea>
+                    placeholder="Masukkan deskripsi dokumen"></textarea>
             </div>
 
             <div>
@@ -144,6 +170,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const selectedFile = document.getElementById('selected-file');
     const fileIcon = document.getElementById('file-icon');
     const dropZone = fileInput.closest('.border-dashed');
+    const tipeSelect = document.getElementById('tipe');
+    const hiddenTipe = document.getElementById('hidden_tipe');
+
+    const currentPath = window.location.pathname;
+    const section = currentPath.split('/')[1] || 'intelijen';
+    
+    if (!hiddenTipe.value) {
+        hiddenTipe.value = section;
+    }
+
+    console.log('Current section:', section);
+    console.log('Hidden type value:', hiddenTipe.value);
 
     fileInput.addEventListener('change', function(e) {
         updateFileName(this.files[0]);

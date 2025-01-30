@@ -33,14 +33,17 @@ Route::middleware('auth')->group(function () {
     // Intelijen
     Route::prefix('intelijen')->group(function() {
         Route::get('/', [IntelijenController::class, 'index'])->name('intelijen');
-        Route::post('/', [Dokumen::class, 'intelijen']);
-        Route::get('/dokumen', [Dokumen::class, 'halaman_intelijen'])->name('intelijen.dokumen');
+        Route::get('/{no_nhi}/dokumen', [Dokumen::class, 'halaman_intelijen'])->name('intelijen.dokumen');
+        Route::get('/{no_nhi}/dokumen/upload', [Dokumen::class, 'halaman_unggah_dokumen'])->name('intelijen.dokumen.upload');
+        Route::post('/{no_nhi}/dokumen/upload', [Dokumen::class, 'unggah_dokumen'])->name('intelijen.upload.dokumen');
     });
 
     //  Monitoring BHP
     Route::prefix('monitoring')->group(function() {
         Route::get('/', [Monitoring::class, 'show'])->name('monitoring');
-        Route::get('/dokumen', [Dokumen::class, 'halaman_monitoring'])->name('monitoring.dokumen');
+        Route::get('/{id}/dokumen', [Dokumen::class, 'halaman_monitoring'])->name('monitoring.dokumen');
+        Route::get('/{id}/dokumen/upload', [Dokumen::class, 'halaman_unggah_dokumen'])->name('monitoring.dokumen.upload');
+        Route::post('/{id}/dokumen/upload', [Dokumen::class, 'unggah_dokumen'])->name('monitoring.upload.dokumen');
         Route::get('/chart', [MonitoringBHPController::class, 'showChart'])->name('monitoring.chart');
         Route::get('/export/{type}', [MonitoringBHPController::class, 'exportExcel'])->name('monitoring.export');
     });
@@ -48,20 +51,21 @@ Route::middleware('auth')->group(function () {
     //  Penindakan
     Route::prefix('penindakan')->group(function() {
         Route::get('/', [PenindakanController::class, 'index'])->name('penindakan');
-        Route::post('/', [PenindakanController::class, 'store'])->name('penindakan.store');
-        Route::get('/dokumen', [Dokumen::class, 'halaman_penindakan'])->name('penindakan.dokumen');
+        Route::get('/{no_sbp}/dokumen', [Dokumen::class, 'halaman_penindakan'])->name('penindakan.dokumen');
+        Route::get('/{no_sbp}/dokumen/upload', [Dokumen::class, 'halaman_unggah_dokumen'])->name('penindakan.dokumen.upload');
+        Route::post('/{no_sbp}/dokumen/upload', [Dokumen::class, 'unggah_dokumen'])->name('penindakan.upload.dokumen');
     });
 
     //  Penyidikan
     Route::prefix('penyidikan')->group(function() {
         Route::get('/', [PenyidikanController::class, 'index'])->name('penyidikan');
-        Route::post('/', [PenyidikanController::class, 'store'])->name('penyidikan.store');
-        Route::get('/dokumen', [Dokumen::class, 'halaman_penyidikan'])->name('penyidikan.dokumen');
+        Route::get('/{no_spdp}/dokumen', [Dokumen::class, 'halaman_penyidikan'])->name('penyidikan.dokumen');
+        Route::get('/{no_spdp}/dokumen/upload', [Dokumen::class, 'halaman_unggah_dokumen'])->name('penyidikan.dokumen.upload');
+        Route::post('/{no_spdp}/dokumen/upload', [Dokumen::class, 'unggah_dokumen'])->name('penyidikan.upload.dokumen');
     });
 
-    // Upload Dokumen
-    Route::get('/dokumen/upload', [Dokumen::class, 'halaman_unggah_dokumen'])->name('dokumen.upload');
-    Route::post('/dokumen/upload', [Dokumen::class, 'unggah_dokumen'])->name('upload.dokumen');
+    // Global document actions
+    Route::delete('/dokumen/{id}', [Dokumen::class, 'delete'])->name('dokumen.delete');
 
     //  Data & Authentication
     Route::post('/data/store', [DataController::class, 'store'])->name('data.store');

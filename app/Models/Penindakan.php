@@ -62,4 +62,14 @@ class Penindakan extends Model
         $this->status = 'processed';
         $this->save();
     }
+
+    public function intelijen()
+    {
+        return $this->belongsTo(Intelijen::class, 'no_nhi', 'no_nhi');
+    }
+
+    public function dokumen()
+    {
+        return $this->hasMany(Dokumen::class, 'reference_id', 'no_sbp');
+    }
 }

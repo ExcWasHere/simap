@@ -3,6 +3,6 @@
     'deskripsi' => '',
 ])
 <main class="container mx-auto pt-12 pb-6">
-    @include('components.penyidikan.dokumen')
+    @include('components.penyidikan.dokumen', ['documents' => $documents, 'no_spdp' => $no_spdp])
 </main>
 @endcomponent

@@ -27,9 +27,14 @@ class Penyidikan extends Model
         'tanggal_spdp' => 'date'
     ];
 
-    public function intelijen(): BelongsTo
+    public function intelijen()
     {
-        return $this->belongsTo(Intelijen::class);
+        return $this->belongsTo(Intelijen::class, 'no_nhi', 'no_nhi');
+    }
+
+    public function dokumen()
+    {
+        return $this->hasMany(Dokumen::class, 'reference_id', 'no_spdp');
     }
 
     public function creator(): BelongsTo
