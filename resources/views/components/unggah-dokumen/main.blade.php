@@ -23,7 +23,7 @@
             </div>
         @endif
 
-        <form action="{{ route('-') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <form action="{{ route('upload.dokumen') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             <div>
                 <label for="judul" class="block text-sm font-medium text-gray-700 mb-1">
@@ -50,12 +50,37 @@
                     required
                 >
                     <option value="">Pilih Tipe Dokumen</option>
-                    <option value="ST-I">ST-I (Surat Tugas Intelijen)</option>
-                    <option value="LPTI">LPTI (Laporan Pelaksanaan Tugas Intelijen)</option>
-                    <option value="LPPI">LPPI (Laporan Perkembangan Pelaksanaan Intelijen)</option>
-                    <option value="LKAI">LKAI (Laporan Kegiatan Analisis Intelijen)</option>
-                    <option value="NHI">NHI (Nota Hasil Intelijen)</option>
-                    <option value="NI">NI (Nota Intelijen)</option>
+                    <option value="ST-I">ST-I</option>
+                    <option value="LPTI">LPTI</option>
+                    <option value="LPPI">LPPI</option>
+                    <option value="LKAI">LKAI</option>
+                    <option value="NHI">NHI</option>
+                    <option value="NI">NI</option>
+                    <option value="LK">LK</option>
+                    <option value="SPTP">SPTP</option>
+                    <option value="SPDP">SPDP</option>
+                    <option value="TAP SITA">TAP SITA</option>
+                    <option value="P2I">P2I</option>
+                    <option value="KEP-BDN">KEP-BDN</option>
+                    <option value="KEP-BMN">KEP-BMN</option>
+                    <option value="KEP-UR">KEP-UR</option>
+                    <option value="STCK">STCK</option>
+                    <option value="PRIN">PRIN</option>
+                    <option value="ST">ST</option>
+                    <option value="BA-Pemeriksaan">BA-Pemeriksaan</option>
+                    <option value="BA-Penegahan">BA-Penegahan</option>
+                    <option value="BAST">BAST</option>
+                    <option value="BA-Dokumentasi">BA-Dokumentasi</option>
+                    <option value="BA-Pencacahan">BA-Pencacahan</option>
+                    <option value="BA-Penyegelan">BA-Penyegelan</option>
+                    <option value="SBP">SBP</option>
+                    <option value="LPHP">LPHP</option>
+                    <option value="LP/LP1">LP/LP1</option>
+                    <option value="LPP">LPP</option>
+                    <option value="LPF">LPF</option>
+                    <option value="SPLIT">SPLIT</option>
+                    <option value="LHP">LHP</option>
+                    <option value="LRP">LRP</option>
                 </select>
             </div>
 
