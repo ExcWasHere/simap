@@ -21,9 +21,9 @@ class Dokumen extends Controller
         return view('pages.dokumen-intelijen');
     }
 
-    public function halaman_monitoring_bhp(): View
+    public function halaman_monitoring(): View
     {
-        return view('pages.dokumen-monitoring-bhp');
+        return view('pages.dokumen-monitoring');
     }
 
     public function halaman_penindakan(): View

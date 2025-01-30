@@ -84,7 +84,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Monitoring BHP'
+                            text: 'Monitoring'
                         }
                     },
                     scales: {
@@ -98,7 +98,7 @@
 
         function fetchChartData() {
             const chartType = document.getElementById('chart-type').value;
-            fetch(`/api/monitoring-bhp/chart-data?type=${chartType}`)
+            fetch(`/api/monitoring/chart-data?type=${chartType}`)
                 .then(response => response.json())
                 .then(data => {
                     initChart(data);

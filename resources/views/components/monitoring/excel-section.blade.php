@@ -53,7 +53,7 @@
             const selectedOption = document.querySelector('input[name="data-excel"]:checked');
 
             try {
-                const response = await fetch(`/monitoring-bhp/export/${selectedOption}`, {
+                const response = await fetch(`/monitoring/export/${selectedOption}`, {
                     method: 'GET',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest'
@@ -65,7 +65,7 @@
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = `monitoring-bhp-${selectedOption}.xlsx`;
+                    a.download = `monitoring-${selectedOption}.xlsx`;
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);

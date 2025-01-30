@@ -14,7 +14,7 @@ class MonitoringBHPController
 
     public function showChart()
     {
-        return view('pages.monitoring-bhp-chart');
+        return view('pages.monitoring-chart');
     }
 
     public function getChartData(Request $request)

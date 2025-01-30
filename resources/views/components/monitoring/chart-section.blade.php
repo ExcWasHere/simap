@@ -21,7 +21,7 @@
             'label' => 'Line Chart - Tahun'
         ])
     </div>
-    <a href="{{ route('monitoring_bhp.chart') }}"
+    <a href="{{ route('monitoring.chart') }}"
         class="mt-4 cursor-pointer w-full py-3 rounded-lg transition-colors bg-indigo-600 text-white hover:bg-indigo-500 text-center">
         Tampilkan Grafik
     </a>

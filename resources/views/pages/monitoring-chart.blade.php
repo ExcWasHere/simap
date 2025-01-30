@@ -1,8 +1,8 @@
 @component('layouts.main', [
-    'judul' => 'Grafik Monitoring BHP',
+    'judul' => 'Grafik Monitoring',
     'deskripsi' => '',
 ])
     <main class="container mx-auto pt-12 pb-6">
-        @include('components.monitoring-bhp.chart-display')
+        @include('components.monitoring.chart-display')
     </main>
 @endcomponent

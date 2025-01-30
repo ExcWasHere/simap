@@ -37,7 +37,7 @@
                                 <i class="fas fa-search"></i>
                             </a>
                             <a
-                                href="/monitoring-bhp/dokumen"
+                                href="/monitoring/dokumen"
                                 class="h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 bg-purple-100 text-purple-600 hover:bg-purple-200 hover:text-purple-700"
                                 title="Akses Modul Monitoring"
                             >

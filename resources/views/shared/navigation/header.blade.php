@@ -15,8 +15,8 @@
                 <a href="/penyidikan" class="text-gray-600 hover:text-gray-900 {{ request()->is('intelijen*') ? 'active' : '' }}">
                     Penyidikan
                 </a>
-                <a href="/monitoring-bhp" class="text-gray-600 hover:text-gray-900 {{ request()->is('penindakan*') ? 'active' : '' }}">
-                    Monitoring BHP
+                <a href="/monitoring" class="text-gray-600 hover:text-gray-900 {{ request()->is('penindakan*') ? 'active' : '' }}">
+                    Monitoring
                 </a>
                 <span class="h-6 w-px bg-gray-200"></span>
                 <form method="POST" action="{{ route('logout') }}" class="inline">

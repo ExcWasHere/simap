@@ -38,11 +38,11 @@ Route::middleware('auth')->group(function () {
     });
 
     //  Monitoring BHP
-    Route::prefix('monitoring-bhp')->group(function() {
-        Route::get('/', [MonitoringBHP::class, 'show'])->name('monitoring_bhp');
-        Route::get('/dokumen', [Dokumen::class, 'halaman_monitoring_bhp'])->name('monitoring_bhp.dokumen');
-        Route::get('/chart', [MonitoringBHPController::class, 'showChart'])->name('monitoring_bhp.chart');
-        Route::get('/export/{type}', [MonitoringBHPController::class, 'exportExcel'])->name('monitoring_bhp.export');
+    Route::prefix('monitoring')->group(function() {
+        Route::get('/', [Monitoring::class, 'show'])->name('monitoring');
+        Route::get('/dokumen', [Dokumen::class, 'halaman_monitoring'])->name('monitoring.dokumen');
+        Route::get('/chart', [MonitoringBHPController::class, 'showChart'])->name('monitoring.chart');
+        Route::get('/export/{type}', [MonitoringBHPController::class, 'exportExcel'])->name('monitoring.export');
     });
 
     //  Penindakan
