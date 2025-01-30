@@ -33,7 +33,7 @@ class Intelijen extends Model
 
     public function penindakan(): HasOne
     {
-        return $this->hasOne(Penindakan::class);
+        return $this->hasOne(Penindakan::class, Penyidikan::class);
     }
 
     public function creator(): BelongsTo

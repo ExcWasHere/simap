@@ -39,7 +39,6 @@
     </main>
 
     @include('shared.navigation.footer')
-    @include('shared.ui.modal-detail')
     @include('shared.ui.modal-tambah')
     @include('shared.ui.modal-filter')
 

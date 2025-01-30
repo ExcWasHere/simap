@@ -17,7 +17,7 @@ class DataController
         try {
             return DB::transaction(function () use ($request, $entityType) {
                 $validated = $this->validateData($request, $entityType);
-                
+
                 switch ($entityType) {
                     case 'intelijen':
                         $model = new Intelijen();
@@ -26,31 +26,19 @@ class DataController
                         break;
                     case 'penindakan':
                         $model = new Penindakan();
-                        $validated['pelaku'] = $validated['penindakan_pelaku'];
-                        unset($validated['penindakan_pelaku']);
-                        
-                        if (isset($validated['intelijen_id'])) {
-                            $intelijen = Intelijen::findOrFail($validated['intelijen_id']);
-                            $intelijen->status = 'processed';
-                            $intelijen->save();
+                        $penyidikan = Penyidikan::findOrFail($validated['penyidikan_id']);
+                        $validated['pelaku'] = $penyidikan->pelaku;
+
+                        if ($penyidikan->intelijen) {
+                            $penyidikan->intelijen->markAsProcessed();
                         }
                         break;
                     case 'penyidikan':
                         $model = new Penyidikan();
+                        $intelijen = Intelijen::findOrFail($validated['intelijen_id']);
                         
-                        if (isset($validated['penindakan_id'])) {
-                            $penindakan = Penindakan::findOrFail($validated['penindakan_id']);
-                            $validated['pelaku'] = $penindakan->pelaku;
-                            
-                            $penindakan->status = 'processed';
-                            $penindakan->save();
-                            
-                            if ($penindakan->intelijen) {
-                                $penindakan->intelijen->status = 'closed';
-                                $penindakan->intelijen->save();
-                            }
-                        }
-                        
+                        $intelijen->markAsProcessed();
+
                         if (isset($validated['penyidikan_keterangan'])) {
                             $validated['keterangan'] = $validated['penyidikan_keterangan'];
                             unset($validated['penyidikan_keterangan']);
@@ -73,7 +61,7 @@ class DataController
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return redirect()
                 ->back()
                 ->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()])
@@ -105,13 +93,21 @@ class DataController
                     'intelijen_keterangan' => ['nullable', 'string'],
                 ];
                 break;
-            case 'penindakan':
+            case 'penyidikan':
                 $typeRules = [
                     'intelijen_id' => ['required', 'exists:intelijen,id'],
+                    'no_spdp' => ['required', 'string', 'unique:penyidikan,no_spdp'],
+                    'tanggal_spdp' => ['required', 'date'],
+                    'pelaku' => ['required', 'string'],
+                    'penyidikan_keterangan' => ['nullable', 'string'],
+                ];
+                break;
+            case 'penindakan':
+                $typeRules = [
+                    'penyidikan_id' => ['required', 'exists:penyidikan,id'],
                     'no_sbp' => ['required', 'string', 'unique:penindakan,no_sbp'],
                     'tanggal_sbp' => ['required', 'date'],
                     'lokasi_penindakan' => ['required', 'string'],
-                    'penindakan_pelaku' => ['required', 'string'],
                     'uraian_bhp' => ['required', 'string'],
                     'jumlah' => ['required', 'integer', 'min:1'],
                     'kemasan' => ['nullable', 'string'],
@@ -119,14 +115,7 @@ class DataController
                     'potensi_kurang_bayar' => ['required', 'integer', 'min:0'],
                 ];
                 break;
-            case 'penyidikan':
-                $typeRules = [
-                    'penindakan_id' => ['required', 'exists:penindakan,id'],
-                    'no_spdp' => ['required', 'string', 'unique:penyidikan,no_spdp'],
-                    'tanggal_spdp' => ['required', 'date'],
-                    'penyidikan_keterangan' => ['nullable', 'string'],
-                ];
-                break;
+
         }
 
         return array_merge($baseRules, $typeRules);
@@ -137,11 +126,11 @@ class DataController
         if (array_key_exists('penindakan_id', $errors) || isset($errors['penyidikan'])) {
             return 'penyidikan';
         }
-        
+
         if (array_key_exists('no_nhi', $errors) || isset($errors['intelijen'])) {
             return 'intelijen';
         }
-        
+
         return 'penindakan';
     }
 }

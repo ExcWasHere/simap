@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('tanggal_spdp');
             $table->string('pelaku');
             $table->text('keterangan')->nullable();
-            $table->foreignId('penindakan_id')->constrained('penindakan');
+            $table->foreignId('intelijen_id')->constrained('intelijen');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->timestamps();
@@ -32,4 +32,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('penyidikan');
     }
-};
+}; 

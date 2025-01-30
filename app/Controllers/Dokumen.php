@@ -3,13 +3,15 @@
 namespace App\Controllers;
 
 use App\Controllers\Controller;
+use App\Models\Dokumen as DokumenModel;
 use App\Models\Intelijen;
 use App\Models\Penindakan;
 use App\Models\Penyidikan;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Request;
 use Illuminate\View\View;
+use Illuminate\Validation\ValidationException;
 
 class Dokumen extends Controller
 {
@@ -129,11 +131,40 @@ class Dokumen extends Controller
         }
     }
 
-    public function unggah_dokumen()
+    public function unggah_dokumen(Request $request)
     {
         try {
-        } catch (Exception $exception) {
-            Log::error('Error: ', ['error' => $exception->getMessage()]);
+            $validated = $request->validate([
+                'judul' => 'required|string|max:255',
+                'tipe' => 'required|string',
+                'deskripsi' => 'required|string',
+                'file' => 'required|file|mimes:pdf|max:10240',
+            ]);
+
+            $file = $request->file('file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            
+            $path = $file->storeAs('public/dokumen', $fileName);
+
+            $dokumen = new DokumenModel();
+            $dokumen->judul = $validated['judul'];
+            $dokumen->tipe = $validated['tipe'];
+            $dokumen->deskripsi = $validated['deskripsi'];
+            $dokumen->file_path = $fileName;
+            $dokumen->uploaded_by = auth()->id();
+            $dokumen->save();
+
+            return redirect()->back()->with('success', 'Dokumen berhasil diunggah!');
+
+        } catch (ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->withInput();
+        } catch (Exception $e) {
+            Log::error('Error uploading document: ' . $e->getMessage());
+            return redirect()->back()
+                ->withErrors(['error' => 'Terjadi kesalahan saat mengunggah dokumen.'])
+                ->withInput();
         }
     }
 }

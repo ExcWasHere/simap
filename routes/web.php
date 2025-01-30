@@ -59,8 +59,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/dokumen', [Dokumen::class, 'halaman_penyidikan'])->name('penyidikan.dokumen');
     });
 
-    //  Upload Dokumen
-    Route::get('/dokumen/upload', [Dokumen::class, 'halaman_unggah_dokumen'])->name('upload.dokumen');
+    // Upload Dokumen
+    Route::get('/dokumen/upload', [Dokumen::class, 'halaman_unggah_dokumen'])->name('dokumen.upload');
+    Route::post('/dokumen/upload', [Dokumen::class, 'unggah_dokumen'])->name('upload.dokumen');
 
     //  Data & Authentication
     Route::post('/data/store', [DataController::class, 'store'])->name('data.store');

@@ -18,7 +18,7 @@ class Penyidikan extends Model
         'tanggal_spdp',
         'pelaku',
         'keterangan',
-        'penindakan_id',
+        'intelijen_id',
         'created_by',
         'updated_by'
     ];
@@ -27,9 +27,9 @@ class Penyidikan extends Model
         'tanggal_spdp' => 'date'
     ];
 
-    public function penindakan(): BelongsTo
+    public function intelijen(): BelongsTo
     {
-        return $this->belongsTo(Penindakan::class);
+        return $this->belongsTo(Intelijen::class);
     }
 
     public function creator(): BelongsTo
@@ -45,12 +45,8 @@ class Penyidikan extends Model
     protected static function booted()
     {
         static::created(function ($penyidikan) {
-            if ($penyidikan->penindakan) {
-                $penyidikan->penindakan->markAsProcessed();
-                
-                if ($penyidikan->penindakan->intelijen) {
-                    $penyidikan->penindakan->intelijen->markAsClosed();
-                }
+            if ($penyidikan->intelijen) {
+                $penyidikan->intelijen->markAsProcessed();
             }
         });
     }

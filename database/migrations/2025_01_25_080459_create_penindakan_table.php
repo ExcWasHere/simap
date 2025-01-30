@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('kemasan')->nullable();
             $table->integer('perkiraan_nilai_barang');
             $table->integer('potensi_kurang_bayar');
-            $table->foreignId('intelijen_id')->constrained('intelijen');
+            $table->foreignId('penyidikan_id')->nullable()->constrained('penyidikan')->nullOnDelete();
             $table->enum('status', ['open', 'processed', 'closed'])->default('open');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->nullable()->constrained('users');

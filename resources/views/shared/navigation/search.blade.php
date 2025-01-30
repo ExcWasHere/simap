@@ -22,7 +22,7 @@
         <i class="fas fa-download"></i>
         <h5 class="hidden lg:inline">Download</h5>
     </button>
-    <button onclick="open_modal('modal_tambah')"
+    <button onclick="open_modal('modal_tambah', '{{ $section }}')"
         class="flex cursor-pointer items-center gap-2 px-4 py-3 border rounded-lg transition-colors duration-300 border-gray-300 text-gray-600 hover:bg-gray-50">
         <i class="fas fa-plus"></i>
         <h5 class="hidden lg:inline">Tambah Data</h5>
@@ -36,4 +36,4 @@
     </a>
 @endif
 
-@include('shared.ui.modal-tambah')
+@include('shared.ui.modal-tambah', ['activeTab' => $section])

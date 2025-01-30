@@ -47,16 +47,22 @@
             });
         });
 
-        downloadBtn.addEventListener('click', async function () {
+        downloadBtn.addEventListener('click', async function (e) {
             e.preventDefault();
 
-            const selectedOption = document.querySelector('input[name="data-excel"]:checked');
+            const selectedOption = document.querySelector('input[name="data-excel"]:checked').id;
+            const downloadBtn = this;
+
+            downloadBtn.disabled = true;
+            downloadBtn.classList.add('cursor-not-allowed', 'opacity-50');
+            downloadBtn.textContent = 'Mengunduh...';
 
             try {
                 const response = await fetch(`/monitoring/export/${selectedOption}`, {
                     method: 'GET',
                     headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                     }
                 });
 
@@ -72,8 +78,22 @@
                 } else {
                     throw new Error('Export failed');
                 }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `monitoring-bhp-${selectedOption}-${new Date().toISOString().split('T')[0]}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
             } catch (error) {
+                console.error('Download error:', error);
                 alert('Gagal mengunduh file Excel. Silahkan coba lagi.');
+            } finally {
+                downloadBtn.disabled = false;
+                downloadBtn.classList.remove('cursor-not-allowed', 'opacity-50');
+                downloadBtn.textContent = 'Unduh Excel';
             }
         });
     });

@@ -1,8 +1,40 @@
-export const open_modal = (id_modal) => {
+export const open_modal = (id_modal, activeTab = null) => {
     const modal = document.getElementById(id_modal);
     modal.classList.remove("hidden");
     modal.classList.add("modal-active");
     document.body.style.overflow = "hidden";
+
+    if (activeTab) {
+        const form = modal.querySelector('#formulir-tambah-data');
+        if (form) {
+            const entityTypeInput = form.querySelector('#entity_type');
+            if (entityTypeInput) {
+                entityTypeInput.value = activeTab;
+            }
+
+            // Hide all tab contents and deactivate all tab buttons
+            modal.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('active');
+            });
+            modal.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active', 'border-b-2', 'border-blue-500', 'text-blue-600');
+                btn.classList.add('text-gray-500');
+            });
+
+            // Show active tab content and activate its button
+            const activeContent = modal.querySelector(`#${activeTab}-content`);
+            const activeButton = modal.querySelector(`[data-tab="${activeTab}"]`);
+            if (activeContent) {
+                activeContent.classList.remove('hidden');
+                activeContent.classList.add('active');
+            }
+            if (activeButton) {
+                activeButton.classList.add('border-b-2', 'border-blue-500', 'text-blue-600');
+                activeButton.classList.remove('text-gray-500');
+            }
+        }
+    }
 }
 
 export const close_modal = (id_modal) => {
@@ -32,19 +64,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
         tab_button.forEach((button) => {
             button.addEventListener("click", () => {
+                // Update tab buttons
                 tab_button.forEach(btn => {
                     btn.classList.remove("active", "border-b-2", "border-blue-500", "text-blue-600");
                     btn.classList.add("text-gray-500");
                 });
         
-                tab_content.forEach(content => content.classList.add("hidden"));
+                // Update tab contents
+                tab_content.forEach(content => {
+                    content.classList.add("hidden");
+                    content.classList.remove("active");
+                });
         
+                // Activate clicked tab
                 button.classList.add("border-b-2", "border-blue-500", "text-blue-600");
                 button.classList.remove("text-gray-500");
+                
+                // Show corresponding content
                 const data_tab = button.getAttribute("data-tab");
-                modal.querySelector(`#${data_tab}-content`).classList.remove("hidden");
+                const activeContent = modal.querySelector(`#${data_tab}-content`);
+                if (activeContent) {
+                    activeContent.classList.remove("hidden");
+                    activeContent.classList.add("active");
+                }
 
-                const form = document.getElementById('formulir-tambah-data');
+                // Update form state
+                const form = modal.querySelector('#formulir-tambah-data');
                 if (form) {
                     const entityTypeInput = form.querySelector('#entity_type');
                     if (entityTypeInput) {

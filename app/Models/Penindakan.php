@@ -24,7 +24,7 @@ class Penindakan extends Model
         'kemasan',
         'perkiraan_nilai_barang',
         'potensi_kurang_bayar',
-        'intelijen_id',
+        'penyidikan_id',
         'status',
         'created_by',
         'updated_by'
@@ -37,14 +37,9 @@ class Penindakan extends Model
         'potensi_kurang_bayar' => 'integer'
     ];
 
-    public function intelijen(): BelongsTo
+    public function penyidikan(): BelongsTo
     {
-        return $this->belongsTo(Intelijen::class);
-    }
-
-    public function penyidikan(): HasOne
-    {
-        return $this->hasOne(Penyidikan::class);
+        return $this->belongsTo(Penyidikan::class);
     }
 
     public function creator(): BelongsTo

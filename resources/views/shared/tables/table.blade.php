@@ -50,13 +50,6 @@
                             >
                                 <i class="fas fa-gavel"></i>
                             </a>
-                            <button
-                                onclick="open_modal('modal_detail')"
-                                class="h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 bg-yellow-100 text-yellow-600 hover:bg-yellow-200 hover:text-yellow-700"
-                                title="Lihat Detail"
-                            >
-                                <i class="fas fa-eye"></i>
-                            </button>
                         </td>
                     </tr>
                 @endforeach

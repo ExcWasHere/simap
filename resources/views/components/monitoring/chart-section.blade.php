@@ -26,29 +26,3 @@
         Tampilkan Grafik
     </a>
 </figure>
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const radioButtons = document.querySelectorAll('input[name="grafik-analisis"]');
-    const showChartBtn = document.getElementById('show-chart-btn');
-
-    radioButtons.forEach(radio => {
-        radio.addEventListener('change', function() {
-            if (this.checked) {
-                showChartBtn.classList.remove('cursor-not-allowed', 'opacity-50');
-                showChartBtn.classList.add('hover:bg-indigo-500');
-                showChartBtn.removeAttribute('disabled');
-            }
-        });
-    });
-
-    showChartBtn.addEventListener('click', function(e) {
-        if (this.hasAttribute('disabled')) {
-            e.preventDefault();
-            alert('Silakan pilih jenis grafik terlebih dahulu');
-        }
-    });
-});
-</script>
-@endpush

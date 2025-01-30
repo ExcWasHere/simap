@@ -1,54 +1,5 @@
-<div class="container mx-auto px-4 py-6">
+<div class="container mx-auto px-4 py-6 pt-12">
     <div class="grid grid-cols-3 gap-6">
-        <a href="/dokumen/dokumen1.pdf" class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
-            <div class="p-4 flex items-center justify-center h-32">
-                <i class="fas fa-file-pdf text-4xl text-red-500"></i>
-            </div>
-            <div class="p-4 bg-gray-50 rounded-b-lg">
-                <h3 class="text-lg font-semibold text-gray-900">LK</h3>
-                <p class="text-sm text-gray-600">Deskripsi Dokumen 1</p>
-            </div>
-        </a>
-
-        <a href="/dokumen/dokumen2.pdf" class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
-            <div class="p-4 flex items-center justify-center h-32">
-                <i class="fas fa-file-pdf text-4xl text-red-500"></i>
-            </div>
-            <div class="p-4 bg-gray-50 rounded-b-lg">
-                <h3 class="text-lg font-semibold text-gray-900">SPTP</h3>
-                <p class="text-sm text-gray-600">Deskripsi Dokumen 2</p>
-            </div>
-        </a>
-
-        <a href="/dokumen/dokumen3.pdf" class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
-            <div class="p-4 flex items-center justify-center h-32">
-                <i class="fas fa-file-pdf text-4xl text-red-500"></i>
-            </div>
-            <div class="p-4 bg-gray-50 rounded-b-lg">
-                <h3 class="text-lg font-semibold text-gray-900">SPDP</h3>
-                <p class="text-sm text-gray-600">Deskripsi Dokumen 3</p>
-            </div>
-        </a>
-
-        <a href="/dokumen/dokumen4.pdf" class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
-            <div class="p-4 flex items-center justify-center h-32">
-                <i class="fas fa-file-pdf text-4xl text-red-500"></i>
-            </div>
-            <div class="p-4 bg-gray-50 rounded-b-lg">
-                <h3 class="text-lg font-semibold text-gray-900">TAP SITA</h3>
-                <p class="text-sm text-gray-600">Deskripsi Dokumen 4</p>
-            </div>
-        </a>
-
-        <a href="/dokumen/dokumen5.pdf" class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
-            <div class="p-4 flex items-center justify-center h-32">
-                <i class="fas fa-file-pdf text-4xl text-red-500"></i>
-            </div>
-            <div class="p-4 bg-gray-50 rounded-b-lg">
-                <h3 class="text-lg font-semibold text-gray-900">P2I</h3>
-                <p class="text-sm text-gray-600">Deskripsi Dokumen 5</p>
-            </div>
-        </a>
 
         <a href="/dokumen/upload" class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
             <div class="p-4 flex items-center justify-center h-32">

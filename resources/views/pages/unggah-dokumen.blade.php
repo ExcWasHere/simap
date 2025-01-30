@@ -2,5 +2,7 @@
     'judul' => 'Upload Dokumen',
     'deskripsi' => '',
 ])
-    @include('components.unggah-dokumen.main')
+    <main class="container mx-auto pt-12 pb-6">
+        @include('components.unggah-dokumen.main')
+    </main>
 @endcomponent
