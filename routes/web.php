@@ -73,4 +73,9 @@ Route::middleware('auth')->group(function () {
 
     //  Export
     Route::get('/export/{section}', [ExportController::class, 'export'])->name('export');
+
+    // Tambah Data
+    Route::get('/tambah-data', function () {
+        return view('pages.tambah-data');
+    })->name('tambah-data');
 });

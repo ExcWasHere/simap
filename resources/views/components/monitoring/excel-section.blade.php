@@ -66,17 +66,13 @@
                     }
                 });
 
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `monitoring-${selectedOption}.xlsx`;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                } else {
-                    throw new Error('Export failed');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('spreadsheetml.sheet')) {
+                    throw new Error('Invalid file format received');
                 }
 
                 const blob = await response.blob();
@@ -86,6 +82,7 @@
                 a.download = `monitoring-bhp-${selectedOption}-${new Date().toISOString().split('T')[0]}.xlsx`;
                 document.body.appendChild(a);
                 a.click();
+                document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
             } catch (error) {
                 console.error('Download error:', error);
