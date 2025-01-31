@@ -19,7 +19,8 @@
             'Perkiraan Nilai Barang',
             'Potensi Kurang Bayar',
         ],
-        'rows' => $rows
+        'rows' => $rows,
+        'moduleIds' => $moduleIds
     ])
     {{ $penindakan->links() }}
 </main>

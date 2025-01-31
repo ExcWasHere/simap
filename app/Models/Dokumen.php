@@ -26,10 +26,10 @@ class Dokumen extends Model
     public function parent()
     {
         return match($this->tipe) {
-            'intelijen' => $this->belongsTo(Intelijen::class, 'reference_id', 'no_nhi'),
-            'penyidikan' => $this->belongsTo(Penyidikan::class, 'reference_id', 'no_spdp'),
-            'penindakan' => $this->belongsTo(Penindakan::class, 'reference_id', 'no_sbp'),
-            'monitoring' => $this->belongsTo(Intelijen::class, 'reference_id', 'no_nhi'),
+            'intelijen' => $this->belongsTo(Intelijen::class, 'reference_id'),
+            'penyidikan' => $this->belongsTo(Penyidikan::class, 'reference_id'),
+            'penindakan' => $this->belongsTo(Penindakan::class, 'reference_id'),
+            'monitoring' => $this->belongsTo(Intelijen::class, 'reference_id'),
             default => null
         };
     }

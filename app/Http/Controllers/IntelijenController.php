@@ -34,9 +34,19 @@ class IntelijenController
             $query->whereDate('tanggal_nhi', '<=', $dateTo);
         }
 
-        $intelijen = $query->latest()->paginate(10)->withQueryString();
+        $intelijen = $query->with('penyidikan.penindakan')->latest()->paginate(10)->withQueryString();
 
-        $rows = $intelijen->map(function ($item, $index) use ($intelijen) {
+        $moduleIds = [];
+        $rows = $intelijen->map(function ($item, $index) use (&$moduleIds, $intelijen) {
+            $penyidikan = optional($item->penyidikan)->first();
+            $penindakan = optional(optional($penyidikan)->penindakan)->first();
+            
+            $moduleIds[$index] = [
+                'intelijen' => $item->no_nhi,
+                'penyidikan' => optional($penyidikan)->no_spdp,
+                'penindakan' => optional($penindakan)->no_sbp,
+            ];
+
             return [
                 ($intelijen->currentPage() - 1) * $intelijen->perPage() + $index + 1,
                 $item->no_nhi,
@@ -51,6 +61,7 @@ class IntelijenController
         return view('pages.intelijen', [
             'rows' => $rows,
             'intelijen' => $intelijen,
+            'moduleIds' => $moduleIds
         ]);
     }
 

@@ -42,7 +42,7 @@ class Penindakan extends Model
 
     public function penyidikan(): BelongsTo
     {
-        return $this->belongsTo(Penyidikan::class, 'penyidikan_id', 'no_spdp');
+        return $this->belongsTo(Penyidikan::class);
     }
 
     public function creator(): BelongsTo
@@ -74,5 +74,19 @@ class Penindakan extends Model
     public function dokumen()
     {
         return $this->hasMany(Dokumen::class, 'reference_id', 'no_sbp')->where('module', 'penindakan');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function($model) {
+            $timestamp = now()->format('YmdHis');
+            $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
+            $suffix = "_deleted_{$timestamp}{$random}";
+            
+            $model->no_sbp = $model->no_sbp . $suffix;
+            $model->save();
+        });
     }
 }

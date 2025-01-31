@@ -85,7 +85,7 @@ class DataController
         switch ($entityType) {
             case 'intelijen':
                 $typeRules = [
-                    'no_nhi' => ['required', 'string', 'unique:intelijen,no_nhi'],
+                    'no_nhi' => ['required', 'string', 'unique:intelijen,no_nhi,NULL,id,deleted_at,NULL'],
                     'tanggal_nhi' => ['required', 'date'],
                     'tempat' => ['required', 'string'],
                     'jenis_barang' => ['required', 'string'],
@@ -96,7 +96,7 @@ class DataController
             case 'penyidikan':
                 $typeRules = [
                     'intelijen_id' => ['required', 'exists:intelijen,id'],
-                    'no_spdp' => ['required', 'string', 'unique:penyidikan,no_spdp'],
+                    'no_spdp' => ['required', 'string', 'unique:penyidikan,no_spdp,NULL,id,deleted_at,NULL'],
                     'tanggal_spdp' => ['required', 'date'],
                     'pelaku' => ['required', 'string'],
                     'penyidikan_keterangan' => ['nullable', 'string'],
@@ -105,7 +105,7 @@ class DataController
             case 'penindakan':
                 $typeRules = [
                     'penyidikan_id' => ['required', 'exists:penyidikan,id'],
-                    'no_sbp' => ['required', 'string', 'unique:penindakan,no_sbp'],
+                    'no_sbp' => ['required', 'string', 'unique:penindakan,no_sbp,NULL,id,deleted_at,NULL'],
                     'tanggal_sbp' => ['required', 'date'],
                     'lokasi_penindakan' => ['required', 'string'],
                     'uraian_bhp' => ['required', 'string'],

@@ -13,9 +13,6 @@ class Penyidikan extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'penyidikan';
-    protected $primaryKey = 'no_spdp';
-    public $incrementing = false;
-    protected $keyType = 'string';
 
     protected $fillable = [
         'no_spdp',
@@ -33,12 +30,12 @@ class Penyidikan extends Model
 
     public function intelijen(): BelongsTo
     {
-        return $this->belongsTo(Intelijen::class, 'intelijen_id', 'no_nhi');
+        return $this->belongsTo(Intelijen::class, 'intelijen_id');
     }
 
     public function penindakan(): HasMany
     {
-        return $this->hasMany(Penindakan::class, 'penyidikan_id', 'no_spdp');
+        return $this->hasMany(Penindakan::class);
     }
 
     public function dokumen()
@@ -62,6 +59,15 @@ class Penyidikan extends Model
             if ($penyidikan->intelijen) {
                 $penyidikan->intelijen->markAsProcessed();
             }
+        });
+
+        static::deleting(function($model) {
+            $timestamp = now()->format('YmdHis');
+            $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
+            $suffix = "_deleted_{$timestamp}{$random}";
+            
+            $model->no_spdp = $model->no_spdp . $suffix;
+            $model->save();
         });
     }
 }

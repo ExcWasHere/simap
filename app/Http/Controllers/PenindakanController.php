@@ -31,9 +31,16 @@ class PenindakanController
             $query->whereDate('tanggal_sbp', '<=', $dateTo);
         }
 
-        $penindakan = $query->latest()->paginate(10)->withQueryString();
+        $penindakan = $query->with(['penyidikan.intelijen'])->latest()->paginate(10)->withQueryString();
 
-        $rows = $penindakan->map(function ($item, $index) use ($penindakan) {
+        $moduleIds = [];
+        $rows = $penindakan->map(function ($item, $index) use ($penindakan, &$moduleIds) {
+            $moduleIds[$index] = [
+                'intelijen' => optional(optional($item->penyidikan)->intelijen)->no_nhi ?? null,
+                'penyidikan' => optional($item->penyidikan)->no_spdp ?? null,
+                'penindakan' => $item->no_sbp,
+            ];
+
             return [
                 ($penindakan->currentPage() - 1) * $penindakan->perPage() + $index + 1,
                 $item->no_sbp,
@@ -50,6 +57,7 @@ class PenindakanController
         return view('pages.penindakan', [
             'rows' => $rows,
             'penindakan' => $penindakan,
+            'moduleIds' => $moduleIds
         ]);
     }
 
@@ -58,7 +66,16 @@ class PenindakanController
         try {
             DB::beginTransaction();
             
-            $penindakan = Penindakan::where('no_sbp', $no_sbp)->firstOrFail();
+            $penindakan = Penindakan::whereNull('deleted_at')
+                ->where('no_sbp', $no_sbp)
+                ->firstOrFail();
+            
+            $timestamp = now()->format('YmdHis');
+            $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
+            $suffix = "_deleted_{$timestamp}{$random}";
+            
+            $penindakan->no_sbp = $penindakan->no_sbp . $suffix;
+            $penindakan->save();
             
             $penindakan->delete();
             

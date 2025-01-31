@@ -14,10 +14,7 @@ class Intelijen extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'intelijen';
-    protected $primaryKey = 'no_nhi';
-    public $incrementing = false;
-    protected $keyType = 'string';
-
+    
     protected $fillable = [
         'no_nhi',
         'tanggal_nhi',
@@ -37,7 +34,7 @@ class Intelijen extends Model
 
     public function penyidikan(): HasMany
     {
-        return $this->hasMany(Penyidikan::class, 'intelijen_id', 'no_nhi');
+        return $this->hasMany(Penyidikan::class, 'intelijen_id');
     }
 
     public function dokumen()
@@ -68,5 +65,19 @@ class Intelijen extends Model
     public function markAsClosed(): void
     {
         $this->update(['status' => 'closed']);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function($model) {
+            $timestamp = now()->format('YmdHis');
+            $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
+            $suffix = "_deleted_{$timestamp}{$random}";
+            
+            $model->no_nhi = $model->no_nhi . $suffix;
+            $model->save();
+        });
     }
 }

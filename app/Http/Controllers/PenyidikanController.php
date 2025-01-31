@@ -30,9 +30,16 @@ class PenyidikanController
             $query->whereDate('tanggal_spdp', '<=', $dateTo);
         }
 
-        $penyidikan = $query->latest()->paginate(10)->withQueryString();
+        $penyidikan = $query->with(['intelijen', 'penindakan'])->latest()->paginate(10)->withQueryString();
 
-        $rows = $penyidikan->map(function ($item, $index) use ($penyidikan) {
+        $moduleIds = [];
+        $rows = $penyidikan->map(function ($item, $index) use ($penyidikan, &$moduleIds) {
+            $moduleIds[$index] = [
+                'intelijen' => $item->intelijen->no_nhi,
+                'penyidikan' => $item->no_spdp,
+                'penindakan' => optional($item->penindakan->first())->no_sbp ?? null,
+            ];
+
             return [
                 ($penyidikan->currentPage() - 1) * $penyidikan->perPage() + $index + 1,
                 $item->no_spdp,
@@ -45,6 +52,7 @@ class PenyidikanController
         return view('pages.penyidikan', [
             'rows' => $rows,
             'penyidikan' => $penyidikan,
+            'moduleIds' => $moduleIds
         ]);
     }
 
@@ -53,8 +61,29 @@ class PenyidikanController
         try {
             DB::beginTransaction();
             
-            $penyidikan = Penyidikan::where('no_spdp', $no_spdp)->firstOrFail();
+            $penyidikan = Penyidikan::with('penindakan')
+                ->whereNull('deleted_at')
+                ->where('no_spdp', $no_spdp)
+                ->firstOrFail();
             
+            // Handle related penindakan records first
+            foreach ($penyidikan->penindakan as $penindakan) {
+                $timestamp = now()->format('YmdHis');
+                $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
+                $suffix = "_deleted_{$timestamp}{$random}";
+                
+                $penindakan->no_sbp = $penindakan->no_sbp . $suffix;
+                $penindakan->save();
+                $penindakan->delete();
+            }
+            
+            // Now handle the penyidikan record
+            $timestamp = now()->format('YmdHis');
+            $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
+            $suffix = "_deleted_{$timestamp}{$random}";
+            
+            $penyidikan->no_spdp = $penyidikan->no_spdp . $suffix;
+            $penyidikan->save();
             $penyidikan->delete();
             
             DB::commit();

@@ -9,7 +9,8 @@
     ])
     @include('shared.tables.table', [
         'headers' => ['No', 'No NHI', 'Tgl NHI', 'Tempat', 'Jenis', 'Jumlah Barang', 'Keterangan'],
-        'rows' => $rows
+        'rows' => $rows,
+        'moduleIds' => $moduleIds
     ])
     {{ $intelijen->links() }}
 </main>

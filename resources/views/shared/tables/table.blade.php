@@ -1,4 +1,4 @@
-@props(['headers', 'rows'])
+@props(['headers', 'rows', 'moduleIds' => []])
 
 <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
     <table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
@@ -15,7 +15,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($rows as $row)
+            @foreach($rows as $index => $row)
                 <tr>
                     @foreach($row as $key => $cell)
                         <td class="border-dashed border-t border-gray-200 px-6 py-4 text-gray-700">
@@ -61,7 +61,10 @@
                             @endphp
 
                             @foreach($modules as $moduleName => $config)
-                                <a href="{{ route($config['route'], [$config['param'] => $currentId]) }}"
+                                @php
+                                    $moduleId = isset($moduleIds[$index][$moduleName]) ? $moduleIds[$index][$moduleName] : $currentId;
+                                @endphp
+                                <a href="{{ route($config['route'], [$config['param'] => $moduleId]) }}"
                                     class="h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 {{ $config['colors'] }}"
                                     title="{{ $section === $moduleName ? str_replace('Modul', 'Dokumen', $config['title']) : $config['title'] }}">
                                     <i class="{{ $config['icon'] }}"></i>
@@ -111,14 +114,19 @@
             trigger.addEventListener('click', function(e) {
                 e.stopPropagation();
                 const menu = this.nextElementSibling;
+                const isHidden = menu.classList.contains('hidden');
                 
                 document.querySelectorAll('.dropdown-menu').forEach(otherMenu => {
                     if (otherMenu !== menu) {
                         otherMenu.classList.add('hidden');
                     }
                 });
-
-                menu.classList.toggle('hidden');
+                
+                if (isHidden) {
+                    menu.classList.remove('hidden');
+                } else {
+                    menu.classList.add('hidden');
+                }
             });
         });
 
@@ -130,67 +138,84 @@
         });
 
         document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
                 const id = this.dataset.id;
                 const section = window.location.pathname.split('/')[1];
                 
-                if (confirm('Apakah Anda yakin ingin menghapus item ini?')) {
+                
+                const willDelete = confirm('Apakah Anda yakin ingin menghapus item ini?');
+                
+                if (!willDelete) {
+                    return;
+                }
+                
+                try {
                     const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    console.log('CSRF Token:', token);
                     
                     this.innerHTML = '<i class="fas fa-spinner fa-spin w-4"></i> Menghapus...';
                     this.disabled = true;
                     
-                    fetch(`/${section}/${id}`, {
+                    const response = await fetch(`/${section}/${id}`, {
                         method: 'DELETE',
                         headers: {
                             'X-CSRF-TOKEN': token,
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
                         }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            const row = this.closest('tr');
-                            row.style.backgroundColor = '#fee2e2';
-                            row.style.transition = 'background-color 0.5s ease';
-                            
-                            setTimeout(() => {
-                                row.style.opacity = '0';
-                                row.style.transition = 'opacity 0.5s ease';
-                                
-                                setTimeout(() => {
-                                    row.remove();
-                                    
-                                    const notification = document.createElement('div');
-                                    notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 transform translate-y-0';
-                                    notification.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-check-circle"></i> Data berhasil dihapus</div>';
-                                    document.body.appendChild(notification);
-                                    
-                                    setTimeout(() => {
-                                        notification.style.opacity = '0';
-                                        setTimeout(() => notification.remove(), 500);
-                                    }, 3000);
-                                }, 500);
-                            }, 100);
-                        } else {
-                            throw new Error(data.message || 'Terjadi kesalahan saat menghapus data');
-                        }
-                    })
-                    .catch(error => {
-                        this.innerHTML = '<i class="fas fa-trash-alt w-4"></i> Hapus';
-                        this.disabled = false;
-                        
-                        const notification = document.createElement('div');
-                        notification.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 transform translate-y-0';
-                        notification.innerHTML = `<div class="flex items-center gap-2"><i class="fas fa-exclamation-circle"></i> ${error.message}</div>`;
-                        document.body.appendChild(notification);
+                    });
+                    
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log('Response data:', data);
+                    
+                    if (data.success) {
+                        const row = this.closest('tr');
+                        row.style.backgroundColor = '#fee2e2';
+                        row.style.transition = 'background-color 0.5s ease';
                         
                         setTimeout(() => {
-                            notification.style.opacity = '0';
-                            setTimeout(() => notification.remove(), 500);
-                        }, 3000);
-                    });
+                            row.style.opacity = '0';
+                            row.style.transition = 'opacity 0.5s ease';
+                            
+                            setTimeout(() => {
+                                row.remove();
+                                
+                                const notification = document.createElement('div');
+                                notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 transform translate-y-0';
+                                notification.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-check-circle"></i> Data berhasil dihapus</div>';
+                                document.body.appendChild(notification);
+                                
+                                setTimeout(() => {
+                                    notification.style.opacity = '0';
+                                    setTimeout(() => notification.remove(), 500);
+                                }, 3000);
+                            }, 500);
+                        }, 100);
+                    } else {
+                        throw new Error(data.message || 'Terjadi kesalahan saat menghapus data');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    this.innerHTML = '<i class="fas fa-trash-alt w-4"></i> Hapus';
+                    this.disabled = false;
+                    
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 transform translate-y-0';
+                    notification.innerHTML = `<div class="flex items-center gap-2"><i class="fas fa-exclamation-circle"></i> ${error.message}</div>`;
+                    document.body.appendChild(notification);
+                    
+                    setTimeout(() => {
+                        notification.style.opacity = '0';
+                        setTimeout(() => notification.remove(), 500);
+                    }, 3000);
                 }
             });
         });
