@@ -78,4 +78,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/tambah-data', function () {
         return view('pages.tambah-data');
     })->name('tambah-data');
+
+    // Delete routes pada table
+    Route::delete('/intelijen/{no_nhi}', [IntelijenController::class, 'destroy'])->name('intelijen.destroy');
+    Route::delete('/penyidikan/{no_spdp}', [PenyidikanController::class, 'destroy'])->name('penyidikan.destroy');
+    Route::delete('/penindakan/{no_sbp}', [PenindakanController::class, 'destroy'])->name('penindakan.destroy');
 });

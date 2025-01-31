@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Intelijen extends Model
@@ -13,6 +14,9 @@ class Intelijen extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'intelijen';
+    protected $primaryKey = 'no_nhi';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'no_nhi',
@@ -27,13 +31,18 @@ class Intelijen extends Model
     ];
 
     protected $casts = [
-        'tanggal_nhi' => 'date',
+        'tanggal_nhi' => 'datetime',
         'status' => 'string'
     ];
 
-    public function penindakan(): HasOne
+    public function penyidikan(): HasMany
     {
-        return $this->hasOne(Penindakan::class, Penyidikan::class);
+        return $this->hasMany(Penyidikan::class, 'intelijen_id', 'no_nhi');
+    }
+
+    public function dokumen()
+    {
+        return $this->hasMany(Dokumen::class, 'reference_id', 'no_nhi')->where('module', 'intelijen');
     }
 
     public function creator(): BelongsTo

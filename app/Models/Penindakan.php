@@ -13,9 +13,13 @@ class Penindakan extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'penindakan';
+    protected $primaryKey = 'no_sbp';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'no_sbp',
+        'penyidikan_id',
         'tanggal_sbp',
         'lokasi_penindakan',
         'pelaku',
@@ -24,22 +28,21 @@ class Penindakan extends Model
         'kemasan',
         'perkiraan_nilai_barang',
         'potensi_kurang_bayar',
-        'penyidikan_id',
         'status',
         'created_by',
         'updated_by'
     ];
 
     protected $casts = [
-        'tanggal_sbp' => 'date',
+        'tanggal_sbp' => 'datetime',
         'status' => 'string',
-        'perkiraan_nilai_barang' => 'integer',
-        'potensi_kurang_bayar' => 'integer'
+        'perkiraan_nilai_barang' => 'decimal:2',
+        'potensi_kurang_bayar' => 'decimal:2'
     ];
 
     public function penyidikan(): BelongsTo
     {
-        return $this->belongsTo(Penyidikan::class);
+        return $this->belongsTo(Penyidikan::class, 'penyidikan_id', 'no_spdp');
     }
 
     public function creator(): BelongsTo
@@ -70,6 +73,6 @@ class Penindakan extends Model
 
     public function dokumen()
     {
-        return $this->hasMany(Dokumen::class, 'reference_id', 'no_sbp');
+        return $this->hasMany(Dokumen::class, 'reference_id', 'no_sbp')->where('module', 'penindakan');
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Penindakan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class PenindakanController
@@ -49,5 +51,32 @@ class PenindakanController
             'rows' => $rows,
             'penindakan' => $penindakan,
         ]);
+    }
+
+    public function destroy($no_sbp)
+    {
+        try {
+            DB::beginTransaction();
+            
+            $penindakan = Penindakan::where('no_sbp', $no_sbp)->firstOrFail();
+            
+            $penindakan->delete();
+            
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Data penindakan berhasil dihapus'
+            ]);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error deleting penindakan: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus data penindakan'
+            ], 500);
+        }
     }
 }

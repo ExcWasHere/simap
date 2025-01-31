@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Penyidikan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class PenyidikanController
@@ -44,5 +46,32 @@ class PenyidikanController
             'rows' => $rows,
             'penyidikan' => $penyidikan,
         ]);
+    }
+
+    public function destroy($no_spdp)
+    {
+        try {
+            DB::beginTransaction();
+            
+            $penyidikan = Penyidikan::where('no_spdp', $no_spdp)->firstOrFail();
+            
+            $penyidikan->delete();
+            
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Data penyidikan berhasil dihapus'
+            ]);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error deleting penyidikan: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus data penyidikan'
+            ], 500);
+        }
     }
 }
