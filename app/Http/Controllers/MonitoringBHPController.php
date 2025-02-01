@@ -95,4 +95,114 @@ class MonitoringBHPController
             ]
         );
     }
+
+    public function getChartData(Request $request)
+    {
+        $range = $request->input('range', '7');
+        $endDate = now();
+        $startDate = match($range) {
+            '30' => now()->subDays(29)->startOfDay(),
+            '3' => now()->subMonths(3)->startOfDay(),
+            '1' => now()->subYear()->startOfDay(),
+            default => now()->subDays(6)->startOfDay(),
+        };
+
+        $intelijen = DB::table('intelijen')
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy('date')
+            ->get();
+
+        $penindakan = DB::table('penindakan')
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy('date')
+            ->get();
+
+        $penyidikan = DB::table('penyidikan')
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy('date')
+            ->get();
+
+        $totalIntelijen = DB::table('intelijen')->count();
+        $totalPenindakan = DB::table('penindakan')->count();
+        $totalPenyidikan = DB::table('penyidikan')->count();
+        $totalDokumen = $totalIntelijen + $totalPenindakan + $totalPenyidikan;
+
+        // Hitung rata-rata per bulan
+        $avgPerBulan = round(($totalDokumen / 12), 1); // Asumsi data 1 tahun
+
+        // Hitung pertumbuhan
+        $lastMonthCount = DB::table('intelijen')
+            ->whereMonth('created_at', now()->subMonth()->month)
+            ->count() +
+            DB::table('penindakan')
+            ->whereMonth('created_at', now()->subMonth()->month)
+            ->count() +
+            DB::table('penyidikan')
+            ->whereMonth('created_at', now()->subMonth()->month)
+            ->count();
+
+        $thisMonthCount = DB::table('intelijen')
+            ->whereMonth('created_at', now()->month)
+            ->count() +
+            DB::table('penindakan')
+            ->whereMonth('created_at', now()->month)
+            ->count() +
+            DB::table('penyidikan')
+            ->whereMonth('created_at', now()->month)
+            ->count();
+
+        $pertumbuhan = $lastMonthCount > 0 
+            ? round((($thisMonthCount - $lastMonthCount) / $lastMonthCount) * 100, 1)
+            : 0;
+
+        $dates = collect();
+        $currentDate = $startDate->copy();
+        while ($currentDate <= $endDate) {
+            $dates->push($currentDate->format('Y-m-d'));
+            $currentDate->addDay();
+        }
+
+        $chartData = [
+            'labels' => $dates->map(fn($date) => Carbon::parse($date)->format('d M')),
+            'datasets' => [
+                [
+                    'label' => 'Intelijen',
+                    'data' => $dates->map(function($date) use ($intelijen) {
+                        return $intelijen->firstWhere('date', $date)?->count ?? 0;
+                    }),
+                    'borderColor' => '#3B82F6',
+                    'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
+                    'fill' => true
+                ],
+                [
+                    'label' => 'Penindakan',
+                    'data' => $dates->map(function($date) use ($penindakan) {
+                        return $penindakan->firstWhere('date', $date)?->count ?? 0;
+                    }),
+                    'borderColor' => '#10B981',
+                    'backgroundColor' => 'rgba(16, 185, 129, 0.1)',
+                    'fill' => true
+                ],
+                [
+                    'label' => 'Penyidikan',
+                    'data' => $dates->map(function($date) use ($penyidikan) {
+                        return $penyidikan->firstWhere('date', $date)?->count ?? 0;
+                    }),
+                    'borderColor' => '#F59E0B',
+                    'backgroundColor' => 'rgba(245, 158, 11, 0.1)',
+                    'fill' => true
+                ]
+            ],
+            'stats' => [
+                'totalDokumen' => $totalDokumen,
+                'pertumbuhan' => $pertumbuhan,
+                'avgPerBulan' => $avgPerBulan
+            ]
+        ];
+
+        return response()->json($chartData);
+    }
 }

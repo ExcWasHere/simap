@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/{id}/dokumen/upload', [Dokumen::class, 'unggah_dokumen'])->name('monitoring.upload.dokumen');
         Route::get('/chart', [MonitoringBHPController::class, 'showChart'])->name('monitoring.chart');
         Route::get('/export/{type}', [MonitoringBHPController::class, 'exportExcel'])->name('monitoring.export');
+        Route::get('/chart-data', [MonitoringBHPController::class, 'getChartData'])->name('monitoring.chart-data');
     });
 
     //  Penindakan
