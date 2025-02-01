@@ -96,4 +96,62 @@ class PenindakanController
             ], 500);
         }
     }
+
+    public function edit($no_sbp)
+    {
+        try {
+            $penindakan = Penindakan::with('penyidikan')
+                ->where('no_sbp', $no_sbp)
+                ->firstOrFail();
+            return response()->json($penindakan);
+        } catch (\Exception $e) {
+            Log::error('Error fetching penindakan: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data penindakan'
+            ], 500);
+        }
+    }
+
+    public function update(Request $request, $no_sbp)
+    {
+        try {
+            DB::beginTransaction();
+            
+            $penindakan = Penindakan::where('no_sbp', $no_sbp)->firstOrFail();
+            
+            $validated = $request->validate([
+                'tanggal_sbp' => ['required', 'date'],
+                'penyidikan_id' => ['required', 'exists:penyidikan,id'],
+                'lokasi_penindakan' => ['required', 'string', 'max:255'],
+                'uraian_bhp' => ['required', 'string', 'max:255'],
+                'jumlah' => ['required', 'integer', 'min:1'],
+                'kemasan' => ['required', 'string', 'max:255'],
+                'perkiraan_nilai_barang' => ['required', 'numeric', 'min:0'],
+                'potensi_kurang_bayar' => ['required', 'numeric', 'min:0'],
+            ]);
+            
+            $validated['updated_by'] = auth()->id();
+            
+            $penindakan->update($validated);
+            
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Data penindakan berhasil diperbarui',
+                'data' => $penindakan
+            ]);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error in updating penindakan: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui data penindakan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

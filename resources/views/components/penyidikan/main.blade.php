@@ -13,4 +13,6 @@
         'moduleIds' => $moduleIds
     ])
     {{ $penyidikan->links() }}
+
+    @include('shared.modals.modal-edit', ['section' => 'penyidikan'])
 </main>

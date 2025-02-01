@@ -13,4 +13,6 @@
         'moduleIds' => $moduleIds
     ])
     {{ $intelijen->links() }}
+
+    @include('shared.modals.modal-edit', ['section' => 'intelijen'])
 </main>

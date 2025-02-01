@@ -103,4 +103,58 @@ class PenyidikanController
             ], 500);
         }
     }
+
+    public function edit($no_spdp)
+    {
+        try {
+            $penyidikan = Penyidikan::with('intelijen')
+                ->where('no_spdp', $no_spdp)
+                ->firstOrFail();
+            return response()->json($penyidikan);
+        } catch (\Exception $e) {
+            Log::error('Error fetching penyidikan: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data penyidikan'
+            ], 500);
+        }
+    }
+
+    public function update(Request $request, $no_spdp)
+    {
+        try {
+            DB::beginTransaction();
+            
+            $penyidikan = Penyidikan::where('no_spdp', $no_spdp)->firstOrFail();
+            
+            $validated = $request->validate([
+                'tanggal_spdp' => ['required', 'date'],
+                'pelaku' => ['required', 'string', 'max:255'],
+                'intelijen_id' => ['required', 'exists:intelijen,id'],
+                'keterangan' => ['nullable', 'string'],
+            ]);
+            
+            $validated['updated_by'] = auth()->id();
+            
+            $penyidikan->update($validated);
+            
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Data penyidikan berhasil diperbarui',
+                'data' => $penyidikan
+            ]);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error in updating penyidikan: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui data penyidikan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

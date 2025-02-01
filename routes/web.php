@@ -36,6 +36,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/{no_nhi}/dokumen', [Dokumen::class, 'halaman_intelijen'])->name('intelijen.dokumen');
         Route::get('/{no_nhi}/dokumen/upload', [Dokumen::class, 'halaman_unggah_dokumen'])->name('intelijen.dokumen.upload');
         Route::post('/{no_nhi}/dokumen/upload', [Dokumen::class, 'unggah_dokumen'])->name('intelijen.upload.dokumen');
+        Route::get('/{no_nhi}/edit', [IntelijenController::class, 'edit'])->name('intelijen.edit');
+        Route::put('/{no_nhi}', [IntelijenController::class, 'update'])->name('intelijen.update');
+        Route::delete('/{no_nhi}', [IntelijenController::class, 'destroy'])->name('intelijen.destroy');
     });
 
     //  Monitoring BHP
@@ -54,6 +57,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/{no_sbp}/dokumen', [Dokumen::class, 'halaman_penindakan'])->name('penindakan.dokumen');
         Route::get('/{no_sbp}/dokumen/upload', [Dokumen::class, 'halaman_unggah_dokumen'])->name('penindakan.dokumen.upload');
         Route::post('/{no_sbp}/dokumen/upload', [Dokumen::class, 'unggah_dokumen'])->name('penindakan.upload.dokumen');
+        Route::get('/{no_sbp}/edit', [PenindakanController::class, 'edit'])->name('penindakan.edit');
+        Route::put('/{no_sbp}', [PenindakanController::class, 'update'])->name('penindakan.update');
+        Route::delete('/{no_sbp}', [PenindakanController::class, 'destroy'])->name('penindakan.destroy');
     });
 
     //  Penyidikan
@@ -62,6 +68,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/{no_spdp}/dokumen', [Dokumen::class, 'halaman_penyidikan'])->name('penyidikan.dokumen');
         Route::get('/{no_spdp}/dokumen/upload', [Dokumen::class, 'halaman_unggah_dokumen'])->name('penyidikan.dokumen.upload');
         Route::post('/{no_spdp}/dokumen/upload', [Dokumen::class, 'unggah_dokumen'])->name('penyidikan.upload.dokumen');
+        Route::get('/{no_spdp}/edit', [PenyidikanController::class, 'edit'])->name('penyidikan.edit');
+        Route::put('/{no_spdp}', [PenyidikanController::class, 'update'])->name('penyidikan.update');
+        Route::delete('/{no_spdp}', [PenyidikanController::class, 'destroy'])->name('penyidikan.destroy');
     });
 
     // Global document actions
@@ -80,7 +89,6 @@ Route::middleware('auth')->group(function () {
     })->name('tambah-data');
 
     // Delete routes pada table
-    Route::delete('/intelijen/{no_nhi}', [IntelijenController::class, 'destroy'])->name('intelijen.destroy');
     Route::delete('/penyidikan/{no_spdp}', [PenyidikanController::class, 'destroy'])->name('penyidikan.destroy');
     Route::delete('/penindakan/{no_sbp}', [PenindakanController::class, 'destroy'])->name('penindakan.destroy');
 });

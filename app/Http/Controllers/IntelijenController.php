@@ -144,5 +144,50 @@ class IntelijenController
             ], 500);
         }
     }
+
+    public function edit($no_nhi)
+    {
+        $intelijen = Intelijen::where('no_nhi', $no_nhi)->firstOrFail();
+        return response()->json($intelijen);
+    }
+
+    public function update(Request $request, $no_nhi)
+    {
+        try {
+            DB::beginTransaction();
+            
+            $intelijen = Intelijen::where('no_nhi', $no_nhi)->firstOrFail();
+            
+            $validated = $request->validate([
+                'tempat' => ['required', 'string', 'max:255'],
+                'jumlah_barang' => ['required', 'integer', 'min:1'],
+                'tanggal_nhi' => ['required', 'date'],
+                'jenis_barang' => ['required', 'string', 'max:255'],
+                'keterangan' => ['nullable', 'string'],
+            ]);
+            
+            $validated['updated_by'] = auth()->id();
+            
+            $intelijen->update($validated);
+            
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Data intelijen berhasil diperbarui',
+                'data' => $intelijen
+            ]);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error in updating intelijen: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui data intelijen: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
 
