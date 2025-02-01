@@ -17,7 +17,18 @@
         @method('PUT')
         
         @if($section === 'intelijen')
-            <input type="hidden" id="edit_no_nhi" name="no_nhi">
+            @include('shared.forms.input', [
+                'label' => 'Nomor NHI',
+                'name' => 'no_nhi',
+                'type' => 'text',
+                'id' => 'edit_no_nhi',
+                'data_required' => true
+            ])
+            
+            <div class="text-sm text-amber-600 bg-amber-50 p-3 rounded-lg mb-4">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                Perubahan nomor NHI akan memperbarui semua referensi terkait di Penyidikan dan Penindakan.
+            </div>
             
             @include('shared.forms.input', [
                 'label' => 'Tanggal NHI',
@@ -60,7 +71,13 @@
         @endif
 
         @if($section === 'penyidikan')
-            <input type="hidden" id="edit_no_spdp" name="no_spdp">
+            @include('shared.forms.input', [
+                'label' => 'No SPDP',
+                'name' => 'no_spdp',
+                'type' => 'text',
+                'id' => 'edit_no_spdp',
+                'data_required' => true
+            ])
             
             @include('shared.forms.input', [
                 'label' => 'Tanggal SPDP',
@@ -95,7 +112,13 @@
         @endif
 
         @if($section === 'penindakan')
-            <input type="hidden" id="edit_no_sbp" name="no_sbp">
+            @include('shared.forms.input', [
+                'label' => 'No SBP',
+                'name' => 'no_sbp',
+                'type' => 'text',
+                'id' => 'edit_no_sbp',
+                'data_required' => true
+            ])
             
             @include('shared.forms.input', [
                 'label' => 'Tanggal SBP',
@@ -166,31 +189,98 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const editForm = document.getElementById('edit-form');
+    let currentRecordId = null;
+    
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const id = this.dataset.id;
+            currentRecordId = id;
+            const section = window.location.pathname.split('/')[1] || 'penindakan';
+            
+            try {
+                const response = await fetch(`/${section}/${id}/edit`);
+                if (!response.ok) throw new Error('Failed to fetch data');
+                
+                const data = await response.json();
+                const editModal = document.getElementById('modal_edit');
+                if (!editModal) {
+                    throw new Error('Modal tidak ditemukan');
+                }
+                editModal.classList.remove('hidden');
+
+                switch(section) {
+                    case 'penindakan':
+                        // Update penyidikan select options if they exist in response
+                        if (data.penyidikanOptions) {
+                            const penyidikanSelect = document.getElementById('edit_penyidikan_id');
+                            if (penyidikanSelect) {
+                                // Clear existing options except the first one (placeholder)
+                                while (penyidikanSelect.options.length > 1) {
+                                    penyidikanSelect.remove(1);
+                                }
+                                // Add new options
+                                Object.entries(data.penyidikanOptions).forEach(([id, noSpdp]) => {
+                                    const option = new Option(noSpdp, id);
+                                    penyidikanSelect.add(option);
+                                });
+                            }
+                        }
+
+                        const penindakanFields = {
+                            'edit_no_sbp': data.no_sbp,
+                            'edit_tanggal_sbp': data.tanggal_sbp.split(' ')[0],
+                            'edit_penyidikan_id': data.penyidikan_id,
+                            'edit_lokasi_penindakan': data.lokasi_penindakan,
+                            'edit_uraian_bhp': data.uraian_bhp,
+                            'edit_jumlah': data.jumlah,
+                            'edit_kemasan': data.kemasan,
+                            'edit_perkiraan_nilai_barang': data.perkiraan_nilai_barang,
+                            'edit_potensi_kurang_bayar': data.potensi_kurang_bayar
+                        };
+                        Object.entries(penindakanFields).forEach(([id, value]) => {
+                            const element = document.getElementById(id);
+                            if (element) element.value = value;
+                        });
+                        break;
+
+                    case 'penyidikan':
+                        const penyidikanFields = {
+                            'edit_no_spdp': data.no_spdp,
+                            'edit_tanggal_spdp': data.tanggal_spdp.split(' ')[0],
+                            'edit_pelaku': data.pelaku,
+                            'edit_intelijen_id': data.intelijen_id,
+                            'edit_keterangan': data.keterangan || ''
+                        };
+                        Object.entries(penyidikanFields).forEach(([id, value]) => {
+                            const element = document.getElementById(id);
+                            if (element) element.value = value;
+                        });
+                        break;
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Gagal mengambil data: ' + error.message);
+            }
+        });
+    });
     
     if (editForm) {
         editForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            if (!currentRecordId) {
+                alert('Error: ID record tidak ditemukan');
+                return;
+            }
+
             const formData = new FormData(this);
             const section = '{{ $section }}';
-            let id;
-            
-            switch(section) {
-                case 'intelijen':
-                    id = formData.get('no_nhi');
-                    break;
-                case 'penyidikan':
-                    id = formData.get('no_spdp');
-                    break;
-                case 'penindakan':
-                    id = formData.get('no_sbp');
-                    break;
-            }
             
             try {
                 const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                 
-                const response = await fetch(`/${section}/${id}`, {
+                const response = await fetch(`/${section}/${currentRecordId}`, {
                     method: 'PUT',
                     headers: {
                         'X-CSRF-TOKEN': token,

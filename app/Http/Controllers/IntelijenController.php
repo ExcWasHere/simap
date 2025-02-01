@@ -70,24 +70,25 @@ class IntelijenController
         try {
             DB::beginTransaction();
             
+            // Load Intelijen with all its relationships
             $intelijen = Intelijen::with(['penyidikan.penindakan'])
                 ->where('no_nhi', $no_nhi)
                 ->firstOrFail();
             
             Log::info('Found Intelijen record with ID: ' . $no_nhi);
             
-            $penyidikanIds = $intelijen->penyidikan->pluck('no_spdp')->toArray();
+            $penyidikanIds = $intelijen->penyidikan->pluck('id')->toArray();
+            $penindakanIds = [];
+            
+            foreach ($intelijen->penyidikan as $penyidikan) {
+                $penindakanIds = array_merge(
+                    $penindakanIds,
+                    $penyidikan->penindakan->pluck('id')->toArray()
+                );
+            }
             
             Log::info('Found related Penyidikan records: ' . implode(', ', $penyidikanIds));
-            
-            $penindakanIds = [];
-            if (!empty($penyidikanIds)) {
-                $penindakanIds = Penindakan::whereIn('penyidikan_id', $penyidikanIds)
-                    ->pluck('no_sbp')
-                    ->toArray();
-                
-                Log::info('Found related Penindakan records: ' . implode(', ', $penindakanIds));
-            }
+            Log::info('Found related Penindakan records: ' . implode(', ', $penindakanIds));
             
             if (!empty($penindakanIds)) {
                 foreach ($penindakanIds as $penindakanId) {
@@ -96,8 +97,8 @@ class IntelijenController
                            ->delete();
                 }
                 Log::info('Deleted Penindakan documents');
-                       
-                Penindakan::whereIn('no_sbp', $penindakanIds)->delete();
+
+                Penindakan::whereIn('id', $penindakanIds)->delete();
                 Log::info('Soft deleted Penindakan records');
             }
             
@@ -109,7 +110,7 @@ class IntelijenController
                 }
                 Log::info('Deleted Penyidikan documents');
                        
-                Penyidikan::whereIn('no_spdp', $penyidikanIds)->delete();
+                Penyidikan::whereIn('id', $penyidikanIds)->delete();
                 Log::info('Soft deleted Penyidikan records');
             }
             
@@ -159,6 +160,7 @@ class IntelijenController
             $intelijen = Intelijen::where('no_nhi', $no_nhi)->firstOrFail();
             
             $validated = $request->validate([
+                'no_nhi' => ['required', 'string', 'max:255', 'unique:intelijen,no_nhi,' . $intelijen->id],
                 'tempat' => ['required', 'string', 'max:255'],
                 'jumlah_barang' => ['required', 'integer', 'min:1'],
                 'tanggal_nhi' => ['required', 'date'],

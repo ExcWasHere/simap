@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Penindakan;
+use App\Models\Penyidikan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -33,6 +34,11 @@ class PenindakanController
 
         $penindakan = $query->with(['penyidikan.intelijen'])->latest()->paginate(10)->withQueryString();
 
+        $penyidikanOptions = Penyidikan::whereNull('deleted_at')
+            ->orderBy('no_spdp')
+            ->get()
+            ->pluck('no_spdp', 'id');
+
         $moduleIds = [];
         $rows = $penindakan->map(function ($item, $index) use ($penindakan, &$moduleIds) {
             $moduleIds[$index] = [
@@ -57,7 +63,8 @@ class PenindakanController
         return view('pages.penindakan', [
             'rows' => $rows,
             'penindakan' => $penindakan,
-            'moduleIds' => $moduleIds
+            'moduleIds' => $moduleIds,
+            'penyidikanOptions' => $penyidikanOptions
         ]);
     }
 
@@ -100,10 +107,19 @@ class PenindakanController
     public function edit($no_sbp)
     {
         try {
-            $penindakan = Penindakan::with('penyidikan')
+            $penindakan = Penindakan::with(['penyidikan'])
                 ->where('no_sbp', $no_sbp)
                 ->firstOrFail();
-            return response()->json($penindakan);
+
+            $penyidikanOptions = Penyidikan::whereNull('deleted_at')
+                ->orderBy('no_spdp')
+                ->get()
+                ->pluck('no_spdp', 'id');
+
+            $data = $penindakan->toArray();
+            $data['penyidikanOptions'] = $penyidikanOptions;
+
+            return response()->json($data);
         } catch (\Exception $e) {
             Log::error('Error fetching penindakan: ' . $e->getMessage());
             return response()->json([
@@ -121,6 +137,7 @@ class PenindakanController
             $penindakan = Penindakan::where('no_sbp', $no_sbp)->firstOrFail();
             
             $validated = $request->validate([
+                'no_sbp' => ['required', 'string', 'max:255', 'unique:penindakan,no_sbp,' . $penindakan->id . ',id,deleted_at,NULL'],
                 'tanggal_sbp' => ['required', 'date'],
                 'penyidikan_id' => ['required', 'exists:penyidikan,id'],
                 'lokasi_penindakan' => ['required', 'string', 'max:255'],

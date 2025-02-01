@@ -107,16 +107,30 @@ class PenyidikanController
     public function edit($no_spdp)
     {
         try {
-            $penyidikan = Penyidikan::with('intelijen')
-                ->where('no_spdp', $no_spdp)
-                ->firstOrFail();
+            Log::info('Attempting to find Penyidikan record with no_spdp: ' . $no_spdp);
+            
+            $penyidikan = Penyidikan::withTrashed()
+                ->with('intelijen')
+                ->where(function($query) use ($no_spdp) {
+                    $query->where('no_spdp', $no_spdp)
+                          ->orWhere('no_spdp', 'LIKE', $no_spdp . '%')
+                          ->orWhere('id', $no_spdp);
+                })
+                ->first();
+
+            if (!$penyidikan) {
+                Log::error('Penyidikan record not found with no_spdp: ' . $no_spdp);
+                throw new \Exception('Data penyidikan tidak ditemukan');
+            }
+
+            Log::info('Found Penyidikan record:', ['id' => $penyidikan->id, 'no_spdp' => $penyidikan->no_spdp]);
             return response()->json($penyidikan);
         } catch (\Exception $e) {
             Log::error('Error fetching penyidikan: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengambil data penyidikan'
-            ], 500);
+                'message' => 'Gagal mengambil data penyidikan: ' . $e->getMessage()
+            ], 404);
         }
     }
 
@@ -125,9 +139,47 @@ class PenyidikanController
         try {
             DB::beginTransaction();
             
-            $penyidikan = Penyidikan::where('no_spdp', $no_spdp)->firstOrFail();
+            Log::info('Attempting to update Penyidikan with no_spdp: ' . $no_spdp);
+            
+            $penyidikan = is_numeric($no_spdp) 
+                ? Penyidikan::withTrashed()->find($no_spdp)
+                : null;
+
+            if (!$penyidikan) {
+                $penyidikan = Penyidikan::withTrashed()
+                    ->where(function($query) use ($no_spdp) {
+                        $baseNoSpdp = preg_replace('/_deleted_.*$/', '', $no_spdp);
+                        $query->where('no_spdp', $no_spdp)
+                              ->orWhere('no_spdp', 'LIKE', $baseNoSpdp . '_deleted_%');
+                    })
+                    ->first();
+            }
+
+            if (!$penyidikan) {
+                Log::error('Penyidikan record not found for update with no_spdp: ' . $no_spdp);
+                throw new \Exception('Data penyidikan tidak ditemukan');
+            }
+
+            Log::info('Found Penyidikan record for update:', [
+                'id' => $penyidikan->id,
+                'no_spdp' => $penyidikan->no_spdp,
+                'is_trashed' => $penyidikan->trashed()
+            ]);
+            
+            $newNoSpdp = $request->input('no_spdp');
+            Log::info('Requested new no_spdp: ' . $newNoSpdp);
+
+            $duplicateExists = Penyidikan::where('no_spdp', $newNoSpdp)
+                ->where('id', '!=', $penyidikan->id)
+                ->whereNull('deleted_at')
+                ->exists();
+
+            if ($duplicateExists) {
+                throw new \Exception('Nomor SPDP sudah digunakan.');
+            }
             
             $validated = $request->validate([
+                'no_spdp' => ['required', 'string', 'max:255'],
                 'tanggal_spdp' => ['required', 'date'],
                 'pelaku' => ['required', 'string', 'max:255'],
                 'intelijen_id' => ['required', 'exists:intelijen,id'],
@@ -136,10 +188,18 @@ class PenyidikanController
             
             $validated['updated_by'] = auth()->id();
             
-            $penyidikan->update($validated);
+            if ($penyidikan->trashed()) {
+                Log::info('Restoring trashed Penyidikan record');
+                $penyidikan->restore();
+            }
+            
+            Log::info('Updating Penyidikan record with new data');
+            $penyidikan->fill($validated);
+            $penyidikan->save();
             
             DB::commit();
             
+            Log::info('Successfully updated Penyidikan record');
             return response()->json([
                 'success' => true,
                 'message' => 'Data penyidikan berhasil diperbarui',
