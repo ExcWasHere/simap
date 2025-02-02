@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Monitoring extends Model
 {
-    public function intelijen()
+    public function intelijen(): BelongsTo
     {
         return $this->belongsTo(Intelijen::class, 'no_nhi', 'no_nhi');
     }
@@ -15,4 +16,4 @@ class Monitoring extends Model
     {
         return $this->hasMany(Dokumen::class, 'reference_id', 'id');
     }
-} 
+}

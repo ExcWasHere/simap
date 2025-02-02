@@ -2,41 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Intelijen;
-use App\Models\Penindakan;
-use App\Models\Penyidikan;
-use DB;
+use App\Http\Controllers\Controller;
+use App\Models\Intelijen as IntelijenModel;
+use App\Models\Penindakan as PenindakanModel;
+use App\Models\Penyidikan as PenyidikanModel;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
-class DataController
+class Data extends Controller
 {
     public function store(Request $request)
     {
-        $entityType = $request->input('entity_type');
+        $entity_type = $request->input('entity_type');
 
         try {
-            return DB::transaction(function () use ($request, $entityType) {
-                $validated = $this->validateData($request, $entityType);
+            return DB::transaction(function () use ($request, $entity_type) {
+                $validated = $this->validate_data($request, $entity_type);
 
-                switch ($entityType) {
+                switch ($entity_type) {
                     case 'intelijen':
                         $model = new Intelijen();
                         $validated['keterangan'] = $validated['intelijen_keterangan'] ?? null;
                         unset($validated['intelijen_keterangan']);
                         break;
                     case 'penindakan':
-                        $model = new Penindakan();
-                        $penyidikan = Penyidikan::findOrFail($validated['penyidikan_id']);
+                        $model = new PenindakanModel();
+                        $penyidikan = PenyidikanModel::findOrFail($validated['penyidikan_id']);
                         $validated['pelaku'] = $penyidikan->pelaku;
-
-                        if ($penyidikan->intelijen) {
-                            $penyidikan->intelijen->markAsProcessed();
-                        }
+                        if ($penyidikan->intelijen) $penyidikan->intelijen->markAsProcessed();
                         break;
                     case 'penyidikan':
-                        $model = new Penyidikan();
-                        $intelijen = Intelijen::findOrFail($validated['intelijen_id']);
-                        
+                        $model = new PenyidikanModel();
+                        $intelijen = IntelijenModel::findOrFail($validated['intelijen_id']);
                         $intelijen->markAsProcessed();
 
                         if (isset($validated['penyidikan_keterangan'])) {
@@ -45,19 +45,19 @@ class DataController
                         }
                         break;
                     default:
-                        throw new \Exception('Invalid entity type');
+                        throw new Exception('Invalid entity type');
                 }
 
                 $model->fill($validated);
-                $model->created_by = auth()->id();
+                $model->created_by = Auth::id();
                 $model->save();
 
                 return redirect()
-                    ->route($entityType)
+                    ->route($entity_type)
                     ->with('success', 'Data berhasil disimpan');
             });
-        } catch (\Exception $e) {
-            \Log::error('Error saving data:', [
+        } catch (Exception $e) {
+            Log::error('Error saving data:', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -69,22 +69,22 @@ class DataController
         }
     }
 
-    private function validateData(Request $request, string $entityType): array
+    private function validate_data(Request $request, string $entity_type): array
     {
-        $rules = $this->getValidationRules($entityType);
+        $rules = $this->get_validation_rules($entity_type);
         return $request->validate($rules);
     }
 
-    private function getValidationRules(string $entityType): array
+    private function get_validation_rules(string $entity_type): array
     {
-        $baseRules = [
+        $base_rules = [
             'entity_type' => ['required', 'string', 'in:intelijen,penindakan,penyidikan'],
         ];
 
-        $typeRules = [];
-        switch ($entityType) {
+        $type_rules = [];
+        switch ($entity_type) {
             case 'intelijen':
-                $typeRules = [
+                $type_rules = [
                     'no_nhi' => ['required', 'string', 'unique:intelijen,no_nhi,NULL,id,deleted_at,NULL'],
                     'tanggal_nhi' => ['required', 'date'],
                     'tempat' => ['required', 'string'],
@@ -94,7 +94,7 @@ class DataController
                 ];
                 break;
             case 'penyidikan':
-                $typeRules = [
+                $type_rules = [
                     'intelijen_id' => ['required', 'exists:intelijen,id'],
                     'no_spdp' => ['required', 'string', 'unique:penyidikan,no_spdp,NULL,id,deleted_at,NULL'],
                     'tanggal_spdp' => ['required', 'date'],
@@ -103,7 +103,7 @@ class DataController
                 ];
                 break;
             case 'penindakan':
-                $typeRules = [
+                $type_rules = [
                     'penyidikan_id' => ['required', 'exists:penyidikan,id'],
                     'no_sbp' => ['required', 'string', 'unique:penindakan,no_sbp,NULL,id,deleted_at,NULL'],
                     'tanggal_sbp' => ['required', 'date'],
@@ -115,22 +115,14 @@ class DataController
                     'potensi_kurang_bayar' => ['required', 'integer', 'min:0'],
                 ];
                 break;
-
         }
-
-        return array_merge($baseRules, $typeRules);
+        return array_merge($base_rules, $type_rules);
     }
 
-    private function determineActiveTab(array $errors): string
+    private function determine_active_tab(array $errors): string
     {
-        if (array_key_exists('penindakan_id', $errors) || isset($errors['penyidikan'])) {
-            return 'penyidikan';
-        }
-
-        if (array_key_exists('no_nhi', $errors) || isset($errors['intelijen'])) {
-            return 'intelijen';
-        }
-
+        if (array_key_exists('penindakan_id', $errors) || isset($errors['penyidikan'])) return 'penyidikan';
+        if (array_key_exists('no_nhi', $errors) || isset($errors['intelijen'])) return 'intelijen';
         return 'penindakan';
     }
 }

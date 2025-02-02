@@ -10,15 +10,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=7" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="index" />
-    <meta name="description" content="{{ $deskripsi }}" />
-    <meta property="og:title" content="{{ $judul }} | SIMAP" />
-    <meta property="og:description" content="{{ $deskripsi }}" />
+    <meta name="description" content="@yield('deskripsi')" />
+    <meta property="og:title" content="@yield('judul') | SIMAP" />
+    <meta property="og:description" content="@yield('deskripsi')" />
     <meta property="og:image" content="{{ asset('favicon.ico') }}" />
-    <meta name="twitter:title" content="{{ $judul }} | SIMAP" />
-    <meta name="twitter:description" content="{{ $deskripsi }}" />
+    <meta name="twitter:title" content="@yield('judul') | SIMAP" />
+    <meta name="twitter:description" content="@yield('deskripsi')" />
     <meta name="twitter:image" content="{{ asset('favicon.ico') }}" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>{{ $judul }} | SIMAP</title>
+    <title>@yield('judul') | SIMAP</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}" />
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -36,7 +36,7 @@
     @include('shared.navigation.header')
 
     <main class="flex-grow @if(!Route::is('login') && !Route::is('lupa-kata-sandi') && !Route::is('reset-kata-sandi')) container mx-auto px-4 py-6 @endif">
-        {{ $slot }}
+        @yield('konten')
     </main>
 
     @include('shared.navigation.footer')

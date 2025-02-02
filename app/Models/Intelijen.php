@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -14,7 +13,7 @@ class Intelijen extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'intelijen';
-    
+
     protected $fillable = [
         'no_nhi',
         'tanggal_nhi',
@@ -71,11 +70,11 @@ class Intelijen extends Model
     {
         parent::boot();
 
-        static::deleting(function($model) {
+        static::deleting(function ($model) {
             $timestamp = now()->format('YmdHis');
             $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
             $suffix = "_deleted_{$timestamp}{$random}";
-            
+
             $model->no_nhi = $model->no_nhi . $suffix;
             $model->save();
         });

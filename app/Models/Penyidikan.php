@@ -61,11 +61,11 @@ class Penyidikan extends Model
             }
         });
 
-        static::deleting(function($model) {
+        static::deleting(function ($model) {
             $timestamp = now()->format('YmdHis');
             $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
             $suffix = "_deleted_{$timestamp}{$random}";
-            
+
             $model->no_spdp = $model->no_spdp . $suffix;
             $model->save();
         });

@@ -2,13 +2,13 @@
 
 namespace App\Observers;
 
-use App\Models\Intelijen;
+use App\Models\Intelijen as IntelijenModel;
 use App\Models\Dokumen;
 use Illuminate\Support\Facades\Log;
 
-class IntelijenObserver
+class Intelijen
 {
-    public function updated(Intelijen $intelijen)
+    public function updated(IntelijenModel $intelijen)
     {
         if ($intelijen->wasChanged('no_nhi')) {
             $oldNhi = $intelijen->getOriginal('no_nhi');
@@ -22,4 +22,4 @@ class IntelijenObserver
 
         }
     }
-} 
+}

@@ -1,8 +1,14 @@
-@component('layouts.main', [
-    'judul' => 'Dokumen Penyidikan',
-    'deskripsi' => '',
-])
-<main class="container mx-auto pt-12 pb-6">
-    @include('components.penyidikan.dokumen', ['documents' => $documents, 'no_spdp' => $no_spdp])
-</main>
-@endcomponent
+@extends('layouts.main')
+
+@section('judul')
+    Dokumen Penyidikan
+@endsection
+
+@section('deskripsi')
+@endsection
+
+@section('konten')
+    <div class="container mx-auto pt-16 pb-6">
+        @include('components.penyidikan.dokumen', ['documents' => $documents, 'no_spdp' => $no_spdp])
+    </div>
+@endsection

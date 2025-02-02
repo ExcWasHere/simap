@@ -1,5 +1,5 @@
 @php
-    $activeTab = old('entity_type', request('entity_type', 'all'));
+    $active_tab = old('entity_type', request('entity_type', 'all'));
 @endphp
 
 @component('shared.ui.modal-base', [

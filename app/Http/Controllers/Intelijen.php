@@ -2,46 +2,46 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Intelijen;
-use App\Models\Penyidikan;
-use App\Models\Penindakan;
+use App\Http\Controllers\Controller;
+use App\Models\Intelijen as IntelijenModel;
+use App\Models\Penyidikan as PenyidikanModel;
+use App\Models\Penindakan as PenindakanModel;
 use App\Models\Dokumen;
-use Illuminate\Http\Request;
+use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class IntelijenController
+class Intelijen extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Intelijen::query();
+        $query = IntelijenModel::query();
 
         if ($search = $request->input('search')) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('no_nhi', 'like', "%{$search}%")
-                  ->orWhere('tempat', 'like', "%{$search}%")
-                  ->orWhere('jenis_barang', 'like', "%{$search}%")
-                  ->orWhere('keterangan', 'like', "%{$search}%");
+                    ->orWhere('tempat', 'like', "%{$search}%")
+                    ->orWhere('jenis_barang', 'like', "%{$search}%")
+                    ->orWhere('keterangan', 'like', "%{$search}%");
             });
         }
 
-        if ($dateFrom = $request->input('date_from')) {
-            $query->whereDate('tanggal_nhi', '>=', $dateFrom);
-        }
-
-        if ($dateTo = $request->input('date_to')) {
-            $query->whereDate('tanggal_nhi', '<=', $dateTo);
-        }
+        if ($date_from = $request->input('date_from'))
+            $query->whereDate('tanggal_nhi', '>=', $date_from);
+        if ($date_to = $request->input('date_to'))
+            $query->whereDate('tanggal_nhi', '<=', $date_to);
 
         $intelijen = $query->with('penyidikan.penindakan')->latest()->paginate(10)->withQueryString();
 
-        $moduleIds = [];
-        $rows = $intelijen->map(function ($item, $index) use (&$moduleIds, $intelijen) {
+        $id_modul = [];
+        $rows = $intelijen->map(function ($item, $index) use (&$id_modul, $intelijen) {
             $penyidikan = optional($item->penyidikan)->first();
             $penindakan = optional(optional($penyidikan)->penindakan)->first();
-            
-            $moduleIds[$index] = [
+
+            $id_modul[$index] = [
                 'intelijen' => $item->no_nhi,
                 'penyidikan' => optional($penyidikan)->no_spdp,
                 'penindakan' => optional($penindakan)->no_sbp,
@@ -61,7 +61,7 @@ class IntelijenController
         return view('pages.intelijen', [
             'rows' => $rows,
             'intelijen' => $intelijen,
-            'moduleIds' => $moduleIds
+            'id_modul' => $id_modul
         ]);
     }
 
@@ -69,76 +69,75 @@ class IntelijenController
     {
         try {
             DB::beginTransaction();
-            
-            // Load Intelijen with all its relationships
-            $intelijen = Intelijen::with(['penyidikan.penindakan'])
+
+            $intelijen = IntelijenModel::with(['penyidikan.penindakan'])
                 ->where('no_nhi', $no_nhi)
                 ->firstOrFail();
-            
+
             Log::info('Found Intelijen record with ID: ' . $no_nhi);
-            
-            $penyidikanIds = $intelijen->penyidikan->pluck('id')->toArray();
-            $penindakanIds = [];
-            
+
+            $id_penyidikan = $intelijen->penyidikan->pluck('id')->toArray();
+            $id_penindakan = [];
+
             foreach ($intelijen->penyidikan as $penyidikan) {
-                $penindakanIds = array_merge(
-                    $penindakanIds,
+                $id_penindakan = array_merge(
+                    $id_penindakan,
                     $penyidikan->penindakan->pluck('id')->toArray()
                 );
             }
-            
-            Log::info('Found related Penyidikan records: ' . implode(', ', $penyidikanIds));
-            Log::info('Found related Penindakan records: ' . implode(', ', $penindakanIds));
-            
-            if (!empty($penindakanIds)) {
-                foreach ($penindakanIds as $penindakanId) {
+
+            Log::info('Found related Penyidikan records: ' . implode(', ', $id_penyidikan));
+            Log::info('Found related Penindakan records: ' . implode(', ', $id_penindakan));
+
+            if (!empty($id_penindakan)) {
+                foreach ($id_penindakan as $id) {
                     Dokumen::where('tipe', 'penindakan')
-                           ->where('reference_id', $penindakanId)
-                           ->delete();
+                        ->where('reference_id', $id)
+                        ->delete();
                 }
                 Log::info('Deleted Penindakan documents');
 
-                Penindakan::whereIn('id', $penindakanIds)->delete();
+                PenindakanModel::whereIn('id', $id_penindakan)->delete();
                 Log::info('Soft deleted Penindakan records');
             }
-            
-            if (!empty($penyidikanIds)) {
-                foreach ($penyidikanIds as $penyidikanId) {
+
+            if (!empty($id_penyidikan)) {
+                foreach ($id_penyidikan as $id) {
                     Dokumen::where('tipe', 'penyidikan')
-                           ->where('reference_id', $penyidikanId)
-                           ->delete();
+                        ->where('reference_id', $id)
+                        ->delete();
                 }
                 Log::info('Deleted Penyidikan documents');
-                       
-                Penyidikan::whereIn('id', $penyidikanIds)->delete();
+                PenyidikanModel::whereIn('id', $id_penyidikan)->delete();
                 Log::info('Soft deleted Penyidikan records');
             }
-            
+
             Dokumen::where('tipe', 'intelijen')
-                   ->where('reference_id', $no_nhi)
-                   ->delete();
+                ->where('reference_id', $no_nhi)
+                ->delete();
+
             Log::info('Deleted Intelijen documents');
-            
+
             $intelijen->delete();
             Log::info('Soft deleted Intelijen record');
-            
+
             DB::commit();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Data intelijen dan semua data terkait berhasil dihapus',
                 'deleted' => [
                     'intelijen' => $no_nhi,
-                    'penyidikan' => $penyidikanIds,
-                    'penindakan' => $penindakanIds
+                    'penyidikan' => $id_penyidikan,
+                    'penindakan' => $id_penindakan
                 ]
             ]);
-            
-        } catch (\Exception $e) {
+
+        } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error in cascade deletion for intelijen: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menghapus data intelijen dan data terkait: ' . $e->getMessage()
@@ -148,7 +147,7 @@ class IntelijenController
 
     public function edit($no_nhi)
     {
-        $intelijen = Intelijen::where('no_nhi', $no_nhi)->firstOrFail();
+        $intelijen = IntelijenModel::where('no_nhi', $no_nhi)->firstOrFail();
         return response()->json($intelijen);
     }
 
@@ -156,9 +155,9 @@ class IntelijenController
     {
         try {
             DB::beginTransaction();
-            
-            $intelijen = Intelijen::where('no_nhi', $no_nhi)->firstOrFail();
-            
+
+            $intelijen = IntelijenModel::where('no_nhi', $no_nhi)->firstOrFail();
+
             $validated = $request->validate([
                 'no_nhi' => ['required', 'string', 'max:255', 'unique:intelijen,no_nhi,' . $intelijen->id],
                 'tempat' => ['required', 'string', 'max:255'],
@@ -167,24 +166,22 @@ class IntelijenController
                 'jenis_barang' => ['required', 'string', 'max:255'],
                 'keterangan' => ['nullable', 'string'],
             ]);
-            
-            $validated['updated_by'] = auth()->id();
-            
+
+            $validated['updated_by'] = Auth::id();
             $intelijen->update($validated);
-            
             DB::commit();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Data intelijen berhasil diperbarui',
                 'data' => $intelijen
             ]);
-            
-        } catch (\Exception $e) {
+
+        } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error in updating intelijen: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal memperbarui data intelijen: ' . $e->getMessage()
@@ -192,4 +189,3 @@ class IntelijenController
         }
     }
 }
-

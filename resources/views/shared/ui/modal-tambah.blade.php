@@ -1,5 +1,5 @@
 @php
-    $activeTab = $activeTab ?? old('entity_type', 'intelijen');
+    $active_tab = $active_tab ?? old('entity_type', 'intelijen');
 @endphp
 
 @component('shared.ui.modal-base', [
@@ -8,15 +8,15 @@
 ])
     <form id="formulir-tambah-data" class="space-y-6" method="POST" 
         action="{{ route('data.store') }}"
-        x-data="{ entityType: '{{ $activeTab }}' }"
+        x-data="{ entity_type: '{{ $active_tab }}' }"
         x-ref="form">
         @csrf
-        <input type="hidden" name="entity_type" id="entity_type" value="{{ $activeTab }}">
+        <input type="hidden" name="entity_type" id="entity_type" value="{{ $active_tab }}">
         @include('shared.ui.navigation', [
             'tabs' => [
-                ['id' => 'intelijen', 'label' => 'Intelijen', 'active' => $activeTab === 'intelijen'],
-                ['id' => 'penyidikan', 'label' => 'Penyidikan', 'active' => $activeTab === 'penyidikan'],
-                ['id' => 'penindakan', 'label' => 'Penindakan', 'active' => $activeTab === 'penindakan'],
+                ['id' => 'intelijen', 'label' => 'Intelijen', 'active' => $active_tab === 'intelijen'],
+                ['id' => 'penyidikan', 'label' => 'Penyidikan', 'active' => $active_tab === 'penyidikan'],
+                ['id' => 'penindakan', 'label' => 'Penindakan', 'active' => $active_tab === 'penindakan'],
             ],
         ])
 
@@ -31,7 +31,7 @@
         @endif
 
         {{-- Intelijen --}}
-        <section class="tab-content {{ $activeTab === 'intelijen' ? 'active' : 'hidden' }}" id="intelijen-content">
+        <section class="tab-content {{ $active_tab === 'intelijen' ? 'active' : 'hidden' }}" id="intelijen-content">
             <div class="grid grid-cols-1 gap-6">
                 @include('shared.forms.input', [
                     'label' => 'No. NHI',
@@ -72,7 +72,7 @@
         </section>
 
         {{-- Penyidikan --}}
-        <section class="tab-content {{ $activeTab === 'penyidikan' ? 'active' : 'hidden' }}" id="penyidikan-content">
+        <section class="tab-content {{ $active_tab === 'penyidikan' ? 'active' : 'hidden' }}" id="penyidikan-content">
             <div class="grid grid-cols-1 gap-6">
                 @include('shared.forms.select', [
                     'label' => 'Intelijen Terkait',
@@ -107,7 +107,7 @@
         </section>
 
          {{-- Penindakan --}}    
-        <section class="tab-content {{ $activeTab === 'penindakan' ? 'active' : 'hidden' }}" id="penindakan-content">
+        <section class="tab-content {{ $active_tab === 'penindakan' ? 'active' : 'hidden' }}" id="penindakan-content">
             <div class="grid grid-cols-1 gap-6">
                 @include('shared.forms.select', [
                     'label' => 'Penyidikan Terkait',

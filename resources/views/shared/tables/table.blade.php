@@ -1,4 +1,4 @@
-@props(['headers', 'rows', 'moduleIds' => []])
+@props(['headers', 'rows', 'id_modul' => []])
 
 <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
     <table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
@@ -62,7 +62,7 @@
 
                             @foreach($modules as $moduleName => $config)
                                 @php
-                                    $moduleId = isset($moduleIds[$index][$moduleName]) ? $moduleIds[$index][$moduleName] : $currentId;
+                                    $moduleId = isset($id_modul[$index][$moduleName]) ? $id_modul[$index][$moduleName] : $currentId;
                                 @endphp
                                 <a href="{{ route($config['route'], [$config['param'] => $moduleId]) }}"
                                     class="h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 {{ $config['colors'] }}"

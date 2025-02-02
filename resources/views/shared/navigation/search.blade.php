@@ -31,4 +31,4 @@
     </a>
 @endif
 
-@include('shared.ui.modal-tambah', ['activeTab' => $section])
+@include('shared.ui.modal-tambah', ['active_tab' => $section])

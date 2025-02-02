@@ -10,7 +10,7 @@
     @include('shared.tables.table', [
         'headers' => ['No', 'No SPDP', 'Tgl SPDP', 'Pelaku', 'Keterangan'],
         'rows' => $rows,
-        'moduleIds' => $moduleIds
+        'id_modul' => $id_modul
     ])
     {{ $penyidikan->links() }}
 

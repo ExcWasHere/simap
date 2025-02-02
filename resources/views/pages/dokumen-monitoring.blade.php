@@ -1,8 +1,14 @@
-@component('layouts.main', [
-    'judul' => 'Dokumen Monitoring',
-    'deskripsi' => '',
-])
-<main class="container mx-auto pt-12 pb-6">
-    @include('components.monitoring.dokumen', ['documents' => $documents, 'id' => $id])
-</main>
-@endcomponent
+@extends('layouts.main')
+
+@section('judul')
+    Dokumen Monitoring
+@endsection
+
+@section('deskripsi')
+@endsection
+
+@section('konten')
+    <div class="container mx-auto pt-16 pb-6">
+        @include('components.monitoring.dokumen', ['documents' => $documents, 'id' => $id])
+    </div>
+@endsection

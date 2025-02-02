@@ -1,7 +1,7 @@
 @props(['documents', 'reference_id', 'section'])
 
 @php
-    $referenceParam = match($section) {
+    $reference_param = match($section) {
         'intelijen' => 'no_nhi',
         'monitoring' => 'id',
         'penindakan' => 'no_sbp',
@@ -88,7 +88,7 @@
             </div>
         @endforelse
 
-        <a href="{{ route($uploadRoute, [$referenceParam => $reference_id]) }}" 
+        <a href="{{ route($uploadRoute, [$reference_param => $reference_id]) }}" 
            class="group relative bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl border-2 border-dashed border-blue-200 hover:border-blue-300 transition-all duration-300">
             <div class="absolute inset-0 bg-blue-500/0 group-hover:bg-blue-500/[0.02] rounded-xl transition-colors duration-300"></div>
             <div class="p-6 flex flex-col items-center justify-center h-40 space-y-3">

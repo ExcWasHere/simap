@@ -2,21 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Penindakan;
-use App\Models\Penyidikan;
+use App\Http\Controllers\Controller;
+use App\Models\Penindakan as PenindakanModel;
+use App\Models\Penyidikan as PenyidikanModel;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
-class PenindakanController
+class Penindakan extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Penindakan::query();
-        
+        $query = PenindakanModel::query();
+
         if ($search = $request->input('search')) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('no_sbp', 'like', "%{$search}%")
                     ->orWhere('lokasi_penindakan', 'like', "%{$search}%")
                     ->orWhere('pelaku', 'like', "%{$search}%")
@@ -24,24 +27,19 @@ class PenindakanController
             });
         }
 
-        if ($dateFrom = $request->input('date_from')) {
-            $query->whereDate('tanggal_sbp', '>=', $dateFrom);
-        }
-
-        if ($dateTo = $request->input('date_to')) {
-            $query->whereDate('tanggal_sbp', '<=', $dateTo);
-        }
+        if ($date_from = $request->input('date_from')) $query->whereDate('tanggal_sbp', '>=', $date_from);
+        if ($date_to = $request->input('date_to')) $query->whereDate('tanggal_sbp', '<=', $date_to);
 
         $penindakan = $query->with(['penyidikan.intelijen'])->latest()->paginate(10)->withQueryString();
 
-        $penyidikanOptions = Penyidikan::whereNull('deleted_at')
+        $opsi_penyidikan = PenyidikanModel::whereNull('deleted_at')
             ->orderBy('no_spdp')
             ->get()
             ->pluck('no_spdp', 'id');
 
-        $moduleIds = [];
-        $rows = $penindakan->map(function ($item, $index) use ($penindakan, &$moduleIds) {
-            $moduleIds[$index] = [
+        $id_modul = [];
+        $rows = $penindakan->map(function ($item, $index) use ($penindakan, &$id_modul) {
+            $id_modul[$index] = [
                 'intelijen' => optional(optional($item->penyidikan)->intelijen)->no_nhi ?? null,
                 'penyidikan' => optional($item->penyidikan)->no_spdp ?? null,
                 'penindakan' => $item->no_sbp,
@@ -63,8 +61,8 @@ class PenindakanController
         return view('pages.penindakan', [
             'rows' => $rows,
             'penindakan' => $penindakan,
-            'moduleIds' => $moduleIds,
-            'penyidikanOptions' => $penyidikanOptions
+            'id_modul' => $id_modul,
+            'opsi_penyidikan' => $opsi_penyidikan,
         ]);
     }
 
@@ -72,31 +70,29 @@ class PenindakanController
     {
         try {
             DB::beginTransaction();
-            
-            $penindakan = Penindakan::whereNull('deleted_at')
+
+            $penindakan = PenindakanModel::whereNull('deleted_at')
                 ->where('no_sbp', $no_sbp)
                 ->firstOrFail();
-            
+
             $timestamp = now()->format('YmdHis');
             $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
             $suffix = "_deleted_{$timestamp}{$random}";
-            
+
             $penindakan->no_sbp = $penindakan->no_sbp . $suffix;
             $penindakan->save();
-            
             $penindakan->delete();
-            
+
             DB::commit();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Data penindakan berhasil dihapus'
             ]);
-            
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error deleting penindakan: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menghapus data penindakan'
@@ -107,20 +103,20 @@ class PenindakanController
     public function edit($no_sbp)
     {
         try {
-            $penindakan = Penindakan::with(['penyidikan'])
+            $penindakan = PenindakanModel::with(['penyidikan'])
                 ->where('no_sbp', $no_sbp)
                 ->firstOrFail();
 
-            $penyidikanOptions = Penyidikan::whereNull('deleted_at')
+            $opsi_penyidikan = PenyidikanModel::whereNull('deleted_at')
                 ->orderBy('no_spdp')
                 ->get()
                 ->pluck('no_spdp', 'id');
 
             $data = $penindakan->toArray();
-            $data['penyidikanOptions'] = $penyidikanOptions;
+            $data['opsi_penyidikan'] = $opsi_penyidikan;
 
             return response()->json($data);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error fetching penindakan: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -133,9 +129,9 @@ class PenindakanController
     {
         try {
             DB::beginTransaction();
-            
-            $penindakan = Penindakan::where('no_sbp', $no_sbp)->firstOrFail();
-            
+
+            $penindakan = PenindakanModel::where('no_sbp', $no_sbp)->firstOrFail();
+
             $validated = $request->validate([
                 'no_sbp' => ['required', 'string', 'max:255', 'unique:penindakan,no_sbp,' . $penindakan->id . ',id,deleted_at,NULL'],
                 'tanggal_sbp' => ['required', 'date'],
@@ -147,24 +143,22 @@ class PenindakanController
                 'perkiraan_nilai_barang' => ['required', 'numeric', 'min:0'],
                 'potensi_kurang_bayar' => ['required', 'numeric', 'min:0'],
             ]);
-            
-            $validated['updated_by'] = auth()->id();
-            
+
+            $validated['updated_by'] = Auth::id();
             $penindakan->update($validated);
-            
             DB::commit();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Data penindakan berhasil diperbarui',
                 'data' => $penindakan
             ]);
-            
-        } catch (\Exception $e) {
+
+        } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error in updating penindakan: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal memperbarui data penindakan: ' . $e->getMessage()

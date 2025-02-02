@@ -2,23 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Penindakan;
+use App\Http\Controllers\Controller;
+use App\Models\Penindakan as PenindakanModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class MonitoringBHPController
+class MonitoringBHP extends Controller
 {
+    /**
+     * Views
+     */
+    public function show()
+    {
+        return view('pages.monitoring');
+    }
 
-    public function showChart()
+    public function show_chart()
     {
         return view('pages.monitoring-chart');
     }
 
 
-    public function exportExcel($type)
+    /**
+     * Controllers
+     */
+    public function ekspor_excel($type)
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -40,7 +51,7 @@ class MonitoringBHPController
             $sheet->getColumnDimension($column)->setAutoSize(true);
         }
 
-        $query = Penindakan::query();
+        $query = PenindakanModel::query();
 
         switch ($type) {
             case 'data-per-bulan':
@@ -71,7 +82,6 @@ class MonitoringBHPController
             $row++;
         }
 
-        // Apply styling to header row
         $sheet->getStyle('A1:I1')->applyFromArray([
             'font' => ['bold' => true],
             'fill' => [
@@ -81,7 +91,7 @@ class MonitoringBHPController
         ]);
 
         $writer = new Xlsx($spreadsheet);
-        $filename = 'monitoring-bhp-' . $type . '-' . now()->format('Y-m-d') . '.xlsx';
+        $file_name = 'monitoring-bhp-' . $type . '-' . now()->format('Y-m-d') . '.xlsx';
 
         return response()->stream(
             function () use ($writer) {
@@ -90,17 +100,17 @@ class MonitoringBHPController
             200,
             [
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                'Content-Disposition' => 'attachment; filename="' . $file_name . '"',
                 'Cache-Control' => 'max-age=0'
             ]
         );
     }
 
-    public function getChartData(Request $request)
+    public function get_chart_data(Request $request)
     {
         $range = $request->input('range', '7');
-        $endDate = now();
-        $startDate = match($range) {
+        $end_date = now();
+        $start_date = match ($range) {
             '30' => now()->subDays(29)->startOfDay(),
             '3' => now()->subMonths(3)->startOfDay(),
             '1' => now()->subYear()->startOfDay(),
@@ -109,68 +119,68 @@ class MonitoringBHPController
 
         $intelijen = DB::table('intelijen')
             ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
-            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereBetween('created_at', [$start_date, $end_date])
             ->groupBy('date')
             ->get();
 
         $penindakan = DB::table('penindakan')
             ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
-            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereBetween('created_at', [$start_date, $end_date])
             ->groupBy('date')
             ->get();
 
         $penyidikan = DB::table('penyidikan')
             ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
-            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereBetween('created_at', [$start_date, $end_date])
             ->groupBy('date')
             ->get();
 
-        $totalIntelijen = DB::table('intelijen')->count();
-        $totalPenindakan = DB::table('penindakan')->count();
-        $totalPenyidikan = DB::table('penyidikan')->count();
-        $totalDokumen = $totalIntelijen + $totalPenindakan + $totalPenyidikan;
+        $total_intelijen = DB::table('intelijen')->count();
+        $total_penindakan = DB::table('penindakan')->count();
+        $total_penyidikan = DB::table('penyidikan')->count();
+        $total_dokumen = $total_intelijen + $total_penindakan + $total_penyidikan;
 
         // Hitung rata-rata per bulan
-        $avgPerBulan = round(($totalDokumen / 12), 1); // Asumsi data 1 tahun
+        $average_per_month = round(($total_dokumen / 12), 1); // Asumsi data 1 tahun
 
         // Hitung pertumbuhan
-        $lastMonthCount = DB::table('intelijen')
+        $last_month_count = DB::table('intelijen')
             ->whereMonth('created_at', now()->subMonth()->month)
             ->count() +
             DB::table('penindakan')
-            ->whereMonth('created_at', now()->subMonth()->month)
-            ->count() +
+                ->whereMonth('created_at', now()->subMonth()->month)
+                ->count() +
             DB::table('penyidikan')
-            ->whereMonth('created_at', now()->subMonth()->month)
-            ->count();
+                ->whereMonth('created_at', now()->subMonth()->month)
+                ->count();
 
-        $thisMonthCount = DB::table('intelijen')
+        $this_month_count = DB::table('intelijen')
             ->whereMonth('created_at', now()->month)
             ->count() +
             DB::table('penindakan')
-            ->whereMonth('created_at', now()->month)
-            ->count() +
+                ->whereMonth('created_at', now()->month)
+                ->count() +
             DB::table('penyidikan')
-            ->whereMonth('created_at', now()->month)
-            ->count();
+                ->whereMonth('created_at', now()->month)
+                ->count();
 
-        $pertumbuhan = $lastMonthCount > 0 
-            ? round((($thisMonthCount - $lastMonthCount) / $lastMonthCount) * 100, 1)
+        $pertumbuhan = $last_month_count > 0
+            ? round((($this_month_count - $last_month_count) / $last_month_count) * 100, 1)
             : 0;
 
         $dates = collect();
-        $currentDate = $startDate->copy();
-        while ($currentDate <= $endDate) {
-            $dates->push($currentDate->format('Y-m-d'));
-            $currentDate->addDay();
+        $current_date = $start_date->copy();
+        while ($current_date <= $end_date) {
+            $dates->push($current_date->format('Y-m-d'));
+            $current_date->addDay();
         }
 
-        $chartData = [
+        $chart_data = [
             'labels' => $dates->map(fn($date) => Carbon::parse($date)->format('d M')),
             'datasets' => [
                 [
                     'label' => 'Intelijen',
-                    'data' => $dates->map(function($date) use ($intelijen) {
+                    'data' => $dates->map(function ($date) use ($intelijen) {
                         return $intelijen->firstWhere('date', $date)?->count ?? 0;
                     }),
                     'borderColor' => '#3B82F6',
@@ -179,7 +189,7 @@ class MonitoringBHPController
                 ],
                 [
                     'label' => 'Penindakan',
-                    'data' => $dates->map(function($date) use ($penindakan) {
+                    'data' => $dates->map(function ($date) use ($penindakan) {
                         return $penindakan->firstWhere('date', $date)?->count ?? 0;
                     }),
                     'borderColor' => '#10B981',
@@ -188,7 +198,7 @@ class MonitoringBHPController
                 ],
                 [
                     'label' => 'Penyidikan',
-                    'data' => $dates->map(function($date) use ($penyidikan) {
+                    'data' => $dates->map(function ($date) use ($penyidikan) {
                         return $penyidikan->firstWhere('date', $date)?->count ?? 0;
                     }),
                     'borderColor' => '#F59E0B',
@@ -197,12 +207,12 @@ class MonitoringBHPController
                 ]
             ],
             'stats' => [
-                'totalDokumen' => $totalDokumen,
+                'total_dokumen' => $total_dokumen,
                 'pertumbuhan' => $pertumbuhan,
-                'avgPerBulan' => $avgPerBulan
+                'average_per_month' => $average_per_month
             ]
         ];
 
-        return response()->json($chartData);
+        return response()->json($chart_data);
     }
 }

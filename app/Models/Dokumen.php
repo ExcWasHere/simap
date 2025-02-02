@@ -25,7 +25,7 @@ class Dokumen extends Model
 
     public function parent()
     {
-        return match($this->tipe) {
+        return match ($this->tipe) {
             'intelijen' => $this->belongsTo(Intelijen::class, 'reference_id'),
             'penyidikan' => $this->belongsTo(Penyidikan::class, 'reference_id'),
             'penindakan' => $this->belongsTo(Penindakan::class, 'reference_id'),
@@ -33,4 +33,4 @@ class Dokumen extends Model
             default => null
         };
     }
-} 
+}

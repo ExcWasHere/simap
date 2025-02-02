@@ -1,6 +1,12 @@
-@component('layouts.main', [
-    'judul' => 'Login',
-    'deskripsi' => '',
-])
+@extends('layouts.main')
+
+@section('judul')
+    Masuk
+@endsection
+
+@section('deskripsi')
+@endsection
+
+@section('konten')
     @include('components.autentikasi.login')
-@endcomponent
+@endsection

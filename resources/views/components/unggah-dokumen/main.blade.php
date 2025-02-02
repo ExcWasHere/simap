@@ -48,9 +48,9 @@
             @endif
 
             @php
-                $currentSection = request()->segment(1) ?: 'intelijen';
+                $current_section = request()->segment(1) ?: 'intelijen';
                 
-                $referenceParam = match($currentSection) {
+                $reference_param = match($current_section) {
                     'intelijen' => 'no_nhi',
                     'monitoring' => 'id',
                     'penindakan' => 'no_sbp',
@@ -58,9 +58,9 @@
                     default => null
                 };
                 
-                $referenceId = $reference_id ?? request()->query($referenceParam);
+                $referenceId = $reference_id ?? request()->query($reference_param);
                 
-                $uploadRoute = match($currentSection) {
+                $uploadRoute = match($current_section) {
                     'intelijen' => 'intelijen.upload.dokumen',
                     'monitoring' => 'monitoring.upload.dokumen',
                     'penindakan' => 'penindakan.upload.dokumen',
@@ -69,9 +69,9 @@
                 };
             @endphp
 
-            <form action="{{ route($uploadRoute, [$referenceParam => $referenceId]) }}" method="POST" enctype="multipart/form-data" class="space-y-8 px-8 py-6">
+            <form action="{{ route($uploadRoute, [$reference_param => $referenceId]) }}" method="POST" enctype="multipart/form-data" class="space-y-8 px-8 py-6">
                 @csrf
-                <input type="hidden" name="tipe" value="{{ $currentSection }}">
+                <input type="hidden" name="tipe" value="{{ $current_section }}">
                 
                 <div class="space-y-2">
                     <label for="tipe" class="block text-sm font-medium text-gray-700">
@@ -82,7 +82,7 @@
                         required>
                         <option value="">Pilih Tipe Dokumen</option>
 
-                        @switch($currentSection)
+                        @switch($current_section)
                             @case('intelijen')
                                 <option value="ST-I">ST-I</option>
                                 <option value="LPTI">LPTI</option>
@@ -199,7 +199,7 @@
 
                 <div class="flex justify-end border-t border-gray-100 pt-6">
                     <button id="upload-button" type="submit"
-                        class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                         <span id="button-text">Upload Dokumen</span>
                         <svg id="loading-spinner" class="hidden animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

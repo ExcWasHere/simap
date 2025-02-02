@@ -20,7 +20,7 @@
             'Potensi Kurang Bayar',
         ],
         'rows' => $rows,
-        'moduleIds' => $moduleIds
+        'id_modul' => $id_modul
     ])
     {{ $penindakan->links() }}
     

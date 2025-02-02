@@ -1,17 +1,19 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Http\Controllers;
 
-use App\Controllers\Controller;
+use App\Http\Controllers\Controller;
 use App\Models\Dokumen as DokumenModel;
-use App\Models\Intelijen;
-use App\Models\Penindakan;
-use App\Models\Penyidikan;
+use App\Models\Intelijen as IntelijenModel;
+use App\Models\Penindakan as PenindakanModel;
+use App\Models\Penyidikan as PenyidikanModel;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class Dokumen extends Controller
 {
@@ -24,7 +26,7 @@ class Dokumen extends Controller
             ->where('reference_id', $no_nhi)
             ->latest()
             ->get();
-            
+
         return view('pages.dokumen-intelijen', [
             'documents' => $documents,
             'no_nhi' => $no_nhi
@@ -37,7 +39,7 @@ class Dokumen extends Controller
             ->where('reference_id', $id)
             ->latest()
             ->get();
-            
+
         return view('pages.dokumen-monitoring', [
             'documents' => $documents,
             'id' => $id
@@ -50,7 +52,7 @@ class Dokumen extends Controller
             ->where('reference_id', $no_sbp)
             ->latest()
             ->get();
-            
+
         return view('pages.dokumen-penindakan', [
             'documents' => $documents,
             'no_sbp' => $no_sbp
@@ -63,7 +65,7 @@ class Dokumen extends Controller
             ->where('reference_id', $no_spdp)
             ->latest()
             ->get();
-            
+
         return view('pages.dokumen-penyidikan', [
             'documents' => $documents,
             'no_spdp' => $no_spdp
@@ -72,10 +74,9 @@ class Dokumen extends Controller
 
     public function halaman_unggah_dokumen($reference_id = null): View
     {
-        $currentSection = request()->segment(1);
-        
-        // Map the reference ID to the correct parameter name
-        $referenceParam = match($currentSection) {
+        $current_section = request()->segment(1);
+
+        $reference_param = match ($current_section) {
             'intelijen' => 'no_nhi',
             'monitoring' => 'id',
             'penindakan' => 'no_sbp',
@@ -83,10 +84,10 @@ class Dokumen extends Controller
             default => null
         };
 
-        \Log::info('Upload page accessed:', [
-            'section' => $currentSection,
+        Log::info('Upload page accessed:', [
+            'section' => $current_section,
             'reference_id' => $reference_id,
-            'reference_param' => $referenceParam
+            'reference_param' => $reference_param,
         ]);
 
         return view('pages.unggah-dokumen', [
@@ -110,7 +111,7 @@ class Dokumen extends Controller
                 'keterangan' => ['nullable', 'string'],
             ]);
 
-            Intelijen::create([
+            IntelijenModel::create([
                 'no_nhi' => $content['no_nhi'],
                 'tempat' => $content['tempat'],
                 'jumlah_barang' => $content['jumlah_barang'],
@@ -140,7 +141,7 @@ class Dokumen extends Controller
                 'potensi_kurang_bayar' => ['required', 'integer', 'min:1'],
             ]);
 
-            Penindakan::create([
+            PenindakanModel::create([
                 'no_sbp' => $content['no_sbp'],
                 'lokasi_penindakan' => $content['lokasi_penindakan'],
                 'uraian_bhp' => $content['uraian_bhp'],
@@ -168,7 +169,7 @@ class Dokumen extends Controller
                 'keterangan' => ['nullable', 'string'],
             ]);
 
-            Penyidikan::create([
+            PenyidikanModel::create([
                 'no_spdp' => $content['no_spdp'],
                 'pelaku' => $content['pelaku'],
                 'tanggal_spdp' => $content['tanggal_spdp'],
@@ -193,8 +194,8 @@ class Dokumen extends Controller
             ]);
 
             $file = $request->file('file');
-            
-            $fileName = sprintf(
+
+            $file_name = sprintf(
                 '%s_%s_%s_%s.%s',
                 strtoupper($validated['tipe']),
                 $validated['sub_tipe'],
@@ -202,14 +203,14 @@ class Dokumen extends Controller
                 now()->format('Ymd'),
                 $file->getClientOriginalExtension()
             );
-            
-            $path = $file->storeAs('dokumen', $fileName, 'public');
 
-            \Log::info('Document upload reference ID:', [
+            $path = $file->storeAs('dokumen', $file_name, 'public');
+
+            Log::info('Document upload reference ID:', [
                 'request_data' => $request->all(),
                 'route_reference_id' => $reference_id,
                 'type' => $validated['tipe'],
-                'filename' => $fileName
+                'filename' => $file_name
             ]);
 
             $dokumen = DokumenModel::create([
@@ -218,10 +219,10 @@ class Dokumen extends Controller
                 'deskripsi' => $validated['deskripsi'],
                 'file_path' => 'storage/' . $path,
                 'reference_id' => $reference_id,
-                'uploaded_by' => auth()->id()
+                'uploaded_by' => Auth::id()
             ]);
 
-            \Log::info('Document uploaded successfully:', [
+            Log::info('Document uploaded successfully:', [
                 'id' => $dokumen->id,
                 'type' => $dokumen->tipe,
                 'sub_type' => $dokumen->sub_tipe,
@@ -229,7 +230,7 @@ class Dokumen extends Controller
                 'file_path' => $dokumen->file_path
             ]);
 
-            $redirectRoute = match($dokumen->tipe) {
+            $redirect_route = match ($dokumen->tipe) {
                 'intelijen' => 'intelijen.dokumen',
                 'monitoring' => 'monitoring.dokumen',
                 'penindakan' => 'penindakan.dokumen',
@@ -237,9 +238,9 @@ class Dokumen extends Controller
                 default => 'dashboard'
             };
 
-            $redirectParams = [];
+            $redirect_params = [];
             if ($dokumen->reference_id) {
-                $redirectParams = match($dokumen->tipe) {
+                $redirect_params = match ($dokumen->tipe) {
                     'intelijen' => ['no_nhi' => $dokumen->reference_id],
                     'monitoring' => ['id' => $dokumen->reference_id],
                     'penindakan' => ['no_sbp' => $dokumen->reference_id],
@@ -248,17 +249,17 @@ class Dokumen extends Controller
                 };
             }
 
-            return redirect()->route($redirectRoute, $redirectParams)->with('success', 'Dokumen berhasil diunggah!');
-
+            return redirect()->route($redirect_route, $redirect_params)->with('success', 'Dokumen berhasil diunggah!');
         } catch (ValidationException $e) {
-            \Log::error('Validation error during upload:', [
+            Log::error('Validation error during upload:', [
                 'errors' => $e->errors()
             ]);
-            return redirect()->back()
+            return redirect()
+                ->back()
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (Exception $e) {
-            \Log::error('Error uploading document:', [
+            Log::error('Error uploading document:', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -272,17 +273,14 @@ class Dokumen extends Controller
     {
         try {
             $document = DokumenModel::findOrFail($id);
+            $file_path = str_replace('storage/', '', $document->file_path);
             
-            $filePath = str_replace('storage/', '', $document->file_path);
-            if (\Storage::disk('public')->exists($filePath)) {
-                \Storage::disk('public')->delete($filePath);
-            }
-            
+            if (Storage::disk('public')->exists($file_path)) Storage::disk('public')->delete($file_path);
             $document->delete();
 
             return redirect()->back()->with('success', 'Dokumen berhasil dihapus!');
         } catch (Exception $e) {
-            \Log::error('Error deleting document:', [
+            Log::error('Error deleting document:', [
                 'id' => $id,
                 'error' => $e->getMessage()
             ]);

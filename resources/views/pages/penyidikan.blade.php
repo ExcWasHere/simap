@@ -1,9 +1,18 @@
-@component('layouts.main', [
-    'judul' => 'Penyidikan',
-    'deskripsi' => '',
-    'activeTab' => 'penyidikan'
-])
-    <main class="container mx-auto pt-12 pb-6">
+@extends('layouts.main')
+
+@section('judul')
+    Penyidikan
+@endsection
+
+@section('deskripsi')
+@endsection
+
+@section('active_tab')
+    penyidikan
+@endsection
+
+@section('konten')
+    <div class="container mx-auto pt-16 pb-6">
         @include('components.penyidikan.main')
-    </main>
-@endcomponent
+    </div>
+@endsection

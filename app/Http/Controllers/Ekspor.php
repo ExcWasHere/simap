@@ -2,39 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Intelijen;
-use App\Models\Penindakan;
-use App\Models\Penyidikan;
+use App\Models\Intelijen as IntelijenModel;
+use App\Models\Penindakan as PenindakanModel;
+use App\Models\Penyidikan as PenyidikanModel;
+use Illuminate\Routing\Controller as BaseController;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller as BaseController;
 
-class ExportController extends BaseController
+class Ekspor extends BaseController
 {
-    public function export(Request $request, $section)
+    public function export($section)
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
         switch ($section) {
             case 'intelijen':
-                return $this->exportIntelijen($spreadsheet, $sheet);
+                return $this->ekspor_intelijen($spreadsheet, $sheet);
             case 'penindakan':
-                return $this->exportPenindakan($spreadsheet, $sheet);
+                return $this->ekspor_penindakan($spreadsheet, $sheet);
             case 'penyidikan':
-                return $this->exportPenyidikan($spreadsheet, $sheet);
+                return $this->ekspor_penyidikan($spreadsheet, $sheet);
             default:
                 abort(404);
         }
     }
 
-    private function exportIntelijen($spreadsheet, $sheet)
+    private function ekspor_intelijen($spreadsheet, $sheet)
     {
         $headers = ['No', 'No NHI', 'Tanggal NHI', 'Tempat', 'Jenis Barang', 'Jumlah Barang', 'Keterangan'];
-        $this->setHeaders($sheet, $headers);
+        $this->set_headers($sheet, $headers);
 
-        $data = Intelijen::orderBy('tanggal_nhi', 'desc')->get();
+        $data = IntelijenModel::orderBy('tanggal_nhi', 'desc')->get();
         $row = 2;
 
         foreach ($data as $index => $item) {
@@ -48,15 +47,15 @@ class ExportController extends BaseController
             $row++;
         }
 
-        return $this->downloadExcel($spreadsheet, 'intelijen');
+        return $this->unduh_excel($spreadsheet, 'intelijen');
     }
 
-    private function exportPenindakan($spreadsheet, $sheet)
+    private function ekspor_penindakan($spreadsheet, $sheet)
     {
         $headers = ['No', 'No SBP', 'Tanggal SBP', 'Lokasi', 'Pelaku', 'Uraian BHP', 'Jumlah', 'Nilai Barang', 'Potensi Kurang Bayar'];
-        $this->setHeaders($sheet, $headers);
+        $this->set_headers($sheet, $headers);
 
-        $data = Penindakan::orderBy('tanggal_sbp', 'desc')->get();
+        $data = PenindakanModel::orderBy('tanggal_sbp', 'desc')->get();
         $row = 2;
 
         foreach ($data as $index => $item) {
@@ -72,15 +71,15 @@ class ExportController extends BaseController
             $row++;
         }
 
-        return $this->downloadExcel($spreadsheet, 'penindakan');
+        return $this->unduh_excel($spreadsheet, 'penindakan');
     }
 
-    private function exportPenyidikan($spreadsheet, $sheet)
+    private function ekspor_penyidikan($spreadsheet, $sheet)
     {
         $headers = ['No', 'No SPDP', 'Tanggal SPDP', 'Pelaku', 'Keterangan'];
-        $this->setHeaders($sheet, $headers);
+        $this->set_headers($sheet, $headers);
 
-        $data = Penyidikan::orderBy('tanggal_spdp', 'desc')->get();
+        $data = PenyidikanModel::orderBy('tanggal_spdp', 'desc')->get();
         $row = 2;
 
         foreach ($data as $index => $item) {
@@ -92,10 +91,10 @@ class ExportController extends BaseController
             $row++;
         }
 
-        return $this->downloadExcel($spreadsheet, 'penyidikan');
+        return $this->unduh_excel($spreadsheet, 'penyidikan');
     }
 
-    private function setHeaders($sheet, $headers)
+    private function set_headers($sheet, $headers)
     {
         foreach (range('A', chr(64 + count($headers))) as $index => $column) {
             $sheet->setCellValue($column . '1', $headers[$index]);
@@ -111,10 +110,10 @@ class ExportController extends BaseController
         ]);
     }
 
-    private function downloadExcel($spreadsheet, $section)
+    private function unduh_excel($spreadsheet, $section)
     {
         $writer = new Xlsx($spreadsheet);
-        $filename = $section . '-' . date('Y-m-d') . '.xlsx';
+        $file_name = $section . '-' . date('Y-m-d') . '.xlsx';
 
         return response()->stream(
             function () use ($writer) {
@@ -123,9 +122,9 @@ class ExportController extends BaseController
             200,
             [
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                'Content-Disposition' => 'attachment; filename="' . $file_name . '"',
                 'Cache-Control' => 'max-age=0',
             ]
         );
     }
-} 
+}

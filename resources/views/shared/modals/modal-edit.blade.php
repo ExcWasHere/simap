@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 switch(section) {
                     case 'penindakan':
                         // Update penyidikan select options if they exist in response
-                        if (data.penyidikanOptions) {
+                        if (data.opsi_penyidikan) {
                             const penyidikanSelect = document.getElementById('edit_penyidikan_id');
                             if (penyidikanSelect) {
                                 // Clear existing options except the first one (placeholder)
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     penyidikanSelect.remove(1);
                                 }
                                 // Add new options
-                                Object.entries(data.penyidikanOptions).forEach(([id, noSpdp]) => {
+                                Object.entries(data.opsi_penyidikan).forEach(([id, noSpdp]) => {
                                     const option = new Option(noSpdp, id);
                                     penyidikanSelect.add(option);
                                 });

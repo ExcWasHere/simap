@@ -72,7 +72,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm text-gray-600">Total Dokumen</p>
-                    <h4 class="text-xl font-semibold text-gray-900" id="totalDokumen">-</h4>
+                    <h4 class="text-xl font-semibold text-gray-900" id="total_dokumen">-</h4>
                 </div>
             </div>
         </div>
@@ -96,7 +96,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm text-gray-600">Rata-rata/Bulan</p>
-                    <h4 class="text-xl font-semibold text-gray-900" id="avgPerBulan">-</h4>
+                    <h4 class="text-xl font-semibold text-gray-900" id="average_per_month">-</h4>
                 </div>
             </div>
         </div>
@@ -109,7 +109,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const ctx = document.getElementById('mainChart').getContext('2d');
     let mainChart = null;
-    let chartData = null;
+    let chart_data = null;
 
     const chartOptions = {
         responsive: true,
@@ -180,9 +180,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateStats(stats) {
-        document.getElementById('totalDokumen').textContent = stats.totalDokumen.toLocaleString();
+        document.getElementById('total_dokumen').textContent = stats.total_dokumen.toLocaleString();
         document.getElementById('pertumbuhan').textContent = `${stats.pertumbuhan > 0 ? '+' : ''}${stats.pertumbuhan}%`;
-        document.getElementById('avgPerBulan').textContent = stats.avgPerBulan.toLocaleString();
+        document.getElementById('average_per_month').textContent = stats.average_per_month.toLocaleString();
 
         const pertumbuhanEl = document.getElementById('pertumbuhan');
         if (stats.pertumbuhan > 0) {
@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function fetchChartData() {
+    function fetchchart_data() {
         const range = document.querySelector('select[name="date-range"]').value;
         const url = new URL('{{ route("monitoring.chart-data") }}');
         url.searchParams.append('range', range);
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                chartData = data;
+                chart_data = data;
                 updateChart();
                 updateStats(data.stats);
             });
@@ -210,9 +210,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedCategory = document.querySelector('select[name="category"]').value;
         const selectedType = document.querySelector('select[name="chart-type"]').value;
 
-        if (!chartData) return;
+        if (!chart_data) return;
 
-        const updatedDatasets = chartData.datasets
+        const updatedDatasets = chart_data.datasets
             .filter(dataset => selectedCategory === 'all' || dataset.label.toLowerCase() === selectedCategory)
             .map(dataset => ({
                 ...dataset,
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }));
 
         createChart(selectedType, {
-            labels: chartData.labels,
+            labels: chart_data.labels,
             datasets: updatedDatasets
         });
     }
@@ -228,13 +228,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('select[name="chart-type"]').value = 'line';
     document.querySelector('select[name="date-range"]').value = '7';
 
-    fetchChartData();
+    fetchchart_data();
 
     document.querySelector('select[name="chart-type"]').addEventListener('change', updateChart);
 
     document.querySelector('select[name="category"]').addEventListener('change', updateChart);
 
-    document.querySelector('select[name="date-range"]').addEventListener('change', fetchChartData);
+    document.querySelector('select[name="date-range"]').addEventListener('change', fetchchart_data);
 
     document.querySelector('button:has(i.fa-expand)').addEventListener('click', function() {
         const chartContainer = document.getElementById('mainChart').parentElement;

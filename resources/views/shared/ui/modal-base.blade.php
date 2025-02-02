@@ -42,8 +42,8 @@
 @if($id_modal === 'modal_tambah')
 <script>
 document.getElementById('formulir-tambah-data').addEventListener('submit', function(e) {
-    const activeTab = document.querySelector('.tab-content:not(.hidden)');
-    const requiredFields = activeTab.querySelectorAll('[data-required="true"]');
+    const active_tab = document.querySelector('.tab-content:not(.hidden)');
+    const requiredFields = active_tab.querySelectorAll('[data-required="true"]');
     
     let isValid = true;
     requiredFields.forEach(field => {

@@ -1,9 +1,18 @@
-@component('layouts.main', [
-    'judul' => 'Intelijen',
-    'deskripsi' => '',
-    'activeTab' => 'intelijen'
-])
-    <main class="container mx-auto pt-12 pb-6">
+@extends('layouts.main')
+
+@section('judul')
+    Intelijen
+@endsection
+
+@section('deskripsi')
+@endsection
+
+@section('active_tab')
+    intelijen
+@endsection
+
+@section('konten')
+    <div class="container mx-auto pt-16 pb-6">
         @include('components.intelijen.main')
-    </main>
-@endcomponent
+    </div>
+@endsection
