@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use App\Http\Requests\IntelijenRequest;
+use App\Http\Requests\PenyidikanRequest;
+use App\Http\Requests\PenindakanRequest;
 
 class Data extends Controller
 {
@@ -42,7 +45,7 @@ class Data extends Controller
 
         try {
             return DB::transaction(function () use ($request, $entity_type) {
-                $validated = $this->validate_data($request, $entity_type);
+                $validated = $this->validate_request($request, $entity_type);
 
                 switch ($entity_type) {
                     case 'intelijen':
@@ -74,34 +77,12 @@ class Data extends Controller
         }
     }
 
-    private function validate_data(Request $request, string $entity_type): array
+    private function validate_request(Request $request, string $entity_type): array
     {
         return match ($entity_type) {
-            'intelijen' => $request->validate([
-                'no_nhi' => ['required', 'string', 'max:255', 'unique:intelijen,no_nhi'],
-                'tanggal_nhi' => ['required', 'date'],
-                'tempat' => ['required', 'string', 'max:255'],
-                'jenis_barang' => ['required', 'string', 'max:255'],
-                'jumlah_barang' => ['required', 'integer', 'min:1'],
-                'kemasan' => ['nullable', 'string', 'in:liter,batang'],
-                'intelijen_keterangan' => ['nullable', 'string'],
-            ]),
-            'penyidikan' => $request->validate([
-                'no_spdp' => ['required', 'string', 'max:255', 'unique:penyidikan,no_spdp'],
-                'tanggal_spdp' => ['required', 'date'],
-                'pelaku' => ['required', 'string', 'max:255'],
-                'penyidikan_keterangan' => ['nullable', 'string'],
-            ]),
-            'penindakan' => $request->validate([
-                'no_sbp' => ['required', 'string', 'max:255', 'unique:penindakan,no_sbp'],
-                'tanggal_sbp' => ['required', 'date'],
-                'lokasi_penindakan' => ['required', 'string'],
-                'pelaku' => ['required', 'string', 'max:255'],
-                'uraian_bhp' => ['required', 'string'],
-                'jumlah' => ['required', 'integer', 'min:1'],
-                'perkiraan_nilai_barang' => ['required', 'numeric', 'min:0'],
-                'potensi_kurang_bayar' => ['required', 'numeric', 'min:0'],
-            ]),
+            'intelijen' => $request->validate(IntelijenRequest::rules()),
+            'penyidikan' => $request->validate(PenyidikanRequest::rules()),
+            'penindakan' => $request->validate(PenindakanRequest::rules()),
             default => throw new Exception('Tipe entitas tidak valid'),
         };
     }
