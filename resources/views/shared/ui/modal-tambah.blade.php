@@ -7,11 +7,31 @@
     'title' => 'Tambah Data',
 ])
     <form id="formulir-tambah-data" class="space-y-6" method="POST" 
-        action="{{ route('data.store') }}"
-        x-data="{ entity_type: '{{ $active_tab }}' }"
+        x-data="{ 
+            entity_type: '{{ $active_tab }}',
+            formAction() {
+                switch(this.entity_type) {
+                    case 'intelijen':
+                        return '{{ route('intelijen.store') }}';
+                    case 'penyidikan':
+                        return '{{ route('penyidikan.store') }}';
+                    case 'penindakan':
+                        return '{{ route('penindakan.store') }}';
+                    default:
+                        return '{{ route('intelijen.store') }}';
+                }
+            },
+            init() {
+                this.$watch('entity_type', value => {
+                    this.$el.action = this.formAction();
+                });
+            }
+        }"
+        :action="formAction()"
+        x-init="init()"
         x-ref="form">
         @csrf
-        <input type="hidden" name="entity_type" id="entity_type" value="{{ $active_tab }}">
+        <input type="hidden" name="entity_type" id="entity_type" x-model="entity_type">
         @include('shared.ui.navigation', [
             'tabs' => [
                 ['id' => 'intelijen', 'label' => 'Intelijen', 'active' => $active_tab === 'intelijen'],
@@ -74,12 +94,6 @@
         {{-- Penyidikan --}}
         <section class="tab-content {{ $active_tab === 'penyidikan' ? 'active' : 'hidden' }}" id="penyidikan-content">
             <div class="grid grid-cols-1 gap-6">
-                @include('shared.forms.select', [
-                    'label' => 'Intelijen Terkait',
-                    'name' => 'intelijen_id',
-                    'options' => App\Models\Intelijen::pluck('no_nhi', 'id'),
-                    'data_required' => true
-                ])
                 @include('shared.forms.input', [
                     'label' => 'No. SPDP',
                     'name' => 'no_spdp',
@@ -109,12 +123,6 @@
          {{-- Penindakan --}}    
         <section class="tab-content {{ $active_tab === 'penindakan' ? 'active' : 'hidden' }}" id="penindakan-content">
             <div class="grid grid-cols-1 gap-6">
-                @include('shared.forms.select', [
-                    'label' => 'Penyidikan Terkait',
-                    'name' => 'penyidikan_id',
-                    'options' => App\Models\Penyidikan::pluck('no_spdp', 'id'),
-                    'data_required' => true
-                ])
                 @include('shared.forms.input', [
                     'label' => 'No. SBP',
                     'name' => 'no_sbp',

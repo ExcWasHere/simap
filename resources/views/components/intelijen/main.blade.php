@@ -8,9 +8,8 @@
         'section' => 'intelijen',
     ])
     @include('shared.tables.table', [
-        'headers' => ['No', 'No NHI', 'Tgl NHI', 'Tempat', 'Jenis', 'Jumlah Barang', 'Keterangan'],
-        'rows' => $rows,
-        'id_modul' => $id_modul
+        'headers' => ['No', 'No NHI', 'Tgl NHI', 'Tempat', 'Jenis', 'Jumlah Barang', 'Kemasan', 'Keterangan'],
+        'rows' => $rows
     ])
     {{ $intelijen->links() }}
 

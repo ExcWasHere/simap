@@ -10,10 +10,10 @@
     };
 
     $uploadRoute = match($section) {
-        'intelijen' => 'intelijen.dokumen.upload',
-        'monitoring' => 'monitoring.dokumen.upload',
-        'penindakan' => 'penindakan.dokumen.upload',
-        'penyidikan' => 'penyidikan.dokumen.upload',
+        'intelijen' => 'intelijen.upload.dokumen',
+        'monitoring' => 'monitoring.upload.dokumen',
+        'penindakan' => 'penindakan.upload.dokumen',
+        'penyidikan' => 'penyidikan.upload.dokumen',
         default => 'dokumen.upload'
     };
 @endphp
@@ -29,7 +29,6 @@
                         onclick="return confirm('Apakah Anda yakin ingin menghapus dokumen ini?')" 
                         class="p-1.5 h-10 w-10 bg-white/80 backdrop-blur-sm text-gray-400 rounded-lg 
                                hover:bg-red-50 hover:text-red-500 
-
                                focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 
                                transition-all duration-200 group-hover:bg-red-50 group-hover:text-red-500
                                border border-gray-200 group-hover:border-red-200">
@@ -37,7 +36,7 @@
                     </button>
                 </form>
 
-                <a href="{{ asset($document->file_path) }}" class="block group-hover:scale-[0.99] transition-transform duration-200">
+                <a href="{{ asset('storage/' . $document->file_path) }}" class="block group-hover:scale-[0.99] transition-transform duration-200" target="_blank">
                     <div class="p-6 flex flex-col items-center justify-center h-40 space-y-3">
                         @if(Str::endsWith($document->file_path, '.pdf'))
                             <div class="relative">
@@ -105,4 +104,9 @@
             </div>
         </a>
     </div>
-</div> 
+</div>
+
+@include('components.unggah-dokumen.main', [
+    'reference_id' => $reference_id,
+    'section' => $section
+]) 

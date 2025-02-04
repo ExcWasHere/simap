@@ -1,219 +1,232 @@
-<div class="min-h-screen">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="px-8 py-6 border-b border-gray-100">
-                <h2 class="text-2xl font-semibold text-gray-800">Upload Dokumen Baru</h2>
-                <p class="mt-1 text-sm text-gray-500">Unggah dokumen PDF untuk melengkapi data</p>
-            </div>
+@props(['reference_id', 'section'])
 
-            @if(session('success'))
-                <div class="mx-8 mt-6">
-                    <div class="rounded-lg bg-green-50 p-4">
-                        <div class="flex">
-                            <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
-
-            @if($errors->any())
-                <div class="mx-8 mt-6">
-                    <div class="rounded-lg bg-red-50 p-4">
-                        <div class="flex">
-                            <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                <h3 class="text-sm font-medium text-red-800">Terdapat beberapa kesalahan:</h3>
-                                <div class="mt-2 text-sm text-red-700">
-                                    <ul class="list-disc list-inside">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
-
-            @php
-                $current_section = request()->segment(1) ?: 'intelijen';
-                
-                $reference_param = match($current_section) {
-                    'intelijen' => 'no_nhi',
-                    'monitoring' => 'id',
-                    'penindakan' => 'no_sbp',
-                    'penyidikan' => 'no_spdp',
-                    default => null
-                };
-                
-                $referenceId = $reference_id ?? request()->query($reference_param);
-                
-                $uploadRoute = match($current_section) {
-                    'intelijen' => 'intelijen.upload.dokumen',
-                    'monitoring' => 'monitoring.upload.dokumen',
-                    'penindakan' => 'penindakan.upload.dokumen',
-                    'penyidikan' => 'penyidikan.upload.dokumen',
-                    default => 'intelijen.upload.dokumen'
-                };
-            @endphp
-
-            <form action="{{ route($uploadRoute, [$reference_param => $referenceId]) }}" method="POST" enctype="multipart/form-data" class="space-y-8 px-8 py-6">
-                @csrf
-                <input type="hidden" name="tipe" value="{{ $current_section }}">
-                
-                <div class="space-y-2">
-                    <label for="tipe" class="block text-sm font-medium text-gray-700">
-                        Tipe Dokumen
-                    </label>
-                    <select name="sub_tipe" id="tipe"
-                        class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                        required>
-                        <option value="">Pilih Tipe Dokumen</option>
-
-                        @switch($current_section)
-                            @case('intelijen')
-                                <option value="ST-I">ST-I</option>
-                                <option value="LPTI">LPTI</option>
-                                <option value="LPPI">LPPI</option>
-                                <option value="LKAI">LKAI</option>
-                                <option value="NHI">NHI</option>
-                                <option value="NI">NI</option>
-                                @break
-
-                            @case('penyidikan')
-                                <option value="LK">LK</option>
-                                <option value="SPTP">SPTP</option>
-                                <option value="SPDP">SPDP</option>
-                                <option value="TAP SITA">TAP SITA</option>
-                                <option value="P2I">P2I</option>
-                                @break
-
-                            @case('monitoring')
-                                <option value="KEP-BDN">KEP-BDN</option>
-                                <option value="KEP-BMN">KEP-BMN</option>
-                                <option value="KEP-UR">KEP-UR</option>
-                                <option value="STCK">STCK</option>
-                                @break
-
-                            @case('penindakan')
-                                <option value="PRIN">PRIN</option>
-                                <option value="ST">ST</option>
-                                <option value="BA-Pemeriksaan">BA-Pemeriksaan</option>
-                                <option value="BA-Penegahan">BA-Penegahan</option>
-                                <option value="BAST">BAST</option>
-                                <option value="BA-Dokumentasi">BA-Dokumentasi</option>
-                                <option value="BA-Pencacahan">BA-Pencacahan</option>
-                                <option value="BA-Penyegelan">BA-Penyegelan</option>
-                                <option value="SBP">SBP</option>
-                                <option value="LPHP">LPHP</option>
-                                <option value="LP/LP1">LP/LP1</option>
-                                <option value="LPP">LPP</option>
-                                <option value="LPF">LPF</option>
-                                <option value="SPLIT">SPLIT</option>
-                                <option value="LHP">LHP</option>
-                                <option value="LRP">LRP</option>
-                                @break
-                        @endswitch
-                    </select>
-                </div>
-
-                <div class="space-y-2">
-                    <label for="deskripsi" class="block text-sm font-medium text-gray-700">
-                        Deskripsi
-                    </label>
-                    <textarea name="deskripsi" id="deskripsi" rows="4"
-                        class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                        placeholder="Masukkan deskripsi dokumen"></textarea>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-700">
-                        Upload File PDF
-                    </label>
-                    <div class="mt-1 flex justify-center rounded-lg border-2 border-dashed border-gray-300 px-6 pt-5 pb-6 relative" id="dropZone">
-                        <div class="space-y-1 text-center" id="uploadState">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+<div id="modal-upload" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true" style="display: none;">
+    <div class="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
+        
+        <div class="relative inline-block transform overflow-hidden rounded-lg bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-3xl sm:align-middle">
+            <div class="bg-white">
+                <div class="px-8 py-6 border-b border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-2xl font-semibold text-gray-800">Upload Dokumen Baru</h2>
+                        <button type="button" class="close-modal text-gray-400 hover:text-gray-500">
+                            <span class="sr-only">Close</span>
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
-                            <div class="flex text-sm text-gray-600 justify-center">
-                                <label for="file" class="relative cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                    <span>Upload file</span>
-                                    <input id="file" name="file" type="file" class="sr-only" accept=".pdf" required>
-                                </label>
-                                <p class="pl-1">atau drag and drop</p>
-                            </div>
-                            <p class="text-xs text-gray-500">PDF hingga 10MB</p>
-                        </div>
+                        </button>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-500">Unggah dokumen PDF untuk melengkapi data</p>
+                </div>
 
-                        <div id="selectedFileState" class="hidden w-full">
-                            <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg border border-gray-200">
-                                <div class="flex items-center space-x-3">
-                                    <div class="flex-shrink-0">
-                                        <i class="fa-solid fa-file-pdf text-red-500 text-2xl"></i>
-                                    </div>
-                                    <div class="min-w-0 flex-1">
-                                        <p id="selected-file" class="text-sm font-medium text-gray-900 truncate"></p>
-                                        <p id="file-size" class="text-sm text-gray-500"></p>
-                                    </div>
-                                </div>
-                                <button type="button" id="removeFile" class="inline-flex items-center rounded-full border border-gray-200 p-1 text-gray-400 hover:bg-gray-50 hover:text-gray-500">
-                                    <span class="sr-only">Remove file</span>
-                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                @if(session('success'))
+                    <div class="mx-8 mt-6">
+                        <div class="rounded-lg bg-green-50 p-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                     </svg>
-                                </button>
-                            </div>
-                            <div id="upload-progress" class="hidden mt-4">
-                                <div class="flex justify-between text-sm text-gray-600 mb-1">
-                                    <span>Upload Progress</span>
-                                    <span id="progress-percentage">0%</span>
                                 </div>
-                                <div class="overflow-hidden rounded-full bg-gray-200">
-                                    <div id="progress-bar" class="h-2 rounded-full bg-blue-600 transition-all duration-300" style="width: 0%"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="dragOverState" class="hidden absolute inset-0 backdrop-blur-sm bg-blue-50/90 rounded-lg border-2 border-blue-500">
-                            <div class="flex items-center justify-center h-full">
-                                <div class="text-center">
-                                    <i class="fa-solid fa-file-arrow-down text-blue-500 text-4xl mb-2"></i>
-                                    <p class="text-blue-600 font-medium">Lepaskan file untuk mengunggah</p>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                @endif
 
-                <div class="flex justify-end border-t border-gray-100 pt-6">
-                    <button id="upload-button" type="submit"
-                        class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                        <span id="button-text">Upload Dokumen</span>
-                        <svg id="loading-spinner" class="hidden animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </button>
-                </div>
-            </form>
+                @if($errors->any())
+                    <div class="mx-8 mt-6">
+                        <div class="rounded-lg bg-red-50 p-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-red-800">Terdapat beberapa kesalahan:</h3>
+                                    <div class="mt-2 text-sm text-red-700">
+                                        <ul class="list-disc list-inside">
+                                            @foreach($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                @php
+                    $reference_param = match($section) {
+                        'intelijen' => 'no_nhi',
+                        'monitoring' => 'id',
+                        'penindakan' => 'no_sbp',
+                        'penyidikan' => 'no_spdp',
+                        default => 'id'
+                    };
+                    
+                    $uploadRoute = match($section) {
+                        'intelijen' => 'intelijen.upload.dokumen',
+                        'monitoring' => 'monitoring.upload.dokumen',
+                        'penindakan' => 'penindakan.upload.dokumen',
+                        'penyidikan' => 'penyidikan.upload.dokumen',
+                        default => 'intelijen.upload.dokumen'
+                    };
+                @endphp
+
+                <form action="{{ route($uploadRoute, [$reference_param => $reference_id]) }}" method="POST" enctype="multipart/form-data" class="space-y-8 px-8 py-6">
+                    @csrf
+                    <input type="hidden" name="tipe" value="{{ $section }}">
+                    
+                    <div class="space-y-2">
+                        <label for="tipe" class="block text-sm font-medium text-gray-700">
+                            Tipe Dokumen
+                        </label>
+                        <select name="sub_tipe" id="tipe"
+                            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            required>
+                            <option value="">Pilih Tipe Dokumen</option>
+
+                            @switch($section)
+                                @case('intelijen')
+                                    <option value="ST-I">ST-I</option>
+                                    <option value="LPTI">LPTI</option>
+                                    <option value="LPPI">LPPI</option>
+                                    <option value="LKAI">LKAI</option>
+                                    <option value="NHI">NHI</option>
+                                    <option value="NI">NI</option>
+                                    @break
+
+                                @case('penyidikan')
+                                    <option value="LK">LK</option>
+                                    <option value="SPTP">SPTP</option>
+                                    <option value="SPDP">SPDP</option>
+                                    <option value="TAP SITA">TAP SITA</option>
+                                    <option value="P2I">P2I</option>
+                                    @break
+
+                                @case('monitoring')
+                                    <option value="KEP-BDN">KEP-BDN</option>
+                                    <option value="KEP-BMN">KEP-BMN</option>
+                                    <option value="KEP-UR">KEP-UR</option>
+                                    <option value="STCK">STCK</option>
+                                    @break
+
+                                @case('penindakan')
+                                    <option value="PRIN">PRIN</option>
+                                    <option value="ST">ST</option>
+                                    <option value="BA-Pemeriksaan">BA-Pemeriksaan</option>
+                                    <option value="BA-Penegahan">BA-Penegahan</option>
+                                    <option value="BAST">BAST</option>
+                                    <option value="BA-Dokumentasi">BA-Dokumentasi</option>
+                                    <option value="BA-Pencacahan">BA-Pencacahan</option>
+                                    <option value="BA-Penyegelan">BA-Penyegelan</option>
+                                    <option value="SBP">SBP</option>
+                                    <option value="LPHP">LPHP</option>
+                                    <option value="LP/LP1">LP/LP1</option>
+                                    <option value="LPP">LPP</option>
+                                    <option value="LPF">LPF</option>
+                                    <option value="SPLIT">SPLIT</option>
+                                    <option value="LHP">LHP</option>
+                                    <option value="LRP">LRP</option>
+                                    @break
+                            @endswitch
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="deskripsi" class="block text-sm font-medium text-gray-700">
+                            Deskripsi
+                        </label>
+                        <textarea name="deskripsi" id="deskripsi" rows="4"
+                            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                            placeholder="Masukkan deskripsi dokumen"></textarea>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">
+                            Upload File PDF
+                        </label>
+                        <div class="mt-1 flex justify-center rounded-lg border-2 border-dashed border-gray-300 px-6 pt-5 pb-6 relative" id="dropZone">
+                            <div class="space-y-1 text-center" id="uploadState">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <div class="flex text-sm text-gray-600 justify-center">
+                                    <label for="file" class="relative cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                        <span>Upload file</span>
+                                        <input id="file" name="file" type="file" class="sr-only" accept=".pdf" required>
+                                    </label>
+                                    <p class="pl-1">atau drag and drop</p>
+                                </div>
+                                <p class="text-xs text-gray-500">PDF hingga 10MB</p>
+                            </div>
+
+                            <div id="selectedFileState" class="hidden w-full">
+                                <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="flex-shrink-0">
+                                            <i class="fa-solid fa-file-pdf text-red-500 text-2xl"></i>
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <p id="selected-file" class="text-sm font-medium text-gray-900 truncate"></p>
+                                            <p id="file-size" class="text-sm text-gray-500"></p>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="removeFile" class="inline-flex items-center rounded-full border border-gray-200 p-1 text-gray-400 hover:bg-gray-50 hover:text-gray-500">
+                                        <span class="sr-only">Remove file</span>
+                                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div id="upload-progress" class="hidden mt-4">
+                                    <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                        <span>Upload Progress</span>
+                                        <span id="progress-percentage">0%</span>
+                                    </div>
+                                    <div class="overflow-hidden rounded-full bg-gray-200">
+                                        <div id="progress-bar" class="h-2 rounded-full bg-blue-600 transition-all duration-300" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="dragOverState" class="hidden absolute inset-0 backdrop-blur-sm bg-blue-50/90 rounded-lg border-2 border-blue-500">
+                                <div class="flex items-center justify-center h-full">
+                                    <div class="text-center">
+                                        <i class="fa-solid fa-file-arrow-down text-blue-500 text-4xl mb-2"></i>
+                                        <p class="text-blue-600 font-medium">Lepaskan file untuk mengunggah</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end border-t border-gray-100 pt-6">
+                        <button id="upload-button" type="submit"
+                            class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span id="button-text">Upload Dokumen</span>
+                            <svg id="loading-spinner" class="hidden animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('modal-upload');
+    const closeButton = modal.querySelector('.close-modal');
     const fileInput = document.getElementById('file');
     const selectedFile = document.getElementById('selected-file');
     const dropZone = fileInput.closest('.border-dashed');
@@ -230,8 +243,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const progressBar = document.getElementById('progress-bar');
     const progressPercentage = document.getElementById('progress-percentage');
 
-    const currentPath = window.location.pathname;
-    const section = currentPath.split('/')[1] || 'intelijen';
+    // Show modal when upload button is clicked
+    document.querySelectorAll('[data-modal-target="modal-upload"]').forEach(button => {
+        button.addEventListener('click', () => {
+            modal.style.display = 'block';
+        });
+    });
+
+    // Close modal when close button is clicked
+    closeButton.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
 
     function setUploadingState(isUploading) {
         uploadButton.disabled = isUploading;
@@ -251,27 +280,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showUploadError(message) {
         const errorDiv = document.createElement('div');
-        errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 fixed top-4 right-4 z-50';
-        errorDiv.innerHTML = `
-            <strong class="font-bold">Error!</strong>
-            <p class="block">${message}</p>
-        `;
+        errorDiv.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 transform translate-y-0';
+        errorDiv.innerHTML = `<div class="flex items-center gap-2"><i class="fas fa-exclamation-circle"></i> ${message}</div>`;
         document.body.appendChild(errorDiv);
-        setTimeout(() => errorDiv.remove(), 5000);
+        setTimeout(() => {
+            errorDiv.style.opacity = '0';
+            setTimeout(() => errorDiv.remove(), 500);
+        }, 3000);
     }
 
     function showUploadSuccess(message) {
         const successDiv = document.createElement('div');
-        successDiv.className = 'bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 fixed top-4 right-4 z-50';
-        successDiv.innerHTML = `
-            <strong class="font-bold">Berhasil!</strong>
-            <p class="block">${message}</p>
-        `;
+        successDiv.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 transform translate-y-0';
+        successDiv.innerHTML = `<div class="flex items-center gap-2"><i class="fas fa-check-circle"></i> ${message}</div>`;
         document.body.appendChild(successDiv);
         setTimeout(() => {
-            successDiv.remove();
-            window.location.reload();
-        }, 2000);
+            successDiv.style.opacity = '0';
+            setTimeout(() => successDiv.remove(), 500);
+        }, 3000);
     }
 
     function formatFileSize(bytes) {
@@ -367,25 +393,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            const reader = response.body.getReader();
-            const contentLength = +response.headers.get('Content-Length');
-
-            let receivedLength = 0;
-            while(true) {
-                const {done, value} = await reader.read();
-
-                if (done) {
-                    break;
-                }
-
-                receivedLength += value.length;
-                const percent = Math.round((receivedLength / contentLength) * 100);
-                progressBar.style.width = percent + '%';
-                progressPercentage.textContent = percent + '%';
-            }
-
             if (response.ok) {
                 showUploadSuccess('File berhasil diunggah!');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
             } else {
                 const data = await response.json();
                 showUploadError(data.message || 'Terjadi kesalahan saat mengunggah file.');

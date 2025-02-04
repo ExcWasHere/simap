@@ -16,7 +16,7 @@
         <h1 class="mx-auto mb-6 text-2xl font-semibold text-gray-900">
             Tambah Data
         </h1>
-        <form id="formulir-tambah-data" class="space-y-6" method="POST" action="{{ route('data.store') }}">
+        <form id="formulir-tambah-data" class="space-y-6" method="POST" action="{{ route('penyidikan.store') }}">
             @csrf
             <input type="hidden" name="entity_type" id="entity_type" value="{{ $active_tab }}">
             @if ($errors->any())

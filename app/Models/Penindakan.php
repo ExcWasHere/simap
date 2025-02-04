@@ -18,7 +18,6 @@ class Penindakan extends Model
 
     protected $fillable = [
         'no_sbp',
-        'penyidikan_id',
         'tanggal_sbp',
         'lokasi_penindakan',
         'pelaku',
@@ -39,11 +38,6 @@ class Penindakan extends Model
         'potensi_kurang_bayar' => 'decimal:2'
     ];
 
-    public function penyidikan(): BelongsTo
-    {
-        return $this->belongsTo(Penyidikan::class);
-    }
-
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -52,22 +46,6 @@ class Penindakan extends Model
     public function updater(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by');
-    }
-
-    public function isProcessable(): bool
-    {
-        return $this->status === 'open';
-    }
-
-    public function markAsProcessed(): void
-    {
-        $this->status = 'processed';
-        $this->save();
-    }
-
-    public function intelijen()
-    {
-        return $this->belongsTo(Intelijen::class, 'no_nhi', 'no_nhi');
     }
 
     public function dokumen()

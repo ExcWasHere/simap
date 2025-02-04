@@ -30,16 +30,9 @@ class Penyidikan extends Controller
         if ($date_to = $request->input('date_to'))
             $query->whereDate('tanggal_spdp', '<=', $date_to);
 
-        $penyidikan = $query->with(['intelijen', 'penindakan'])->latest()->paginate(10)->withQueryString();
+        $penyidikan = $query->latest()->paginate(10)->withQueryString();
 
-        $id_modul = [];
-        $rows = $penyidikan->map(function ($item, $index) use ($penyidikan, &$id_modul) {
-            $id_modul[$index] = [
-                'intelijen' => $item->intelijen->no_nhi,
-                'penyidikan' => $item->no_spdp,
-                'penindakan' => optional($item->penindakan->first())->no_sbp ?? null,
-            ];
-
+        $rows = $penyidikan->map(function ($item, $index) use ($penyidikan) {
             return [
                 ($penyidikan->currentPage() - 1) * $penyidikan->perPage() + $index + 1,
                 $item->no_spdp,
@@ -51,9 +44,43 @@ class Penyidikan extends Controller
 
         return view('pages.penyidikan', [
             'rows' => $rows,
-            'penyidikan' => $penyidikan,
-            'id_modul' => $id_modul
+            'penyidikan' => $penyidikan
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $validated = $request->validate([
+                'no_spdp' => ['required', 'string', 'max:255', 'unique:penyidikan,no_spdp'],
+                'tanggal_spdp' => ['required', 'date'],
+                'pelaku' => ['required', 'string', 'max:255'],
+                'penyidikan_keterangan' => ['nullable', 'string'],
+            ]);
+
+            $validated['keterangan'] = $validated['penyidikan_keterangan'] ?? null;
+            unset($validated['penyidikan_keterangan']);
+            $validated['created_by'] = Auth::id();
+
+            PenyidikanModel::create($validated);
+            DB::commit();
+
+            return redirect()
+                ->route('penyidikan')
+                ->with('success', 'Data penyidikan berhasil disimpan');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Error in storing penyidikan: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['error' => 'Gagal menyimpan data penyidikan: ' . $e->getMessage()]);
+        }
     }
 
     public function destroy($no_spdp)
@@ -61,20 +88,9 @@ class Penyidikan extends Controller
         try {
             DB::beginTransaction();
 
-            $penyidikan = PenyidikanModel::with('penindakan')
-                ->whereNull('deleted_at')
+            $penyidikan = PenyidikanModel::whereNull('deleted_at')
                 ->where('no_spdp', $no_spdp)
                 ->firstOrFail();
-
-            foreach ($penyidikan->penindakan as $penindakan) {
-                $timestamp = now()->format('YmdHis');
-                $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
-                $suffix = "_deleted_{$timestamp}{$random}";
-
-                $penindakan->no_sbp = $penindakan->no_sbp . $suffix;
-                $penindakan->save();
-                $penindakan->delete();
-            }
 
             $timestamp = now()->format('YmdHis');
             $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
@@ -94,10 +110,11 @@ class Penyidikan extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error deleting penyidikan: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghapus data penyidikan'
+                'message' => 'Gagal menghapus data penyidikan: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -172,7 +189,7 @@ class Penyidikan extends Controller
             if ($duplicate_exists) throw new Exception('Nomor SPDP sudah digunakan.');
 
             $validated = $request->validate([
-                'no_spdp' => ['required', 'string', 'max:255'],
+                'no_spdp' => ['required', 'string', 'max:255', 'unique:penyidikan,no_spdp,' . $penyidikan->id],
                 'tanggal_spdp' => ['required', 'date'],
                 'pelaku' => ['required', 'string', 'max:255'],
                 'intelijen_id' => ['required', 'exists:intelijen,id'],

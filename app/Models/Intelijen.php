@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Intelijen extends Model
@@ -20,6 +19,7 @@ class Intelijen extends Model
         'tempat',
         'jenis_barang',
         'jumlah_barang',
+        'kemasan',
         'keterangan',
         'status',
         'created_by',
@@ -28,13 +28,9 @@ class Intelijen extends Model
 
     protected $casts = [
         'tanggal_nhi' => 'datetime',
-        'status' => 'string'
+        'status' => 'string',
+        'kemasan' => 'string'
     ];
-
-    public function penyidikan(): HasMany
-    {
-        return $this->hasMany(Penyidikan::class, 'intelijen_id');
-    }
 
     public function dokumen()
     {
@@ -49,21 +45,6 @@ class Intelijen extends Model
     public function updater(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by');
-    }
-
-    public function isProcessable(): bool
-    {
-        return $this->status === 'open';
-    }
-
-    public function markAsProcessed(): void
-    {
-        $this->update(['status' => 'processed']);
-    }
-
-    public function markAsClosed(): void
-    {
-        $this->update(['status' => 'closed']);
     }
 
     protected static function boot()

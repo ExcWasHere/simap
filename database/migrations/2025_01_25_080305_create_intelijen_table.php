@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('tempat');
             $table->string('jenis_barang');
             $table->integer('jumlah_barang');
+            $table->enum('kemasan', ['liter', 'batang']);
             $table->text('keterangan')->nullable();
             $table->enum('status', ['open', 'processed', 'closed'])->default('open');
             $table->foreignId('created_by')->constrained('users');

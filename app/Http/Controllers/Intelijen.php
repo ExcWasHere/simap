@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Intelijen as IntelijenModel;
-use App\Models\Penyidikan as PenyidikanModel;
-use App\Models\Penindakan as PenindakanModel;
 use App\Models\Dokumen;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -34,19 +32,9 @@ class Intelijen extends Controller
         if ($date_to = $request->input('date_to'))
             $query->whereDate('tanggal_nhi', '<=', $date_to);
 
-        $intelijen = $query->with('penyidikan.penindakan')->latest()->paginate(10);
+        $intelijen = $query->latest()->paginate(10);
 
-        $id_modul = [];
-        $rows = $intelijen->map(function ($item, $index) use (&$id_modul, $intelijen) {
-            $penyidikan = optional($item->penyidikan)->first();
-            $penindakan = optional(optional($penyidikan)->penindakan)->first();
-
-            $id_modul[$index] = [
-                'intelijen' => $item->no_nhi,
-                'penyidikan' => optional($penyidikan)->no_spdp,
-                'penindakan' => optional($penindakan)->no_sbp,
-            ];
-
+        $rows = $intelijen->map(function ($item, $index) use ($intelijen) {
             return [
                 ($intelijen->currentPage() - 1) * $intelijen->perPage() + $index + 1,
                 $item->no_nhi,
@@ -54,93 +42,89 @@ class Intelijen extends Controller
                 $item->tempat,
                 $item->jenis_barang,
                 $item->jumlah_barang,
+                $item->kemasan,
                 $item->keterangan,
             ];
         })->toArray();
 
         return view('pages.intelijen', [
             'rows' => $rows,
-            'intelijen' => $intelijen,
-            'id_modul' => $id_modul
+            'intelijen' => $intelijen
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $validated = $request->validate([
+                'no_nhi' => ['required', 'string', 'max:255', 'unique:intelijen,no_nhi'],
+                'tanggal_nhi' => ['required', 'date'],
+                'tempat' => ['required', 'string', 'max:255'],
+                'jenis_barang' => ['required', 'string', 'max:255'],
+                'jumlah_barang' => ['required', 'integer', 'min:1'],
+                'kemasan' => ['nullable', 'string', 'in:liter,batang'],
+                'intelijen_keterangan' => ['nullable', 'string'],
+            ]);
+
+            $validated['keterangan'] = $validated['intelijen_keterangan'] ?? null;
+            unset($validated['intelijen_keterangan']);
+            $validated['created_by'] = Auth::id();
+
+            IntelijenModel::create($validated);
+            DB::commit();
+
+            return redirect()
+                ->route('intelijen')
+                ->with('success', 'Data intelijen berhasil disimpan');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Error in storing intelijen: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['error' => 'Gagal menyimpan data intelijen: ' . $e->getMessage()]);
+        }
     }
 
     public function destroy($no_nhi)
     {
         try {
             DB::beginTransaction();
+            Log::info('Attempting to delete Intelijen record with no_nhi: ' . $no_nhi);
 
-            $intelijen = IntelijenModel::with(['penyidikan.penindakan'])
+            $intelijen = IntelijenModel::whereNull('deleted_at')
                 ->where('no_nhi', $no_nhi)
                 ->firstOrFail();
 
-            Log::info('Found Intelijen record with ID: ' . $no_nhi);
+            $timestamp = now()->format('YmdHis');
+            $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
+            $suffix = "_deleted_{$timestamp}{$random}";
 
-            $id_penyidikan = $intelijen->penyidikan->pluck('id')->toArray();
-            $id_penindakan = [];
-
-            foreach ($intelijen->penyidikan as $penyidikan) {
-                $id_penindakan = array_merge(
-                    $id_penindakan,
-                    $penyidikan->penindakan->pluck('id')->toArray()
-                );
-            }
-
-            Log::info('Found related Penyidikan records: ' . implode(', ', $id_penyidikan));
-            Log::info('Found related Penindakan records: ' . implode(', ', $id_penindakan));
-
-            if (!empty($id_penindakan)) {
-                foreach ($id_penindakan as $id) {
-                    Dokumen::where('tipe', 'penindakan')
-                        ->where('reference_id', $id)
-                        ->delete();
-                }
-                Log::info('Deleted Penindakan documents');
-
-                PenindakanModel::whereIn('id', $id_penindakan)->delete();
-                Log::info('Soft deleted Penindakan records');
-            }
-
-            if (!empty($id_penyidikan)) {
-                foreach ($id_penyidikan as $id) {
-                    Dokumen::where('tipe', 'penyidikan')
-                        ->where('reference_id', $id)
-                        ->delete();
-                }
-                Log::info('Deleted Penyidikan documents');
-                PenyidikanModel::whereIn('id', $id_penyidikan)->delete();
-                Log::info('Soft deleted Penyidikan records');
-            }
-
-            Dokumen::where('tipe', 'intelijen')
-                ->where('reference_id', $no_nhi)
-                ->delete();
-
-            Log::info('Deleted Intelijen documents');
-
+            $intelijen->no_nhi = $intelijen->no_nhi . $suffix;
+            $intelijen->save();
             $intelijen->delete();
-            Log::info('Soft deleted Intelijen record');
 
+            Log::info('Successfully deleted Intelijen record');
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data intelijen dan semua data terkait berhasil dihapus',
-                'deleted' => [
-                    'intelijen' => $no_nhi,
-                    'penyidikan' => $id_penyidikan,
-                    'penindakan' => $id_penindakan
-                ]
+                'message' => 'Data intelijen berhasil dihapus'
             ]);
 
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Error in cascade deletion for intelijen: ' . $e->getMessage());
+            Log::error('Error deleting intelijen: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghapus data intelijen dan data terkait: ' . $e->getMessage()
+                'message' => 'Gagal menghapus data intelijen: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -164,6 +148,7 @@ class Intelijen extends Controller
                 'jumlah_barang' => ['required', 'integer', 'min:1'],
                 'tanggal_nhi' => ['required', 'date'],
                 'jenis_barang' => ['required', 'string', 'max:255'],
+                'kemasan' => ['nullable', 'string', 'in:liter,batang'],
                 'keterangan' => ['nullable', 'string'],
             ]);
 

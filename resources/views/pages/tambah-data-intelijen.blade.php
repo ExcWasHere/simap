@@ -16,9 +16,8 @@
         <h1 class="mx-auto mb-6 text-2xl font-semibold text-gray-900">
             Tambah Data
         </h1>
-        <form id="formulir-tambah-data" class="space-y-6" method="POST" action="{{ route('data.store') }}">
+        <form id="formulir-tambah-data" class="space-y-6" method="POST" action="{{ route('intelijen.store') }}">
             @csrf
-            <input type="hidden" name="entity_type" id="entity_type" value="{{ $active_tab }}">
             @if ($errors->any())
                 <ul class="mb-4 p-4 bg-red-50 list-disc pl-5 text-red-700 rounded-lg">
                     @foreach ($errors->all() as $error)
@@ -27,7 +26,7 @@
                 </ul>
             @endif
             <section
-                class="tab-content {{ $active_tab === 'intelijen' ? 'active' : 'hidden' }}"
+                class="tab-content active"
                 id="intelijen-content"
                 data-content="intelijen"
             >

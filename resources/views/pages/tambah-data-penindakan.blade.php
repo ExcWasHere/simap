@@ -16,7 +16,7 @@
         <h1 class="mx-auto mb-6 text-2xl font-semibold text-gray-900">
             Tambah Data
         </h1>
-        <form id="formulir-tambah-data" class="space-y-6" method="POST" action="{{ route('data.store') }}">
+        <form id="formulir-tambah-data" class="space-y-6" method="POST" action="{{ route('penindakan.store') }}">
             @csrf
             <input type="hidden" name="entity_type" id="entity_type" value="{{ $active_tab }}">
             @if ($errors->any())
@@ -44,6 +44,12 @@
                         'type' => 'date',
                         'data_required' => true,
                     ])
+                    @include('shared.forms.input', [
+                        'label' => 'Pelaku',
+                        'name' => 'pelaku',
+                        'type' => 'text',
+                        'data_required' => true,
+                    ])
                     @include('shared.forms.textarea', [
                         'label' => 'Lokasi Penindakan',
                         'name' => 'lokasi_penindakan',
@@ -60,6 +66,12 @@
                         'label' => 'Jumlah',
                         'name' => 'jumlah',
                         'type' => 'number',
+                        'data_required' => true,
+                    ])
+                    @include('shared.forms.input', [
+                        'label' => 'Kemasan',
+                        'name' => 'kemasan',
+                        'type' => 'text',
                         'data_required' => true,
                     ])
                     @include('shared.forms.mata-uang', [

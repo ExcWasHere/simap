@@ -22,15 +22,4 @@ class Dokumen extends Model
     {
         return $this->belongsTo(User::class, 'uploaded_by');
     }
-
-    public function parent()
-    {
-        return match ($this->tipe) {
-            'intelijen' => $this->belongsTo(Intelijen::class, 'reference_id'),
-            'penyidikan' => $this->belongsTo(Penyidikan::class, 'reference_id'),
-            'penindakan' => $this->belongsTo(Penindakan::class, 'reference_id'),
-            'monitoring' => $this->belongsTo(Intelijen::class, 'reference_id'),
-            default => null
-        };
-    }
 }

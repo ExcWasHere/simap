@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Penindakan as PenindakanModel;
-use App\Models\Penyidikan as PenyidikanModel;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,24 +26,14 @@ class Penindakan extends Controller
             });
         }
 
-        if ($date_from = $request->input('date_from')) $query->whereDate('tanggal_sbp', '>=', $date_from);
-        if ($date_to = $request->input('date_to')) $query->whereDate('tanggal_sbp', '<=', $date_to);
+        if ($date_from = $request->input('date_from')) 
+            $query->whereDate('tanggal_sbp', '>=', $date_from);
+        if ($date_to = $request->input('date_to')) 
+            $query->whereDate('tanggal_sbp', '<=', $date_to);
 
-        $penindakan = $query->with(['penyidikan.intelijen'])->latest()->paginate(10)->withQueryString();
+        $penindakan = $query->latest()->paginate(10)->withQueryString();
 
-        $opsi_penyidikan = PenyidikanModel::whereNull('deleted_at')
-            ->orderBy('no_spdp')
-            ->get()
-            ->pluck('no_spdp', 'id');
-
-        $id_modul = [];
-        $rows = $penindakan->map(function ($item, $index) use ($penindakan, &$id_modul) {
-            $id_modul[$index] = [
-                'intelijen' => optional(optional($item->penyidikan)->intelijen)->no_nhi ?? null,
-                'penyidikan' => optional($item->penyidikan)->no_spdp ?? null,
-                'penindakan' => $item->no_sbp,
-            ];
-
+        $rows = $penindakan->map(function ($item, $index) use ($penindakan) {
             return [
                 ($penindakan->currentPage() - 1) * $penindakan->perPage() + $index + 1,
                 $item->no_sbp,
@@ -60,16 +49,53 @@ class Penindakan extends Controller
 
         return view('pages.penindakan', [
             'rows' => $rows,
-            'penindakan' => $penindakan,
-            'id_modul' => $id_modul,
-            'opsi_penyidikan' => $opsi_penyidikan,
+            'penindakan' => $penindakan
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $validated = $request->validate([
+                'no_sbp' => ['required', 'string', 'max:255', 'unique:penindakan,no_sbp'],
+                'tanggal_sbp' => ['required', 'date'],
+                'lokasi_penindakan' => ['required', 'string'],
+                'pelaku' => ['required', 'string', 'max:255'],
+                'uraian_bhp' => ['required', 'string'],
+                'jumlah' => ['required', 'integer', 'min:1'],
+                'kemasan' => ['required', 'string', 'max:255'],
+                'perkiraan_nilai_barang' => ['required', 'numeric', 'min:0'],
+                'potensi_kurang_bayar' => ['required', 'numeric', 'min:0'],
+            ]);
+
+            $validated['created_by'] = Auth::id();
+
+            PenindakanModel::create($validated);
+            DB::commit();
+
+            return redirect()
+                ->route('penindakan')
+                ->with('success', 'Data penindakan berhasil disimpan');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Error in storing penindakan: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['error' => 'Gagal menyimpan data penindakan: ' . $e->getMessage()]);
+        }
     }
 
     public function destroy($no_sbp)
     {
         try {
             DB::beginTransaction();
+            Log::info('Attempting to delete Penindakan record with no_sbp: ' . $no_sbp);
 
             $penindakan = PenindakanModel::whereNull('deleted_at')
                 ->where('no_sbp', $no_sbp)
@@ -83,6 +109,7 @@ class Penindakan extends Controller
             $penindakan->save();
             $penindakan->delete();
 
+            Log::info('Successfully deleted Penindakan record');
             DB::commit();
 
             return response()->json([
@@ -92,10 +119,11 @@ class Penindakan extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error deleting penindakan: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghapus data penindakan'
+                'message' => 'Gagal menghapus data penindakan: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -103,19 +131,9 @@ class Penindakan extends Controller
     public function edit($no_sbp)
     {
         try {
-            $penindakan = PenindakanModel::with(['penyidikan'])
-                ->where('no_sbp', $no_sbp)
-                ->firstOrFail();
+            $penindakan = PenindakanModel::where('no_sbp', $no_sbp)->firstOrFail();
 
-            $opsi_penyidikan = PenyidikanModel::whereNull('deleted_at')
-                ->orderBy('no_spdp')
-                ->get()
-                ->pluck('no_spdp', 'id');
-
-            $data = $penindakan->toArray();
-            $data['opsi_penyidikan'] = $opsi_penyidikan;
-
-            return response()->json($data);
+            return response()->json($penindakan);
         } catch (Exception $e) {
             Log::error('Error fetching penindakan: ' . $e->getMessage());
             return response()->json([
@@ -135,8 +153,8 @@ class Penindakan extends Controller
             $validated = $request->validate([
                 'no_sbp' => ['required', 'string', 'max:255', 'unique:penindakan,no_sbp,' . $penindakan->id . ',id,deleted_at,NULL'],
                 'tanggal_sbp' => ['required', 'date'],
-                'penyidikan_id' => ['required', 'exists:penyidikan,id'],
                 'lokasi_penindakan' => ['required', 'string', 'max:255'],
+                'pelaku' => ['required', 'string', 'max:255'],
                 'uraian_bhp' => ['required', 'string', 'max:255'],
                 'jumlah' => ['required', 'integer', 'min:1'],
                 'kemasan' => ['required', 'string', 'max:255'],

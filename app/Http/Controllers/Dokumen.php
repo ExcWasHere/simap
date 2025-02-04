@@ -95,6 +95,22 @@ class Dokumen extends Controller
         ]);
     }
 
+    public function show_documents($section, $id, $module_type)
+    {
+        $documents = DokumenModel::where('tipe', $section)
+            ->where('reference_id', $id)
+            ->when($module_type !== $section, function($query) use ($module_type) {
+                return $query->where('sub_tipe', 'LIKE', strtoupper($module_type) . '%');
+            })
+            ->latest()
+            ->get();
+
+        return view('pages.dokumen', [
+            'documents' => $documents,
+            'reference_id' => $id,
+            'section' => $section
+        ]);
+    }
 
     /**
      * Controllers
@@ -217,7 +233,7 @@ class Dokumen extends Controller
                 'sub_tipe' => $validated['sub_tipe'],
                 'tipe' => $validated['tipe'],
                 'deskripsi' => $validated['deskripsi'],
-                'file_path' => 'storage/' . $path,
+                'file_path' => $path,
                 'reference_id' => $reference_id,
                 'uploaded_by' => Auth::id()
             ]);
@@ -230,26 +246,14 @@ class Dokumen extends Controller
                 'file_path' => $dokumen->file_path
             ]);
 
-            $redirect_route = match ($dokumen->tipe) {
-                'intelijen' => 'intelijen.dokumen',
-                'monitoring' => 'monitoring.dokumen',
-                'penindakan' => 'penindakan.dokumen',
-                'penyidikan' => 'penyidikan.dokumen',
-                default => 'dashboard'
-            };
+            return redirect()
+                ->route('dokumen.show', [
+                    'section' => $validated['tipe'],
+                    'id' => $reference_id,
+                    'module_type' => $validated['tipe']
+                ])
+                ->with('success', 'Dokumen berhasil diunggah!');
 
-            $redirect_params = [];
-            if ($dokumen->reference_id) {
-                $redirect_params = match ($dokumen->tipe) {
-                    'intelijen' => ['no_nhi' => $dokumen->reference_id],
-                    'monitoring' => ['id' => $dokumen->reference_id],
-                    'penindakan' => ['no_sbp' => $dokumen->reference_id],
-                    'penyidikan' => ['no_spdp' => $dokumen->reference_id],
-                    default => []
-                };
-            }
-
-            return redirect()->route($redirect_route, $redirect_params)->with('success', 'Dokumen berhasil diunggah!');
         } catch (ValidationException $e) {
             Log::error('Validation error during upload:', [
                 'errors' => $e->errors()
@@ -263,7 +267,8 @@ class Dokumen extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            return redirect()->back()
+            return redirect()
+                ->back()
                 ->withErrors(['error' => 'Terjadi kesalahan saat mengunggah dokumen: ' . $e->getMessage()])
                 ->withInput();
         }
