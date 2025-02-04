@@ -27,7 +27,7 @@
         <img
             id="carousel-img"
             src="{{ asset('img/logo-beacukai.png') }}" alt="Logo Bea Cukai"
-            class="w-16 mb-4 transform hover:scale-105 transition-transform duration-300 opacity-0"
+            class="w-16 mb-4 transform hover:scale-105 transition-transform duration-300"
             loading="lazy"
         />
         <h4 class="text-2xl font-bold tracking-tight">Direktorat Jenderal Bea dan Cukai</h4>

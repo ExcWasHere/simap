@@ -64,7 +64,7 @@
 
     @stack('skrip')
 
-    @if(Route::is('login'))
+    @if(Route::is('login') || Route::is('lupa-kata-sandi') || Route::is('reset-kata-sandi'))
         @vite('resources/js/carousel.js')
     @endif
 </body>

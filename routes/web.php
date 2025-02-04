@@ -91,3 +91,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/penyidikan/{no_spdp}', [Penyidikan::class, 'destroy'])->name('penyidikan.destroy');
     Route::delete('/penindakan/{no_sbp}', [Penindakan::class, 'destroy'])->name('penindakan.destroy');
 });
+
+// Password Reset
+Route::post('/forgot-password', [Autentikasi::class, 'lupa_kata_sandi'])->name('password.email');
