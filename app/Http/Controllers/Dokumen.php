@@ -20,55 +20,19 @@ class Dokumen extends Controller
     /**
      * Views
      */
-    public function halaman_intelijen($no_nhi): View
+    public function halaman_dokumen($id, $tipe): View
     {
-        $documents = DokumenModel::where('tipe', 'intelijen')
-            ->where('reference_id', $no_nhi)
-            ->latest()
-            ->get();
+        $validTypes = ['intelijen', 'monitoring', 'penindakan', 'penyidikan'];
+        abort_unless(in_array($tipe, $validTypes), 404);
 
-        return view('pages.dokumen-intelijen', [
-            'documents' => $documents,
-            'no_nhi' => $no_nhi
-        ]);
-    }
-
-    public function halaman_monitoring($id): View
-    {
-        $documents = DokumenModel::where('tipe', 'monitoring')
+        $documents = DokumenModel::where('tipe', $tipe)
             ->where('reference_id', $id)
             ->latest()
             ->get();
 
-        return view('pages.dokumen-monitoring', [
+        return view("pages.dokumen-{$tipe}", [
             'documents' => $documents,
-            'id' => $id
-        ]);
-    }
-
-    public function halaman_penindakan($no_sbp): View
-    {
-        $documents = DokumenModel::where('tipe', 'penindakan')
-            ->where('reference_id', $no_sbp)
-            ->latest()
-            ->get();
-
-        return view('pages.dokumen-penindakan', [
-            'documents' => $documents,
-            'no_sbp' => $no_sbp
-        ]);
-    }
-
-    public function halaman_penyidikan($no_spdp): View
-    {
-        $documents = DokumenModel::where('tipe', 'penyidikan')
-            ->where('reference_id', $no_spdp)
-            ->latest()
-            ->get();
-
-        return view('pages.dokumen-penyidikan', [
-            'documents' => $documents,
-            'no_spdp' => $no_spdp
+            'reference_id' => $id
         ]);
     }
 

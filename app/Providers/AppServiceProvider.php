@@ -12,6 +12,5 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        IntelijenModel::observe(Intelijen::class);
     }
 }

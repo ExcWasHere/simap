@@ -45,7 +45,9 @@
                 </button>
             </span>
         </div>
-        <canvas id="main-chart" class="h-96 w-full bg-gray-50 rounded-lg border border-gray-200"></canvas>
+        <div class="relative h-[400px]">
+            <canvas id="main-chart" class="w-full bg-gray-50 rounded-lg border border-gray-200" data-url="{{ route('monitoring.chart-data') }}"></canvas>
+        </div>
     </section>
     <section class="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-3">
         <figure class="flex items-center p-6 rounded-lg shadow-sm bg-white">

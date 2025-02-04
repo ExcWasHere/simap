@@ -103,7 +103,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const fetch_chart_data = () => {
         const range = document.querySelector('select[name="date-range"]').value;
-        const url = new URL('{{ route("monitoring.chart-data") }}');
+        const chartElement = document.getElementById("main-chart");
+        const dataUrl = chartElement.dataset.url;
+        
+        if (!dataUrl) {
+            console.error("Chart data URL not provided");
+            return;
+        }
+
+        const url = new URL(dataUrl);
         url.searchParams.append("range", range);
 
         fetch(url)
@@ -112,6 +120,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 chart_data = data;
                 perbarui_chart();
                 perbarui_statistik(data.stats);
+            })
+            .catch((error) => {
+                console.error("Error fetching chart data:", error);
             });
     }
 
