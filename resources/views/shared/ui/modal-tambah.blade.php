@@ -145,12 +145,12 @@
                     'type' => 'number',
                     'data_required' => true
                 ])
-                @include('shared.forms.currency-input', [
+                @include('shared.forms.mata-uang', [
                     'label' => 'Perkiraan Nilai Barang',
                     'name' => 'perkiraan_nilai_barang',
                     'data_required' => true
                 ])
-                @include('shared.forms.currency-input', [
+                @include('shared.forms.mata-uang', [
                     'label' => 'Potensi Kurang Bayar',
                     'name' => 'potensi_kurang_bayar',
                     'data_required' => true

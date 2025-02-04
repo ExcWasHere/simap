@@ -5,7 +5,7 @@
     ])
     @include('shared.navigation.search', [
         'placeholder' => 'Cari data intelijen...',
-        'section' => 'intelijen'
+        'section' => 'intelijen',
     ])
     @include('shared.tables.table', [
         'headers' => ['No', 'No NHI', 'Tgl NHI', 'Tempat', 'Jenis', 'Jumlah Barang', 'Keterangan'],

@@ -168,14 +168,14 @@
                 'data_required' => true
             ])
 
-            @include('shared.forms.currency-input', [
+            @include('shared.forms.mata-uang', [
                 'label' => 'Perkiraan Nilai Barang',
                 'name' => 'perkiraan_nilai_barang',
                 'id' => 'edit_perkiraan_nilai_barang',
                 'data_required' => true
             ])
 
-            @include('shared.forms.currency-input', [
+            @include('shared.forms.mata-uang', [
                 'label' => 'Potensi Kurang Bayar',
                 'name' => 'potensi_kurang_bayar',
                 'id' => 'edit_potensi_kurang_bayar',
@@ -185,7 +185,7 @@
     </form>
 @endcomponent
 
-@push('scripts')
+@push('skrip')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const editForm = document.getElementById('edit-form');

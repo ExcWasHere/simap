@@ -34,7 +34,7 @@ class Intelijen extends Controller
         if ($date_to = $request->input('date_to'))
             $query->whereDate('tanggal_nhi', '<=', $date_to);
 
-        $intelijen = $query->with('penyidikan.penindakan')->latest()->paginate(10)->withQueryString();
+        $intelijen = $query->with('penyidikan.penindakan')->latest()->paginate(10);
 
         $id_modul = [];
         $rows = $intelijen->map(function ($item, $index) use (&$id_modul, $intelijen) {

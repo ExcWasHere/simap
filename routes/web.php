@@ -70,22 +70,24 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{no_spdp}', [Penyidikan::class, 'destroy'])->name('penyidikan.destroy');
     });
 
-    // Global document actions
+    // Tambah Data
+    Route::prefix('tambah-data')->group(function () {
+        Route::get('/intelijen', [Data::class, 'intelijen'])->name('tambah-data-intelijen');
+        Route::get('/penindakan', [Data::class, 'penindakan'])->name('tambah-data-penindakan');
+        Route::get('penyidikan', [Data::class, 'penyidikan'])->name('tambah-data-penyidikan');
+    });
+
+    // Aksi Dokumen Global
     Route::delete('/dokumen/{id}', [Dokumen::class, 'delete'])->name('dokumen.delete');
 
-    //  Data & Authentication
+    //  Autentikasi dan Data
     Route::post('/data/store', [Data::class, 'store'])->name('data.store');
     Route::post('/logout', [Autentikasi::class, 'logout'])->name('logout');
 
     //  Ekspor
     Route::get('/export/{section}', [Ekspor::class, 'export'])->name('export');
 
-    // Tambah Data
-    Route::get('/tambah-data', function () {
-        return view('pages.tambah-data');
-    })->name('tambah-data');
-
-    // Delete routes pada table
+    // Menghapus URL pada tabel
     Route::delete('/penyidikan/{no_spdp}', [Penyidikan::class, 'destroy'])->name('penyidikan.destroy');
     Route::delete('/penindakan/{no_sbp}', [Penindakan::class, 'destroy'])->name('penindakan.destroy');
 });

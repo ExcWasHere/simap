@@ -12,7 +12,8 @@
 @endsection
 
 @section('konten')
-    <div class="container mx-auto pt-12 pb-6">
+    @include('shared.navigation.back')
+    <div class="container mx-auto py-6">
         @include('components.penindakan.main')
     </div>
 @endsection

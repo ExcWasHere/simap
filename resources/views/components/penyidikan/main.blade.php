@@ -5,7 +5,7 @@
     ])
     @include('shared.navigation.search', [
         'placeholder' => 'Cari data penyidikan...',
-        'section' => 'penyidikan'
+        'section' => 'penyidikan',
     ])
     @include('shared.tables.table', [
         'headers' => ['No', 'No SPDP', 'Tgl SPDP', 'Pelaku', 'Keterangan'],

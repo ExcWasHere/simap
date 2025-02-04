@@ -28,6 +28,7 @@
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js" integrity="sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @vite(['resources/js/app.js', 'resources/css/app.css'])
 </head>
 
@@ -44,10 +45,10 @@
     @include('shared.ui.modal-filter')
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const downloadBtn = document.getElementById('download-btn');
-        if (downloadBtn) {
-            downloadBtn.addEventListener('click', function() {
+    document.addEventListener('DOMContentLoaded', () => {
+        const tombol_unduh = document.getElementById('tombol-unduh');
+        if (tombol_unduh) {
+            tombol_unduh.addEventListener('click', () => {
                 const section = this.dataset.section;
                 const type = this.dataset.type || 'semua-data';
                 
@@ -61,7 +62,7 @@
     });
     </script>
 
-    @stack('scripts')
+    @stack('skrip')
 </body>
 
 </html>

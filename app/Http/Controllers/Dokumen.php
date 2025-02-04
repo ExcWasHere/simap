@@ -97,7 +97,7 @@ class Dokumen extends Controller
 
 
     /**
-     * Middleware
+     * Controllers
      */
     public function intelijen(Request $request)
     {

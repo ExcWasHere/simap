@@ -11,9 +11,32 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 
 class Data extends Controller
 {
+    /**
+     * Views
+     */
+    public function intelijen(): View
+    {
+        return view('pages.tambah-data-intelijen');
+    }
+
+    public function penindakan(): View
+    {
+        return view('pages.tambah-data-penindakan');
+    }
+
+    public function penyidikan(): View
+    {
+        return view('pages.tambah-data-penyidikan');
+    }
+
+
+    /**
+     * Controllers
+     */
     public function store(Request $request)
     {
         $entity_type = $request->input('entity_type');
@@ -117,12 +140,5 @@ class Data extends Controller
                 break;
         }
         return array_merge($base_rules, $type_rules);
-    }
-
-    private function determine_active_tab(array $errors): string
-    {
-        if (array_key_exists('penindakan_id', $errors) || isset($errors['penyidikan'])) return 'penyidikan';
-        if (array_key_exists('no_nhi', $errors) || isset($errors['intelijen'])) return 'intelijen';
-        return 'penindakan';
     }
 }

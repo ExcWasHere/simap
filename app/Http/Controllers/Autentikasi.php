@@ -38,7 +38,7 @@ class Autentikasi extends Controller
 
 
     /**
-     * Middleware
+     * Controllers
      */
     public function login(Request $request): RedirectResponse
     {

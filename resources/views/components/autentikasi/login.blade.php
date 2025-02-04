@@ -1,13 +1,13 @@
-<main class="w-full min-h-screen flex relative">
+<main class="w-full min-h-[120vh] flex relative xl:min-h-screen">
     @include('shared.ui.image')
-    <section class="w-full flex flex-col items-center justify-center text-black bg-slate-50 lg:w-1/2 lg:px-4">
-        <header class="mb-6 cursor-default text-center">
-            <h3 class="font-bold text-3xl text-[#1a4167]">Selamat Datang</h3>
-            <h5 class="mt-2 text-gray-600">
-                Silakan masuk ke akun Anda.
-            </h5>
-        </header>
-        <form action="{{ route('login') }}" method="POST" class="w-[65%]">
+    <section class="w-full flex flex-col items-center justify-center text-black lg:w-1/2 lg:px-4">
+        <h3 class="cursor-default text-center font-bold text-xl text-[#1a4167] lg:text-3xl">
+            Selamat Datang
+        </h3>
+        <h5 class="mb-6 mt-2 cursor-default text-sm text-center text-gray-600 lg:text-base">
+            Silakan masuk ke akun Anda.
+        </h5>
+        <form action="{{ route('login') }}" method="POST" class="w-3/4 lg:w-[65%]">
             @csrf
             <fieldset class="flex flex-col space-y-4">
                 <label for="nip">NIP</label>
