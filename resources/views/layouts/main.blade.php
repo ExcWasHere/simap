@@ -63,6 +63,10 @@
     </script>
 
     @stack('skrip')
+
+    @if(Route::is('login'))
+        @vite('resources/js/carousel.js')
+    @endif
 </body>
 
 </html>

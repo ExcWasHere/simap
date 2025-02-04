@@ -16,5 +16,9 @@ export default defineConfig({
             origin: '*',
             methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         },
+    },
+    input: {
+        app: 'resources/js/app.js',
+        carousel: 'resources/js/carousel.js',
     }
 });

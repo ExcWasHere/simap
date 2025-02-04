@@ -1,17 +1,33 @@
 <section class="w-1/2 relative hidden lg:inline">
-    <span class="absolute inset-0 bg-gradient-to-b from-[#1a4167]/80 to-[#1a4167]/40 transition-opacity duration-300"></span>
-    <img
-        src="{{ asset('img/login-1.jpg') }}"
-        alt="Background"
-        class="carousel-image w-full h-full object-cover bg-white transition-opacity duration-300"
-        loading="lazy"
-        data-index="0"
-    />
-    <figure class="absolute bottom-8 left-8 text-white space-y-2">
+    <span class="absolute inset-0 z-10 bg-gradient-to-b from-[#1a4167]/80 to-[#1a4167]/40 transition-opacity duration-300"></span>
+    <div class="carousel-container h-full">
+        <img
+            src="{{ asset('img/login-1.jpg') }}"
+            alt="Background 1"
+            class="carousel-image absolute w-full h-full object-cover bg-white opacity-0"
+            loading="lazy"
+            data-index="0"
+        />
+        <img
+            src="{{ asset('img/login-2.jpg') }}"
+            alt="Background 2"
+            class="carousel-image absolute w-full h-full object-cover bg-white opacity-0"
+            loading="lazy"
+            data-index="1"
+        />
+        <img
+            src="{{ asset('img/login-3.jpg') }}"
+            alt="Background 3"
+            class="carousel-image absolute w-full h-full object-cover bg-white opacity-0"
+            loading="lazy"
+            data-index="2"
+        />
+    </div>
+    <figure class="absolute z-20 bottom-8 left-8 text-white space-y-2">
         <img
             id="carousel-img"
             src="{{ asset('img/logo-beacukai.png') }}" alt="Logo Bea Cukai"
-            class="w-16 mb-4 transform hover:scale-105 transition-transform duration-300"
+            class="w-16 mb-4 transform hover:scale-105 transition-transform duration-300 opacity-0"
             loading="lazy"
         />
         <h4 class="text-2xl font-bold tracking-tight">Direktorat Jenderal Bea dan Cukai</h4>
