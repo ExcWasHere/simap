@@ -36,9 +36,11 @@ class Autentikasi extends Controller
         return view('pages.lupa-kata-sandi');
     }
 
-    public function halaman_reset_kata_sandi(): View
+    public function halaman_reset_kata_sandi(Request $request): View
     {
-        return view('pages.reset-kata-sandi');
+        $token = $request->route('token');
+        $nip = $request->query('nip');
+        return view('components.autentikasi.reset-kata-sandi', ['token' => $token, 'nip' => $nip]);
     }
 
 
@@ -126,7 +128,7 @@ class Autentikasi extends Controller
                 Mail::send('emails.reset-password', [
                     'token' => $token,
                     'name' => $user->name,
-                    'email' => $user->email,
+                    'nip' => $user->nip,
                 ], function ($message) use ($user) {
                     $message->to($user->email)
                         ->subject('Reset Kata Sandi')
@@ -164,11 +166,65 @@ class Autentikasi extends Controller
     public function reset_kata_sandi(Request $request)
     {
         try {
-        } catch (Exception $exception) {
-            Log::error('Error: ', ['error' => $exception->getMessage()]);
+            $request->validate([
+                'token' => 'required',
+                'nip' => 'required|digits:10',
+                'password' => 'required|min:8|confirmed',
+            ], [
+                'token.required' => 'Token tidak valid.',
+                'nip.required' => 'NIP wajib diisi.',
+                'nip.digits' => 'NIP harus terdiri dari 10 digit angka.',
+                'password.required' => 'Kata sandi baru wajib diisi.',
+                'password.min' => 'Kata sandi minimal 8 karakter.',
+                'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
+            ]);
+
+            $user = User::where('nip', $request->nip)->first();
+            
+            if (!$user) {
+                return back()->withErrors(['error' => 'NIP tidak ditemukan.']);
+            }
+
+            $resetRecord = DB::table('password_reset_tokens')
+                ->where('email', $user->email)
+                ->first();
+
+            if (!$resetRecord) {
+                return back()->withErrors(['error' => 'Token reset kata sandi tidak valid.']);
+            }
+
+            if (!Hash::check($request->token, $resetRecord->token)) {
+                return back()->withErrors(['error' => 'Token reset kata sandi tidak valid.']);
+            }
+
+            if (Carbon::parse($resetRecord->created_at)->addHours(1)->isPast()) {
+                DB::table('password_reset_tokens')->where('email', $user->email)->delete();
+                return back()->withErrors(['error' => 'Token reset kata sandi telah kadaluarsa. Silakan meminta token baru.']);
+            }
+
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            DB::table('password_reset_tokens')->where('email', $user->email)->delete();
+
+            Log::info('Password reset successful', ['nip' => $user->nip]);
+
+            return redirect()
+                ->route('login')
+                ->with('success', 'Kata sandi berhasil direset. Silakan login dengan kata sandi baru Anda.');
+
+        } catch (ValidationException $e) {
             return back()
-                ->withErrors(['error' => 'Terjadi kesalahan pada sistem.'])
-                ->withInput($request->except(''));
+                ->withErrors($e->errors())
+                ->withInput($request->except('password', 'password_confirmation'));
+        } catch (Exception $e) {
+            Log::error('Password reset error:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()
+                ->withErrors(['error' => 'Terjadi kesalahan sistem. Silakan coba beberapa saat lagi.'])
+                ->withInput($request->except('password', 'password_confirmation'));
         }
     }
 }

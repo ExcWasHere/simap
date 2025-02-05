@@ -40,6 +40,14 @@ window.open_modal = open_modal;
 window.close_modal = close_modal;
 
 document.addEventListener("DOMContentLoaded", function () {
+    window.addEventListener('open-upload-modal', function() {
+        const uploadModal = document.getElementById('modal-upload');
+        if (uploadModal) {
+            uploadModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+    });
+
     document.addEventListener("keydown", function (event) {
         if (event.key === "Escape") {
             const activeModals = document.querySelectorAll(".modal-active");

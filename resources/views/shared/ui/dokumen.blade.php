@@ -87,8 +87,8 @@
             </div>
         @endforelse
 
-        <a href="{{ route($uploadRoute, [$reference_param => $reference_id]) }}" 
-           class="group relative bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl border-2 border-dashed border-blue-200 hover:border-blue-300 transition-all duration-300">
+        <div class="group relative bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl border-2 border-dashed border-blue-200 hover:border-blue-300 transition-all duration-300 cursor-pointer"
+             onclick="window.dispatchEvent(new CustomEvent('open-upload-modal'))">
             <div class="absolute inset-0 bg-blue-500/0 group-hover:bg-blue-500/[0.02] rounded-xl transition-colors duration-300"></div>
             <div class="p-6 flex flex-col items-center justify-center h-40 space-y-3">
                 <div class="relative">
@@ -102,7 +102,7 @@
                 <h3 class="text-lg font-medium text-blue-600 group-hover:text-blue-700 transition-colors duration-200">Upload Dokumen</h3>
                 <p class="mt-1 text-sm text-blue-500/80">Unggah dokumen baru</p>
             </div>
-        </a>
+        </div>
     </div>
 </div>
 

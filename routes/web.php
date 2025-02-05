@@ -94,3 +94,5 @@ Route::middleware('auth')->group(function () {
 
 // Password Reset
 Route::post('/forgot-password', [Autentikasi::class, 'lupa_kata_sandi'])->name('password.email');
+Route::get('/reset-password/{token}', [Autentikasi::class, 'halaman_reset_kata_sandi'])->name('password.reset');
+Route::post('/reset-password', [Autentikasi::class, 'reset_kata_sandi'])->name('password.update');

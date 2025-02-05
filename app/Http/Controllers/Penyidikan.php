@@ -122,30 +122,69 @@ class Penyidikan extends Controller
     public function edit($no_spdp)
     {
         try {
-            Log::info('Attempting to find Penyidikan record with no_spdp: ' . $no_spdp);
+            Log::info('Starting edit method for Penyidikan', [
+                'no_spdp' => $no_spdp,
+                'type' => gettype($no_spdp)
+            ]);
 
-            $penyidikan = PenyidikanModel::withTrashed()
-                ->with('intelijen')
-                ->where(function ($query) use ($no_spdp) {
-                    $query->where('no_spdp', $no_spdp)
-                        ->orWhere('no_spdp', 'LIKE', $no_spdp . '%')
-                        ->orWhere('id', $no_spdp);
-                })
-                ->first();
-
-            if (!$penyidikan) {
-                Log::error('Penyidikan record not found with no_spdp: ' . $no_spdp);
-                throw new Exception('Data penyidikan tidak ditemukan');
+            if (is_numeric($no_spdp)) {
+                Log::info('Attempting to find by ID');
+                $penyidikan = PenyidikanModel::withTrashed()
+                    ->find($no_spdp);
+                
+                if ($penyidikan) {
+                    Log::info('Found record by ID', ['id' => $penyidikan->id]);
+                }
+            }
+            
+            // If not found by ID, try other search methods
+            if (!isset($penyidikan) || !$penyidikan) {
+                Log::info('Attempting to find by no_spdp or pattern');
+                $penyidikan = PenyidikanModel::withTrashed()
+                    ->where(function ($query) use ($no_spdp) {
+                        $query->where('no_spdp', $no_spdp)
+                            ->orWhere('no_spdp', 'LIKE', $no_spdp . '%');
+                    })
+                    ->first();
             }
 
-            Log::info('Found Penyidikan record:', ['id' => $penyidikan->id, 'no_spdp' => $penyidikan->no_spdp]);
-            return response()->json($penyidikan);
+            if (!$penyidikan) {
+                Log::error('Penyidikan record not found', [
+                    'no_spdp' => $no_spdp,
+                    'search_type' => is_numeric($no_spdp) ? 'id' : 'no_spdp'
+                ]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data penyidikan tidak ditemukan'
+                ], 404);
+            }
+
+            Log::info('Successfully found Penyidikan record', [
+                'id' => $penyidikan->id,
+                'no_spdp' => $penyidikan->no_spdp
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => $penyidikan
+            ]);
         } catch (Exception $e) {
-            Log::error('Error fetching penyidikan: ' . $e->getMessage());
+            Log::error('Error in Penyidikan edit method', [
+                'no_spdp' => $no_spdp,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile()
+            ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengambil data penyidikan: ' . $e->getMessage()
-            ], 404);
+                'message' => 'Gagal mengambil data penyidikan: ' . $e->getMessage(),
+                'debug_info' => config('app.debug') ? [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ] : null
+            ], 500);
         }
     }
 
@@ -192,7 +231,6 @@ class Penyidikan extends Controller
                 'no_spdp' => ['required', 'string', 'max:255', 'unique:penyidikan,no_spdp,' . $penyidikan->id],
                 'tanggal_spdp' => ['required', 'date'],
                 'pelaku' => ['required', 'string', 'max:255'],
-                'intelijen_id' => ['required', 'exists:intelijen,id'],
                 'keterangan' => ['nullable', 'string'],
             ]);
 

@@ -14,12 +14,12 @@
         <p>Anda menerima email ini karena kami menerima permintaan reset kata sandi untuk akun Anda.</p>
 
         <a
-            href="{{ url('reset-password', ['token' => $token, 'email' => $email]) }}"
+            href="{{ url('reset-password', ['token' => $token]) }}?nip={{ $nip }}"
             style="margin: 30px 0; background-color: #1a4167; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px"
         >
             Reset Kata Sandi
         </a>
-        <h5>Tautan reset kata sandi ini akan kedaluwarsa dalam 60 menit.</h5>
+        <h5>Tautan reset kata sandi ini akan kedaluwarsa dalam 24 jam.</h5>
         <h5>Jika Anda tidak meminta reset kata sandi, abaikan email ini.</h5>
         <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
         <h5 style="color: #666; font-size: 12px">

@@ -1,5 +1,5 @@
 <fieldset>
-    <label for="{{ $name }}" class="block text-sm font-medium text-gray-700 mb-1">
+    <label for="{{ $id ?? $name }}" class="block text-sm font-medium text-gray-700 mb-1">
         {{ $label }}
         @if ($required ?? false)
             <span class="text-red-500">*</span>
@@ -8,7 +8,7 @@
     <span class="relative">
         <textarea
             name="{{ $name }}"
-            id="{{ $name }}"
+            id="{{ $id ?? $name }}"
             rows="{{ $rows ?? 3 }}"
             class="w-full rounded-lg shadow-sm px-4 py-2.5 resize-none transition duration-150 ease-in-out placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500 @error($name) border-red-500 ring-1 ring-red-500 @enderror"
             {{ $required ?? false ? 'required' : '' }}

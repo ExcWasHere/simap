@@ -120,24 +120,27 @@ class MonitoringBHP extends Controller
         $intelijen = DB::table('intelijen')
             ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
             ->whereBetween('created_at', [$start_date, $end_date])
+            ->whereNull('deleted_at')
             ->groupBy('date')
             ->get();
 
         $penindakan = DB::table('penindakan')
             ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
             ->whereBetween('created_at', [$start_date, $end_date])
+            ->whereNull('deleted_at')
             ->groupBy('date')
             ->get();
 
         $penyidikan = DB::table('penyidikan')
             ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
             ->whereBetween('created_at', [$start_date, $end_date])
+            ->whereNull('deleted_at')
             ->groupBy('date')
             ->get();
 
-        $total_intelijen = DB::table('intelijen')->count();
-        $total_penindakan = DB::table('penindakan')->count();
-        $total_penyidikan = DB::table('penyidikan')->count();
+        $total_intelijen = DB::table('intelijen')->whereNull('deleted_at')->count();
+        $total_penindakan = DB::table('penindakan')->whereNull('deleted_at')->count();
+        $total_penyidikan = DB::table('penyidikan')->whereNull('deleted_at')->count();
         $total_dokumen = $total_intelijen + $total_penindakan + $total_penyidikan;
 
         // Hitung rata-rata per bulan
@@ -146,22 +149,28 @@ class MonitoringBHP extends Controller
         // Hitung pertumbuhan
         $last_month_count = DB::table('intelijen')
             ->whereMonth('created_at', now()->subMonth()->month)
+            ->whereNull('deleted_at')
             ->count() +
             DB::table('penindakan')
                 ->whereMonth('created_at', now()->subMonth()->month)
+                ->whereNull('deleted_at')
                 ->count() +
             DB::table('penyidikan')
                 ->whereMonth('created_at', now()->subMonth()->month)
+                ->whereNull('deleted_at')
                 ->count();
 
         $this_month_count = DB::table('intelijen')
             ->whereMonth('created_at', now()->month)
+            ->whereNull('deleted_at')
             ->count() +
             DB::table('penindakan')
                 ->whereMonth('created_at', now()->month)
+                ->whereNull('deleted_at')
                 ->count() +
             DB::table('penyidikan')
                 ->whereMonth('created_at', now()->month)
+                ->whereNull('deleted_at')
                 ->count();
 
         $pertumbuhan = $last_month_count > 0
