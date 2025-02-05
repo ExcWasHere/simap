@@ -77,5 +77,3 @@ document.addEventListener("DOMContentLoaded", () => {
     const carousel = new Carousel();
     window.addEventListener("unload", () => carousel.destroy());
 });
-
-export default Carousel;

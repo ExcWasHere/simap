@@ -36,14 +36,9 @@
     <section class="bg-white p-6 rounded-lg shadow-sm">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-lg font-semibold text-gray-900">Tren Data Keseluruhan</h2>
-            <span class="flex gap-2">
-                <button class="px-3 py-1 text-sm rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200">
-                    <i class="fas fa-download mr-1"></i> Unduh
-                </button>
-                <button class="px-3 py-1 text-sm rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200">
-                    <i class="fas fa-expand mr-1"></i> Layar Penuh
-                </button>
-            </span>
+            <button class="px-3 py-1 text-sm rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200">
+                <i class="fas fa-expand mr-1"></i> Layar Penuh
+            </button>
         </div>
         <div class="relative h-[400px]">
             <canvas id="main-chart" class="w-full bg-gray-50 rounded-lg border border-gray-200" data-url="{{ route('monitoring.chart-data') }}"></canvas>

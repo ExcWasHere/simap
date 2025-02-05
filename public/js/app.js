@@ -1,7 +1,8 @@
 import "./bootstrap";
+import "./carousel";
 import "./chart";
+import "./download-excel";
 import "./modal";
-import "./unduh-excel";
 import createLoaderAnimation from "./loader";
 
 document.addEventListener("DOMContentLoaded", () => {

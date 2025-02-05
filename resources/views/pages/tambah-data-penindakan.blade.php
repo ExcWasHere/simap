@@ -68,11 +68,13 @@
                         'type' => 'number',
                         'data_required' => true,
                     ])
-                    @include('shared.forms.input', [
+                    @include('shared.forms.select', [
                         'label' => 'Kemasan',
                         'name' => 'kemasan',
-                        'type' => 'text',
-                        'data_required' => true,
+                        'options' => [
+                            'batang' => "Batang",
+                            'liter' => "Liter",
+                        ],
                     ])
                     @include('shared.forms.mata-uang', [
                         'label' => 'Perkiraan Nilai Barang',

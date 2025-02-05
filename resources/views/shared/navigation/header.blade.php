@@ -9,11 +9,11 @@
                 <a href="/intelijen" class="text-gray-600 hover:text-gray-900 {{ request()->is('/') ? 'active' : '' }}">
                     Intelijen
                 </a>
-                <a href="/penyidikan" class="text-gray-600 hover:text-gray-900 {{ request()->is('intelijen*') ? 'active' : '' }}">
-                    Penyidikan
-                </a>
                 <a href="/penindakan" class="text-gray-600 hover:text-gray-900 {{ request()->is('intelijen*') ? 'active' : '' }}">
                     Penindakan
+                </a>
+                <a href="/penyidikan" class="text-gray-600 hover:text-gray-900 {{ request()->is('intelijen*') ? 'active' : '' }}">
+                    Penyidikan
                 </a>
                 <a href="/monitoring" class="text-gray-600 hover:text-gray-900 {{ request()->is('penindakan*') ? 'active' : '' }}">
                     Monitoring
