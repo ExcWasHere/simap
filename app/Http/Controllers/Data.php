@@ -6,15 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\Intelijen as IntelijenModel;
 use App\Models\Penindakan as PenindakanModel;
 use App\Models\Penyidikan as PenyidikanModel;
+use App\Http\Requests\Intelijen as IntelijenRequest;
+use App\Http\Requests\Penindakan as PenindakanRequest;
+use App\Http\Requests\Penyidikan as PenyidikanRequest;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
-use App\Http\Requests\IntelijenRequest;
-use App\Http\Requests\PenyidikanRequest;
-use App\Http\Requests\PenindakanRequest;
 
 class Data extends Controller
 {
@@ -80,9 +80,9 @@ class Data extends Controller
     private function validate_request(Request $request, string $entity_type): array
     {
         return match ($entity_type) {
-            'intelijen' => $request->validate(IntelijenRequest::rules()),
-            'penyidikan' => $request->validate(PenyidikanRequest::rules()),
-            'penindakan' => $request->validate(PenindakanRequest::rules()),
+            'intelijen' => $request->validate((new IntelijenRequest())->rules()),
+            'penindakan' => $request->validate((new PenindakanRequest())->rules()),
+            'penyidikan' => $request->validate((new PenyidikanRequest())->rules()),
             default => throw new Exception('Tipe entitas tidak valid'),
         };
     }

@@ -1,7 +1,8 @@
 import "./bootstrap";
+import "./chart";
 import "./modal";
-import createLoaderAnimation from "./loader";
 import "./unduh-excel";
+import createLoaderAnimation from "./loader";
 
 document.addEventListener("DOMContentLoaded", () => {
     const mobile_menu_button = document.getElementById("mobile-menu-button");

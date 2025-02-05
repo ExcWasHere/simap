@@ -12,18 +12,10 @@ document.addEventListener("DOMContentLoaded", () => {
             data: data,
             options: {
                 responsive: true,
-                maintainAspectRatio: true,
+                maintainAspectRatio: false,
                 interaction: {
                     intersect: false,
                     mode: "index",
-                },
-                layout: {
-                    padding: {
-                        top: 20,
-                        right: 20,
-                        bottom: 20,
-                        left: 20
-                    }
                 },
                 plugins: {
                     legend: {

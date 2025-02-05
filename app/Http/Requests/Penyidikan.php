@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PenyidikanRequest extends FormRequest
+class Penyidikan extends FormRequest
 {
     public function authorize(): bool
     {
@@ -29,4 +29,4 @@ class PenyidikanRequest extends FormRequest
             'penyidikan_keterangan' => 'Keterangan',
         ];
     }
-} 
+}

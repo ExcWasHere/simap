@@ -3,12 +3,12 @@ import { gsap } from "gsap";
 class Carousel {
     constructor() {
         this.currentIndex = 0;
-        this.images = document.querySelectorAll('.carousel-image');
-        this.indicators = document.querySelectorAll('.carousel-indicator');
+        this.images = document.querySelectorAll(".carousel-image");
+        this.indicators = document.querySelectorAll(".carousel-indicator");
         this.totalSlides = this.images.length;
         this.interval = null;
         this.duration = 0.5;
-        this.autoPlayDelay = 5
+        this.autoPlayDelay = 5;
 
         if (this.totalSlides === 0) return;
 
@@ -20,7 +20,7 @@ class Carousel {
         gsap.set(this.images[0], { opacity: 1 });
 
         this.indicators.forEach((indicator, index) => {
-            indicator.addEventListener('click', () => this.goToSlide(index));
+            indicator.addEventListener("click", () => this.goToSlide(index));
         });
 
         this.startAutoPlay();
@@ -29,24 +29,23 @@ class Carousel {
     goToSlide(index) {
         if (index === this.currentIndex) return;
 
-        this.indicators[this.currentIndex].classList.remove('bg-white');
-        this.indicators[index].classList.add('bg-white');
+        this.indicators[this.currentIndex].classList.remove("bg-white");
+        this.indicators[index].classList.add("bg-white");
 
         gsap.to(this.images[this.currentIndex], {
             opacity: 0,
             duration: this.duration,
-            ease: 'power2.inOut',
+            ease: "power2.inOut",
         });
 
         gsap.to(this.images[index], {
             opacity: 1,
             duration: this.duration,
-            ease: 'power2.inOut',
+            ease: "power2.inOut",
         });
 
         this.currentIndex = index;
         this.resetAutoPlay();
-
     }
 
     nextSlide() {
@@ -55,7 +54,10 @@ class Carousel {
     }
 
     startAutoPlay() {
-        this.interval = setInterval(() => this.nextSlide(), this.autoPlayDelay * 1000);
+        this.interval = setInterval(
+            () => this.nextSlide(),
+            this.autoPlayDelay * 1000,
+        );
     }
 
     resetAutoPlay() {
@@ -66,15 +68,14 @@ class Carousel {
     destroy() {
         clearInterval(this.interval);
         this.indicators.forEach((indicator) => {
-            indicator.removeEventListener('click', () => this.goToSlide(index));
+            indicator.removeEventListener("click", () => this.goToSlide(index));
         });
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
     const carousel = new Carousel();
-
-    window.addEventListener('unload', () => carousel.destroy());
+    window.addEventListener("unload", () => carousel.destroy());
 });
 
 export default Carousel;
