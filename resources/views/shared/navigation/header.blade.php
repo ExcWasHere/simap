@@ -30,8 +30,32 @@
                     </button>
                 </form>
             </nav>
-            <i class="fa-solid fa-bars cursor-pointer text-xl text-gray-600 hover:text-gray-900 focus:outline-none lg:!hidden" id="mobile-menu-button"></i>
+            <button 
+                type="button"
+                class="fa-solid fa-bars cursor-pointer text-xl text-gray-600 hover:text-gray-900 focus:outline-none lg:!hidden" 
+                id="mobile-menu-button"
+                aria-label="Toggle mobile menu"
+                aria-expanded="false"
+                onclick="
+                    const menu = document.getElementById('mobile-menu');
+                    if (menu) {
+                        menu.classList.toggle('hidden');
+                        menu.classList.toggle('flex');
+                        this.setAttribute('aria-expanded', this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true');
+                    }
+                "
+            ></button>
             @include('shared.navigation.mobile-menu')
         </div>
     </header>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menu = document.getElementById('mobile-menu');
+            if (menu) {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+            }
+        });
+    </script>
 @endauth
