@@ -3,19 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use DB;
+use App\Models\User;
+use Carbon\Carbon;
 use Exception;
-use Hash;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
-use App\Models\User;
-use Mail;
-use Str;
-use Carbon\Carbon;
+
 class Autentikasi extends Controller
 {
     /**
@@ -125,7 +126,7 @@ class Autentikasi extends Controller
             );
 
             try {
-                Mail::send('emails.reset-password', [
+                Mail::send('emails.reset-kata-sandi', [
                     'token' => $token,
                     'name' => $user->name,
                     'nip' => $user->nip,

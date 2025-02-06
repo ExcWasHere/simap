@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Dokumen as EnumsDokumen;
 use App\Http\Controllers\Controller;
 use App\Models\Dokumen as DokumenModel;
 use App\Models\Intelijen as IntelijenModel;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -64,7 +66,7 @@ class Dokumen extends Controller
         $documents = DokumenModel::where('tipe', $section)
             ->where('reference_id', $id)
             ->when($module_type !== $section, function($query) use ($module_type) {
-                return $query->where('sub_tipe', 'LIKE', strtoupper($module_type) . '%');
+                return $query->where('', 'LIKE', strtoupper($module_type) . '%');
             })
             ->latest()
             ->get();
@@ -167,8 +169,7 @@ class Dokumen extends Controller
     {
         try {
             $validated = $request->validate([
-                'sub_tipe' => 'required|string|max:255',
-                'tipe' => 'required|string|in:intelijen,monitoring,penindakan,penyidikan',
+                'tipe' => ['required', 'string', Rule::in(EnumsDokumen::values())],
                 'deskripsi' => 'nullable|string',
                 'file' => 'required|file|mimes:pdf|max:10240',
             ]);
@@ -176,9 +177,8 @@ class Dokumen extends Controller
             $file = $request->file('file');
 
             $file_name = sprintf(
-                '%s_%s_%s_%s.%s',
+                '%s_%s_%s.%s',
                 strtoupper($validated['tipe']),
-                $validated['sub_tipe'],
                 $reference_id,
                 now()->format('Ymd'),
                 $file->getClientOriginalExtension()
@@ -194,7 +194,6 @@ class Dokumen extends Controller
             ]);
 
             $dokumen = DokumenModel::create([
-                'sub_tipe' => $validated['sub_tipe'],
                 'tipe' => $validated['tipe'],
                 'deskripsi' => $validated['deskripsi'],
                 'file_path' => $path,
@@ -205,7 +204,6 @@ class Dokumen extends Controller
             Log::info('Document uploaded successfully:', [
                 'id' => $dokumen->id,
                 'type' => $dokumen->tipe,
-                'sub_type' => $dokumen->sub_tipe,
                 'reference_id' => $dokumen->reference_id,
                 'file_path' => $dokumen->file_path
             ]);

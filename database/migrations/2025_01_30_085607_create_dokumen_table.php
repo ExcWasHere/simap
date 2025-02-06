@@ -9,8 +9,7 @@ return new class extends Migration {
     {
         Schema::create('dokumen', function (Blueprint $table) {
             $table->id();
-            $table->string('tipe');
-            $table->string('sub_tipe');
+            $table->enum('tipe', ['ST-I', 'LPTI', 'LPPI', 'LKAI', 'NHI', 'NI', 'LK', 'SPTP', 'SPDP', 'TAP-SITA', 'P2I', 'KEP-BDN', 'KEP-BMN', 'KEP-UR', 'SCTK']);
             $table->text('deskripsi')->nullable();
             $table->string('file_path');
             $table->string('reference_id')->nullable();

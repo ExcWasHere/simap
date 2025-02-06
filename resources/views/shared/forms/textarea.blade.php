@@ -1,4 +1,4 @@
-<fieldset>
+<fieldset class="space-y-2">
     <label for="{{ $id ?? $name }}" class="block text-sm font-medium text-gray-700 mb-1">
         {{ $label }}
         @if ($required ?? false)

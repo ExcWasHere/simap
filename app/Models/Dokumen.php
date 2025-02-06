@@ -10,7 +10,6 @@ class Dokumen extends Model
     protected $table = 'dokumen';
 
     protected $fillable = [
-        'sub_tipe',
         'tipe',
         'deskripsi',
         'file_path',

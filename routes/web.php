@@ -15,18 +15,18 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->group(function () {
     Route::get('/login', [Autentikasi::class, 'halaman_login'])->name('login');
     Route::get('/lupa-kata-sandi', [Autentikasi::class, 'halaman_lupa_kata_sandi'])->name('lupa-kata-sandi');
-    Route::get('/reset-kata-sandi', [Autentikasi::class, 'halaman_reset_kata_sandi'])->name('reset-kata-sandi');
+    Route::get('/reset-kata-sandi/{token}', [Autentikasi::class, 'halaman_reset_kata_sandi'])->name('password.reset');
 
     Route::post('/login', [Autentikasi::class, 'login']);
-    Route::post('/lupa-kata-sandi', [Autentikasi::class, 'lupa_kata_sandi']);
-    Route::post('/reset-kata-sandi', [Autentikasi::class, 'reset_kata_sandi']);
+    Route::post('/lupa-kata-sandi', [Autentikasi::class, 'lupa_kata_sandi'])->name('password.email');
+    Route::post('/reset-kata-sandi', [Autentikasi::class, 'reset_kata_sandi'])->name('password.update');
 });
 
 Route::middleware('auth')->group(function () {
-    // Dashboard
+    // Dasbor
     Route::get('/', [Autentikasi::class, 'halaman_beranda'])->name('dashboard');
 
-    // Document
+    // Dokumen
     Route::get('/{section}/{id}/dokumen/{module_type}', [Dokumen::class, 'show_documents'])
         ->where('section', 'intelijen|penyidikan|penindakan')
         ->where('module_type', 'intelijen|penyidikan|penindakan')
@@ -91,8 +91,3 @@ Route::middleware('auth')->group(function () {
     Route::delete('/penyidikan/{no_spdp}', [Penyidikan::class, 'destroy'])->name('penyidikan.destroy');
     Route::delete('/penindakan/{no_sbp}', [Penindakan::class, 'destroy'])->name('penindakan.destroy');
 });
-
-// Password Reset
-Route::post('/forgot-password', [Autentikasi::class, 'lupa_kata_sandi'])->name('password.email');
-Route::get('/reset-password/{token}', [Autentikasi::class, 'halaman_reset_kata_sandi'])->name('password.reset');
-Route::post('/reset-password', [Autentikasi::class, 'reset_kata_sandi'])->name('password.update');

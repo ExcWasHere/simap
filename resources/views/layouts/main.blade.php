@@ -43,24 +43,6 @@
     @include('shared.ui.modal-tambah')
     @include('shared.ui.modal-filter')
 
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const tombol_unduh = document.getElementById('tombol-unduh');
-        if (tombol_unduh) {
-            tombol_unduh.addEventListener('click', () => {
-                const section = this.dataset.section;
-                const type = this.dataset.type || 'semua-data';
-                
-                if (section === 'monitoring') {
-                    window.location.href = `/monitoring/export/${type}`;
-                } else if (section) {
-                    window.location.href = `/export/${section}`;
-                }
-            });
-        }
-    });
-    </script>
-
     @stack('skrip')
 </body>
 

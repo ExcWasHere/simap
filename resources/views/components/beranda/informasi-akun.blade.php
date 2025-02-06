@@ -4,15 +4,15 @@
         <h3 class="mb-3 font-semibold text-xl text-gray-900">Informasi Akun</h3>
         <span class="flex items-center mb-3">
             <h5 class="font-medium">Nama:</h5>&emsp;&emsp;
-            {{ auth()->user()->name }}
+            {{ Auth::user()->name }}
         </span>
         <span class="flex items-center mb-3">
             <h5 class="font-medium">NIP:</h5>&emsp;&emsp;&emsp;
-            {{ auth()->user()->nip }}
+            {{ Auth::user()->nip }}
         </span>
         <span class="flex items-center mb-3">
             <h5 class="font-medium">Email:</h5>&emsp;&emsp;
-            {{ auth()->user()->email }}
+            {{ Auth::user()->email }}
         </span>
     </div>
 </section>

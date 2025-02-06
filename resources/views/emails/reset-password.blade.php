@@ -14,7 +14,7 @@
         <p>Anda menerima email ini karena kami menerima permintaan reset kata sandi untuk akun Anda.</p>
 
         <a
-            href="{{ url('reset-password', ['token' => $token]) }}?nip={{ $nip }}"
+            href="{{ url('reset-kata-sandi', ['token' => $token]) }}?nip={{ $nip }}"
             style="margin: 30px 0; background-color: #1a4167; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px"
         >
             Reset Kata Sandi
