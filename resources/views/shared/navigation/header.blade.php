@@ -50,6 +50,7 @@
     </header>
 
     <script>
+        // Ensure mobile menu is hidden by default on page load
         document.addEventListener('DOMContentLoaded', () => {
             const menu = document.getElementById('mobile-menu');
             if (menu) {

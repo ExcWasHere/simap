@@ -1,7 +1,7 @@
 @props(['headers', 'rows', 'id_modul' => []])
 
 <div class="w-full">
-    <div class="overflow-x-auto overflow-y-auto bg-white rounded-lg shadow relative max-h-[70vh]">
+    <div class="overflow-x-auto overflow-y-auto bg-white rounded-lg shadow relative max-h-[70vh] horizontal-scroll-table">
         <table class="w-full divide-y divide-gray-200">
             <thead class="bg-gray-100">
                 <tr>
@@ -137,5 +137,27 @@
                 });
             });
         })
+
+        const tables = document.querySelectorAll('.horizontal-scroll-table');
+    
+    tables.forEach(table => {
+        table.addEventListener('wheel', (e) => {
+            if (table.scrollWidth > table.clientWidth) { 
+                e.preventDefault();  
+                
+                const delta = e.deltaY || e.detail || e.wheelDelta;
+                table.scrollLeft += (delta * 0.5);
+                
+                if ((table.scrollLeft <= 0 && delta < 0) || 
+                    (table.scrollLeft >= (table.scrollWidth - table.clientWidth) && delta > 0)) {
+                    e.preventDefault = false;
+                }
+            }
+        }, { passive: false }); 
+
+        if (table.scrollWidth > table.clientWidth) {
+            table.classList.add('cursor-ew-resize');
+        }
+    });
     </script>
 @endpush
