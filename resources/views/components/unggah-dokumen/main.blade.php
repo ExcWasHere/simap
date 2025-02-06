@@ -1,4 +1,4 @@
-@props(['reference_id', 'section'])
+@props(['reference_id', 'section', 'module_type'])
 
 <section
     id="modal-upload"
@@ -67,7 +67,7 @@
                     required
                 >
                     <option>Pilih Tipe Dokumen</option>
-                    @switch($section)
+                    @switch($module_type)
                         @case('intelijen')
                             <option value="ST-I">ST-I</option>
                             <option value="LPTI">LPTI</option>

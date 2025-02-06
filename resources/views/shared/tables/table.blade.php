@@ -29,6 +29,7 @@
                             @php
                                 $section = request()->segment(1);
                                 $current_id = $row[1];
+                                $unique_menu_id = "dropdown-menu-{$index}-{$current_id}";
 
                                 $modules = [
                                     'intelijen' => [
@@ -62,7 +63,11 @@
                                 ];
                             @endphp
                             @foreach ($modules as $module_name => $config)
-                                <a href="{{ route('dokumen.show', ['section' => $section, 'id' => $current_id, 'module_type' => $module_name]) }}"
+                                <a href="{{ route('dokumen.show', [
+                                    'section' => $section,
+                                    'id' => rawurlencode($current_id),
+                                    'module_type' => $module_name
+                                ]) }}"
                                     class="h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 {{ $config['colors'] }}"
                                     title="{{ $config['title'] }}">
                                     <i class="{{ $config['icon'] }}"></i>
@@ -71,6 +76,7 @@
                             <button
                                 class="dropdown-trigger h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 hover:bg-gray-100"
                                 data-id="{{ $current_id }}"
+                                data-menu-id="{{ $unique_menu_id }}"
                             >
                                 <i class="fas fa-ellipsis-v text-gray-500"></i>
                             </button>
@@ -80,16 +86,22 @@
             @endforeach
         </tbody>
     </table>
-    <div id="dropdown-menu-{{ $current_id ?? '' }}" class="dropdown-menu hidden fixed mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-50">
-        <button data-id="{{ $current_id ?? '' }}" class="edit-btn w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 flex items-center gap-2">
-            <i class="fas fa-edit w-4"></i>
-            Edit
-        </button>
-        <button data-id="{{ $current_id ?? '' }}" class="delete-btn w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 flex items-center gap-2">
-            <i class="fas fa-trash-alt w-4"></i>
-            Hapus
-        </button>
-    </div>
+    @foreach ($rows as $index => $row)
+        @php
+            $current_id = $row[1];
+            $unique_menu_id = "dropdown-menu-{$index}-{$current_id}";
+        @endphp
+        <div id="{{ $unique_menu_id }}" class="dropdown-menu hidden fixed mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-50">
+            <button data-id="{{ $current_id }}" class="edit-btn w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 flex items-center gap-2">
+                <i class="fas fa-edit w-4"></i>
+                Edit
+            </button>
+            <button data-id="{{ $current_id }}" class="delete-btn w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 flex items-center gap-2">
+                <i class="fas fa-trash-alt w-4"></i>
+                Hapus
+            </button>
+        </div>
+    @endforeach
 </section>
 
 @push('skrip')
@@ -107,8 +119,8 @@
             dropdown_triggers.forEach((trigger) => {
                 trigger.addEventListener("click", function (e) {
                     e.stopPropagation();
-                    const id = this.getAttribute("data-id");
-                    const menu = document.getElementById(`dropdown-menu-${id}`);
+                    const menuId = this.getAttribute("data-menu-id");
+                    const menu = document.getElementById(menuId);
 
                     dropdown_menus.forEach((m) => {
                         if (m !== menu) m.classList.add("hidden");

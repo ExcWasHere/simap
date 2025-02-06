@@ -37,5 +37,11 @@ class DatabaseSeeder extends Seeder
             'email' => 'mizukinako7@gmail.com',
             'password' => Hash::make('password'),
         ]);
+
+        $this->call([
+            IntelijenSeeder::class,
+            PenindakanSeeder::class,
+            PenyidikanSeeder::class,
+        ]);
     }
 }

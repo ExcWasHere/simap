@@ -63,10 +63,19 @@ class Dokumen extends Controller
 
     public function show_documents($section, $id, $module_type)
     {
-        $documents = DokumenModel::where('tipe', $section)
-            ->where('reference_id', $id)
-            ->when($module_type !== $section, function($query) use ($module_type) {
-                return $query->where('', 'LIKE', strtoupper($module_type) . '%');
+        $documents = DokumenModel::where('reference_id', $id)
+            ->when($module_type === 'intelijen', function($query) {
+                $query->whereIn('tipe', ['LPPI', 'LPTI', 'LKAI', 'NHI', 'NI', 'ST-I']);
+            })
+            ->when($module_type === 'penyidikan', function($query) {
+                $query->whereIn('tipe', ['LK', 'SPTP', 'SPDP', 'TAP SITA', 'P2I']);
+            })
+            ->when($module_type === 'penindakan', function($query) {
+                $query->whereIn('tipe', ['PRIN', 'ST', 'BA-Pemeriksaan', 'BA-Penegahan', 'BAST', 'BA-Dokumentasi', 
+                    'BA-Pencacahan', 'BA-Penyegelan', 'SBP', 'LPHP', 'LP/LP1', 'LPP', 'LPF', 'SPLIT', 'LHP', 'LRP']);
+            })
+            ->when($module_type === 'monitoring', function($query) {
+                $query->whereIn('tipe', ['KEP-BDN', 'KEP-BMN', 'KEP-UR', 'SCTK']);
             })
             ->latest()
             ->get();
@@ -74,7 +83,8 @@ class Dokumen extends Controller
         return view('pages.dokumen', [
             'documents' => $documents,
             'reference_id' => $id,
-            'section' => $section
+            'section' => $section,
+            'module_type' => $module_type
         ]);
     }
 
@@ -168,6 +178,26 @@ class Dokumen extends Controller
     public function unggah_dokumen(Request $request, $reference_id = null)
     {
         try {
+            $referrer = $request->headers->get('referer');
+            $referrer_path = parse_url($referrer, PHP_URL_PATH);
+            $url_segments = array_values(array_filter(explode('/', $referrer_path)));
+            
+            $section = $url_segments[0] ?? 'intelijen';
+            $module_type = $url_segments[3] ?? $section;
+
+            $valid_modules = ['intelijen', 'penyidikan', 'penindakan', 'monitoring'];
+            if (!in_array($module_type, $valid_modules)) {
+                $module_type = $section;
+            }
+
+            Log::info('Document upload context:', [
+                'referrer' => $referrer,
+                'url_segments' => $url_segments,
+                'section' => $section,
+                'module_type' => $module_type,
+                'reference_id' => $reference_id
+            ]);
+
             $validated = $request->validate([
                 'tipe' => ['required', 'string', Rule::in(EnumsDokumen::values())],
                 'deskripsi' => 'nullable|string',
@@ -176,21 +206,35 @@ class Dokumen extends Controller
 
             $file = $request->file('file');
 
+            $safe_reference_id = str_replace(['/', '\\'], '_', $reference_id);
+            $encoded_reference_id = rawurlencode($reference_id);
+
+            $storage_path = sprintf(
+                'dokumen/%s/%s/modul_%s',
+                strtolower($section),
+                $encoded_reference_id,
+                strtolower($module_type)
+            );
+
             $file_name = sprintf(
                 '%s_%s_%s.%s',
                 strtoupper($validated['tipe']),
-                $reference_id,
+                $safe_reference_id,
                 now()->format('Ymd'),
                 $file->getClientOriginalExtension()
             );
 
-            $path = $file->storeAs('dokumen', $file_name, 'public');
+            $path = $file->storeAs($storage_path, $file_name, 'public');
 
             Log::info('Document upload reference ID:', [
                 'request_data' => $request->all(),
                 'route_reference_id' => $reference_id,
                 'type' => $validated['tipe'],
-                'filename' => $file_name
+                'filename' => $file_name,
+                'section' => $section,
+                'module_type' => $module_type,
+                'storage_path' => $storage_path,
+                'encoded_reference_id' => $encoded_reference_id
             ]);
 
             $dokumen = DokumenModel::create([
@@ -210,9 +254,9 @@ class Dokumen extends Controller
 
             return redirect()
                 ->route('dokumen.show', [
-                    'section' => $validated['tipe'],
-                    'id' => $reference_id,
-                    'module_type' => $validated['tipe']
+                    'section' => $section,
+                    'id' => rawurlencode($reference_id),
+                    'module_type' => $module_type
                 ])
                 ->with('success', 'Dokumen berhasil diunggah!');
 
@@ -242,8 +286,15 @@ class Dokumen extends Controller
             $document = DokumenModel::findOrFail($id);
             $file_path = str_replace('storage/', '', $document->file_path);
             
-            if (Storage::disk('public')->exists($file_path)) Storage::disk('public')->delete($file_path);
+            if (Storage::disk('public')->exists($file_path)) {
+                Storage::disk('public')->delete($file_path);
+            }
+
+            $dir_path = dirname($file_path);
+            
             $document->delete();
+
+            $this->cleanupEmptyDirectories($dir_path);
 
             return redirect()->back()->with('success', 'Dokumen berhasil dihapus!');
         } catch (Exception $e) {
@@ -252,6 +303,61 @@ class Dokumen extends Controller
                 'error' => $e->getMessage()
             ]);
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus dokumen.');
+        }
+    }
+
+    private function cleanupEmptyDirectories(string $path)
+    {
+        try {
+            while ($path && $path !== '.' && $path !== 'dokumen') {
+                $storage = Storage::disk('public');
+                
+                $files = $storage->files($path);
+                $directories = $storage->directories($path);
+
+                if (empty($files) && empty($directories)) {
+                    $storage->deleteDirectory($path);
+                    Log::info('Deleted empty directory:', ['path' => $path]);
+                    
+                    $path = dirname($path);
+                } else {
+                    break;
+                }
+            }
+        } catch (Exception $e) {
+            Log::error('Error cleaning up directories:', [
+                'path' => $path,
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function download($id)
+    {
+        try {
+            $document = DokumenModel::findOrFail($id);
+            $file_path = storage_path('app/public/' . $document->file_path);
+
+            if (!file_exists($file_path)) {
+                throw new Exception('File tidak ditemukan.');
+            }
+
+            Log::info('Document downloaded:', [
+                'id' => $document->id,
+                'file_path' => $document->file_path,
+                'user_id' => Auth::id()
+            ]);
+
+            return response()->download(
+                $file_path, 
+                $document->tipe . '_' . basename($document->file_path)
+            );
+        } catch (Exception $e) {
+            Log::error('Error downloading document:', [
+                'id' => $id,
+                'error' => $e->getMessage()
+            ]);
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh dokumen.');
         }
     }
 }

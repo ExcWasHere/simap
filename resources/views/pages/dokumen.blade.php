@@ -5,7 +5,7 @@
 @endsection
 
 @section('deskripsi')
-    Menampilkan dokumen untuk {{ $section }} dengan ID: {{ $reference_id }}
+    Halaman dokumen {{ $section }} untuk referensi {{ $reference_id }}
 @endsection
 
 @section('konten')
@@ -13,7 +13,8 @@
         @include('shared.ui.dokumen', [
             'documents' => $documents,
             'reference_id' => $reference_id,
-            'section' => $section
+            'section' => $section,
+            'module_type' => $module_type
         ])
     </div>
 @endsection 

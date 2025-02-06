@@ -1,4 +1,4 @@
-@props(['documents', 'reference_id', 'section'])
+@props(['documents', 'reference_id', 'section', 'module_type'])
 
 @php
     $reference_param = match ($section) {
@@ -37,8 +37,8 @@
                     </button>
                 </form>
 
-                <a href="{{ asset('storage/' . $document->file_path) }}"
-                    class="block group-hover:scale-[0.99] transition-transform duration-200" target="_blank">
+                <a href="{{ route('dokumen.download', $document->id) }}"
+                    class="block group-hover:scale-[0.99] transition-transform duration-200">
                     <div class="p-6 flex flex-col items-center justify-center h-40 space-y-3">
                         @if (Str::endsWith($document->file_path, '.pdf'))
                             <div class="relative">
@@ -123,4 +123,5 @@
 @include('components.unggah-dokumen.main', [
     'reference_id' => $reference_id,
     'section' => $section,
+    'module_type' => $module_type
 ])

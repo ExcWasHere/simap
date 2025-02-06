@@ -33,10 +33,14 @@ document.addEventListener("DOMContentLoaded", function () {
             e.stopPropagation();
 
             const id = this.dataset.id;
-            const section = window.location.pathname.split("/")[1];
+            if (!id) {
+                console.error("No ID found for delete button");
+                return;
+            }
 
+            const section = window.location.pathname.split("/")[1];
             const willDelete = confirm(
-                "Apakah Anda yakin ingin menghapus item ini?",
+                "Apakah Anda yakin ingin menghapus item ini?"
             );
 
             if (!willDelete) {
@@ -53,17 +57,25 @@ document.addEventListener("DOMContentLoaded", function () {
                     '<i class="fas fa-spinner fa-spin w-4"></i> Menghapus...';
                 this.disabled = true;
 
-                const response = await fetch(`/${section}/${id}`, {
+                const encodedId = id.split('/').map(part => encodeURIComponent(part)).join('/');
+                console.log('Encoded ID:', encodedId);
+                console.log('Delete URL:', `/${section}/${encodedId}`);
+
+                const response = await fetch(`/${section}/${encodedId}`, {
                     method: "DELETE",
                     headers: {
                         "X-CSRF-TOKEN": token,
-                        Accept: "application/json",
+                        "Accept": "application/json",
                         "Content-Type": "application/json",
+                        "X-HTTP-Method-Override": "DELETE"
                     },
+                    credentials: 'same-origin'
                 });
 
                 console.log("Response status:", response.status);
                 if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error("Error response:", errorText);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
@@ -72,32 +84,45 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (data.success) {
                     const row = this.closest("tr");
-                    row.style.backgroundColor = "#fee2e2";
-                    row.style.transition = "background-color 0.5s ease";
+                    if (!row) {
+                        console.error("Could not find table row to delete");
+                        window.location.reload();
+                        return;
+                    }
 
-                    setTimeout(() => {
+                    try {
+                        row.style.backgroundColor = "#fee2e2";
+                        row.style.transition = "all 0.5s ease";
+                        
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        
                         row.style.opacity = "0";
-                        row.style.transition = "opacity 0.5s ease";
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        
+                        row.remove();
+                        
+                        const notification = document.createElement("div");
+                        notification.className =
+                            "fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 transform translate-y-0";
+                        notification.innerHTML =
+                            '<div class="flex items-center gap-2"><i class="fas fa-check-circle"></i> Data berhasil dihapus</div>';
+                        document.body.appendChild(notification);
 
                         setTimeout(() => {
-                            row.remove();
-
-                            const notification = document.createElement("div");
-                            notification.className =
-                                "fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 transform translate-y-0";
-                            notification.innerHTML =
-                                '<div class="flex items-center gap-2"><i class="fas fa-check-circle"></i> Data berhasil dihapus</div>';
-                            document.body.appendChild(notification);
-
-                            setTimeout(() => {
-                                notification.style.opacity = "0";
-                                setTimeout(() => notification.remove(), 500);
-                            }, 3000);
-                        }, 500);
-                    }, 100);
+                            notification.style.opacity = "0";
+                            setTimeout(() => notification.remove(), 500);
+                        }, 3000);
+                        
+                        if (document.contains(row)) {
+                            window.location.reload();
+                        }
+                    } catch (error) {
+                        console.error("Error during row deletion animation:", error);
+                        window.location.reload();
+                    }
                 } else {
                     throw new Error(
-                        data.message || "Terjadi kesalahan saat menghapus data",
+                        data.message || "Terjadi kesalahan saat menghapus data"
                     );
                 }
             } catch (error) {
