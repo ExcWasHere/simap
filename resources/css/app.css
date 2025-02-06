@@ -2,9 +2,7 @@
 @source "../views";
 
 @media screen and (max-width: 3120px) {
-    ::-webkit-scrollbar {
-        display: none !important;
-    }
+
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
     input:-webkit-autofill:focus,
