@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Penindakan as PenindakanModel;
+use App\Models\Intelijen as IntelijenModel;
+use App\Models\Penyidikan as PenyidikanModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,8 +34,112 @@ class MonitoringBHP extends Controller
     public function ekspor_excel($type)
     {
         $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
 
+        // Sheet 1: Intelijen
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Intelijen');
+        $headers = [
+            'No',
+            'No NHI',
+            'Tanggal NHI',
+            'Tempat',
+            'Jenis Barang',
+            'Jumlah Barang',
+            'Keterangan'
+        ];
+
+        foreach (range('A', 'G') as $index => $column) {
+            $sheet->setCellValue($column . '1', $headers[$index]);
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+
+        $query = IntelijenModel::query();
+        switch ($type) {
+            case 'data-per-bulan':
+                $query->whereMonth('tanggal_nhi', now()->month)
+                    ->whereYear('tanggal_nhi', now()->year);
+                break;
+            case 'rekap-tahunan':
+                $query->whereYear('tanggal_nhi', now()->year);
+                break;
+            case 'semua-data':
+            default:
+                break;
+        }
+
+        $data = $query->orderBy('tanggal_nhi', 'desc')->get();
+        $row = 2;
+        foreach ($data as $index => $item) {
+            $sheet->setCellValue('A' . $row, $index + 1);
+            $sheet->setCellValue('B' . $row, $item->no_nhi);
+            $sheet->setCellValue('C' . $row, $item->tanggal_nhi->format('d-m-Y'));
+            $sheet->setCellValue('D' . $row, $item->tempat);
+            $sheet->setCellValue('E' . $row, $item->jenis_barang);
+            $sheet->setCellValue('F' . $row, $item->jumlah_barang);
+            $sheet->setCellValue('G' . $row, $item->keterangan);
+            $row++;
+        }
+
+        $sheet->getStyle('A1:G1')->applyFromArray([
+            'font' => ['bold' => true],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'E5E7EB']
+            ]
+        ]);
+
+        // Sheet 2: Penyidikan
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('Penyidikan');
+        $headers = [
+            'No',
+            'No SPDP',
+            'Tanggal SPDP',
+            'Pelaku',
+            'Keterangan'
+        ];
+
+        foreach (range('A', 'E') as $index => $column) {
+            $sheet->setCellValue($column . '1', $headers[$index]);
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+
+        $query = PenyidikanModel::query();
+        switch ($type) {
+            case 'data-per-bulan':
+                $query->whereMonth('tanggal_spdp', now()->month)
+                    ->whereYear('tanggal_spdp', now()->year);
+                break;
+            case 'rekap-tahunan':
+                $query->whereYear('tanggal_spdp', now()->year);
+                break;
+            case 'semua-data':
+            default:
+                break;
+        }
+
+        $data = $query->orderBy('tanggal_spdp', 'desc')->get();
+        $row = 2;
+        foreach ($data as $index => $item) {
+            $sheet->setCellValue('A' . $row, $index + 1);
+            $sheet->setCellValue('B' . $row, $item->no_spdp);
+            $sheet->setCellValue('C' . $row, $item->tanggal_spdp->format('d-m-Y'));
+            $sheet->setCellValue('D' . $row, $item->pelaku);
+            $sheet->setCellValue('E' . $row, $item->keterangan);
+            $row++;
+        }
+
+        $sheet->getStyle('A1:E1')->applyFromArray([
+            'font' => ['bold' => true],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'E5E7EB']
+            ]
+        ]);
+
+        // Sheet 3: Penindakan
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle('Penindakan');
         $headers = [
             'No',
             'No SBP',
@@ -52,7 +158,6 @@ class MonitoringBHP extends Controller
         }
 
         $query = PenindakanModel::query();
-
         switch ($type) {
             case 'data-per-bulan':
                 $query->whereMonth('tanggal_sbp', now()->month)
@@ -67,7 +172,6 @@ class MonitoringBHP extends Controller
         }
 
         $data = $query->orderBy('tanggal_sbp', 'desc')->get();
-
         $row = 2;
         foreach ($data as $index => $item) {
             $sheet->setCellValue('A' . $row, $index + 1);
@@ -89,6 +193,9 @@ class MonitoringBHP extends Controller
                 'startColor' => ['rgb' => 'E5E7EB']
             ]
         ]);
+
+        // Set the first sheet as active
+        $spreadsheet->setActiveSheetIndex(0);
 
         $writer = new Xlsx($spreadsheet);
         $file_name = 'monitoring-bhp-' . $type . '-' . now()->format('Y-m-d') . '.xlsx';
