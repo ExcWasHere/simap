@@ -1,91 +1,97 @@
 @props(['headers', 'rows', 'id_modul' => []])
 
-<section class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
-    <table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
-        <thead>
-            <tr class="text-left">
-                @foreach ($headers as $header)
-                    <th
-                        class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-3 text-gray-600 font-bold tracking-wider uppercase text-xs">
-                        {{ $header }}
-                    </th>
-                @endforeach
-                <th
-                    class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-3 text-gray-600 font-bold tracking-wider uppercase text-xs">
-                    Aksi
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($rows as $index => $row)
-                <tr>
-                    @foreach ($row as $key => $cell)
-                        <td class="border-dashed border-t border-gray-200 px-6 py-4 text-gray-700">
-                            {{ $cell }}
-                        </td>
-                    @endforeach
-                    <td class="border-dashed border-t border-gray-200 px-6 py-4">
-                        <fieldset class="flex items-center gap-2">
-                            @php
-                                $section = request()->segment(1);
-                                $current_id = $row[1];
-                                $unique_menu_id = "dropdown-menu-{$index}-{$current_id}";
-
-                                $modules = [
-                                    'intelijen' => [
-                                        'route' => 'intelijen.dokumen',
-                                        'param' => 'no_nhi',
-                                        'colors' => 'bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-700',
-                                        'icon' => 'fas fa-file-alt',
-                                        'title' => 'Akses Modul Intelijen',
-                                    ],
-                                    'penyidikan' => [
-                                        'route' => 'penyidikan.dokumen',
-                                        'param' => 'no_spdp',
-                                        'colors' => 'bg-green-100 text-green-600 hover:bg-green-200 hover:text-green-700',
-                                        'icon' => 'fas fa-search',
-                                        'title' => 'Akses Modul Penyidikan',
-                                    ],
-                                    'monitoring' => [
-                                        'route' => 'monitoring.dokumen',
-                                        'param' => 'id',
-                                        'colors' => 'bg-purple-100 text-purple-600 hover:bg-purple-200 hover:text-purple-700',
-                                        'icon' => 'fas fa-chart-line',
-                                        'title' => 'Akses Modul Monitoring',
-                                    ],
-                                    'penindakan' => [
-                                        'route' => 'penindakan.dokumen',
-                                        'param' => 'no_sbp',
-                                        'colors' => 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-700',
-                                        'icon' => 'fas fa-gavel',
-                                        'title' => 'Akses Modul Penindakan',
-                                    ],
-                                ];
-                            @endphp
-                            @foreach ($modules as $module_name => $config)
-                                <a href="{{ route('dokumen.show', [
-                                    'section' => $section,
-                                    'id' => rawurlencode($current_id),
-                                    'module_type' => $module_name
-                                ]) }}"
-                                    class="h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 {{ $config['colors'] }}"
-                                    title="{{ $config['title'] }}">
-                                    <i class="{{ $config['icon'] }}"></i>
-                                </a>
+<div class="w-full">
+    <div class="overflow-x-auto bg-white rounded-lg shadow relative">
+        <div class="inline-block min-w-full">
+            <div class="overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            @foreach ($headers as $header)
+                                <th scope="col" class="sticky top-0 px-4 sm:px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider whitespace-nowrap">
+                                    {{ $header }}
+                                </th>
                             @endforeach
-                            <button
-                                class="dropdown-trigger h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 hover:bg-gray-100"
-                                data-id="{{ $current_id }}"
-                                data-menu-id="{{ $unique_menu_id }}"
-                            >
-                                <i class="fas fa-ellipsis-v text-gray-500"></i>
-                            </button>
-                        </fieldset>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+                            <th scope="col" class="sticky top-0 px-4 sm:px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                                Aksi
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach ($rows as $index => $row)
+                            <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                @foreach ($row as $key => $cell)
+                                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                        <div class="flex items-center">
+                                            <div class="truncate">{{ $cell }}</div>
+                                        </div>
+                                    </td>
+                                @endforeach
+                                <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <fieldset class="flex items-center gap-2">
+                                        @php
+                                            $section = request()->segment(1);
+                                            $current_id = $row[1];
+                                            $unique_menu_id = "dropdown-menu-{$index}-{$current_id}";
+
+                                            $modules = [
+                                                'intelijen' => [
+                                                    'route' => 'intelijen.dokumen',
+                                                    'param' => 'no_nhi',
+                                                    'colors' => 'bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-700',
+                                                    'icon' => 'fas fa-file-alt',
+                                                    'title' => 'Akses Modul Intelijen',
+                                                ],
+                                                'penyidikan' => [
+                                                    'route' => 'penyidikan.dokumen',
+                                                    'param' => 'no_spdp',
+                                                    'colors' => 'bg-green-100 text-green-600 hover:bg-green-200 hover:text-green-700',
+                                                    'icon' => 'fas fa-search',
+                                                    'title' => 'Akses Modul Penyidikan',
+                                                ],
+                                                'monitoring' => [
+                                                    'route' => 'monitoring.dokumen',
+                                                    'param' => 'id',
+                                                    'colors' => 'bg-purple-100 text-purple-600 hover:bg-purple-200 hover:text-purple-700',
+                                                    'icon' => 'fas fa-chart-line',
+                                                    'title' => 'Akses Modul Monitoring',
+                                                ],
+                                                'penindakan' => [
+                                                    'route' => 'penindakan.dokumen',
+                                                    'param' => 'no_sbp',
+                                                    'colors' => 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-700',
+                                                    'icon' => 'fas fa-gavel',
+                                                    'title' => 'Akses Modul Penindakan',
+                                                ],
+                                            ];
+                                        @endphp
+                                        @foreach ($modules as $module_name => $config)
+                                            <a href="{{ route('dokumen.show', [
+                                                'section' => $section,
+                                                'id' => rawurlencode($current_id),
+                                                'module_type' => $module_name
+                                            ]) }}"
+                                                class="h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 {{ $config['colors'] }}"
+                                                title="{{ $config['title'] }}">
+                                                <i class="{{ $config['icon'] }}"></i>
+                                            </a>
+                                        @endforeach
+                                        <button
+                                            class="dropdown-trigger h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 hover:bg-gray-100"
+                                            data-id="{{ $current_id }}"
+                                            data-menu-id="{{ $unique_menu_id }}"
+                                        >
+                                            <i class="fas fa-ellipsis-v text-gray-500"></i>
+                                        </button>
+                                    </fieldset>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     @foreach ($rows as $index => $row)
         @php
             $current_id = $row[1];
@@ -102,7 +108,7 @@
             </button>
         </div>
     @endforeach
-</section>
+</div>
 
 @push('skrip')
     <script>
