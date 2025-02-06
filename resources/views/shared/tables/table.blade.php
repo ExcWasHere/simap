@@ -128,7 +128,7 @@
 
                     const rect = trigger.getBoundingClientRect();
                     menu.style.position = "fixed";
-                    menu.style.top = `${rect.bottom + window.scrollY}px`;
+                    menu.style.top = `${rect.bottom}px`;
                     menu.style.left = `${rect.left}px`;
 
                     menu.classList.toggle("hidden");

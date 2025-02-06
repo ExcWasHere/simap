@@ -16,7 +16,6 @@
     <meta name="twitter:image" content="{{ asset('favicon.ico') }}" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>@yield('judul') | SIMAP</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}" />
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
