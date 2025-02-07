@@ -250,8 +250,23 @@ class MonitoringBHP extends Controller
         $total_penyidikan = DB::table('penyidikan')->whereNull('deleted_at')->count();
         $total_dokumen = $total_intelijen + $total_penindakan + $total_penyidikan;
 
-        // Hitung rata-rata per bulan
-        $average_per_month = round(($total_dokumen / 12), 1); // Asumsi data 1 tahun
+        $first_intelijen = DB::table('intelijen')->whereNull('deleted_at')->min('created_at');
+        $first_penindakan = DB::table('penindakan')->whereNull('deleted_at')->min('created_at');
+        $first_penyidikan = DB::table('penyidikan')->whereNull('deleted_at')->min('created_at');
+
+        $first_date = collect([$first_intelijen, $first_penindakan, $first_penyidikan])
+            ->filter()
+            ->min();
+
+        if ($first_date) {
+            $months_diff = Carbon::parse($first_date)->diffInMonths(Carbon::now()) + 1; // +1 untuk mengikutsertakan bulan berjalan
+            
+            $average_per_month = $months_diff > 0 
+                ? round(($total_dokumen / $months_diff), 1)
+                : $total_dokumen; 
+        } else {
+            $average_per_month = 0;
+        }
 
         // Hitung pertumbuhan
         $last_month_count = DB::table('intelijen')

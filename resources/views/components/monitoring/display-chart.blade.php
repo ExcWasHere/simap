@@ -10,7 +10,6 @@
                 '30' => '30 Hari Terakhir',
                 '3' => '3 Bulan Terakhir',
                 '1' => '1 Tahun Terakhir',
-                'custom' => 'Custom Range',
             ],
         ])
         @include('shared.forms.select', [

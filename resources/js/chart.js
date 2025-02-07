@@ -117,13 +117,39 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(url)
             .then((response) => response.json())
             .then((data) => {
-                chart_data = data;
+                if (range === "7" || range === "30") {
+                    chart_data = data;
+                } else {
+                    const monthlyData = {
+                        labels: [...new Set(data.labels.map(date => {
+                            const [day, month] = date.split(' ');
+                            return month;
+                        }))],
+                        datasets: data.datasets.map(dataset => ({
+                            ...dataset,
+                            data: groupDataByMonth(data.labels, dataset.data)
+                        })),
+                        stats: data.stats
+                    };
+                    chart_data = monthlyData;
+                }
                 perbarui_chart();
                 perbarui_statistik(data.stats);
             })
             .catch((error) => {
                 console.error("Error fetching chart data:", error);
             });
+    }
+
+    const groupDataByMonth = (labels, data) => {
+        const monthlyTotals = {};
+        
+        labels.forEach((label, index) => {
+            const month = label.split(' ')[1];
+            monthlyTotals[month] = (monthlyTotals[month] || 0) + data[index];
+        });
+
+        return Object.values(monthlyTotals);
     }
 
     document.querySelector('select[name="chart-type"]').value = "line";
