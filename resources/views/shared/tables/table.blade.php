@@ -16,75 +16,94 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                @foreach ($rows as $index => $row)
-                    <tr class="hover:bg-gray-50 transition-colors duration-200">
-                        @foreach ($row as $key => $cell)
-                            <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                <div class="flex items-center">
-                                    <div class="truncate">{{ $cell }}</div>
-                                </div>
-                            </td>
-                        @endforeach
-                        <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <fieldset class="flex items-center gap-2">
-                                @php
-                                    $section = request()->segment(1);
-                                    $current_id = $row[1];
-                                    $unique_menu_id = "dropdown-menu-{$index}-{$current_id}";
+                @if (count($rows) > 0)
+                    @foreach ($rows as $index => $row)
+                        <tr class="hover:bg-gray-50 transition-colors duration-200">
+                            @foreach ($row as $key => $cell)
+                                <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                    <div class="flex items-center">
+                                        <div class="truncate">{{ $cell }}</div>
+                                    </div>
+                                </td>
+                            @endforeach
+                            <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <fieldset class="flex items-center gap-2">
+                                    @php
+                                        $section = request()->segment(1);
+                                        $current_id = $row[1];
+                                        $unique_menu_id = "dropdown-menu-{$index}-{$current_id}";
 
-                                    $modules = [
-                                        'intelijen' => [
-                                            'route' => 'intelijen.dokumen',
-                                            'param' => 'no_nhi',
-                                            'colors' => 'bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-700',
-                                            'icon' => 'fas fa-file-alt',
-                                            'title' => 'Akses Modul Intelijen',
-                                        ],
-                                        'penyidikan' => [
-                                            'route' => 'penyidikan.dokumen',
-                                            'param' => 'no_spdp',
-                                            'colors' => 'bg-green-100 text-green-600 hover:bg-green-200 hover:text-green-700',
-                                            'icon' => 'fas fa-search',
-                                            'title' => 'Akses Modul Penyidikan',
-                                        ],
-                                        'monitoring' => [
-                                            'route' => 'monitoring.dokumen',
-                                            'param' => 'id',
-                                            'colors' => 'bg-purple-100 text-purple-600 hover:bg-purple-200 hover:text-purple-700',
-                                            'icon' => 'fas fa-chart-line',
-                                            'title' => 'Akses Modul Monitoring',
-                                        ],
-                                        'penindakan' => [
-                                            'route' => 'penindakan.dokumen',
-                                            'param' => 'no_sbp',
-                                            'colors' => 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-700',
-                                            'icon' => 'fas fa-gavel',
-                                            'title' => 'Akses Modul Penindakan',
-                                        ],
-                                    ];
-                                @endphp
-                                @foreach ($modules as $module_name => $config)
-                                    <a href="{{ route('dokumen.show', [
-                                        'section' => $section,
-                                        'id' => rawurlencode($current_id),
-                                        'module_type' => $module_name
-                                    ]) }}"
-                                        class="h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 {{ $config['colors'] }}"
-                                        title="{{ $config['title'] }}">
-                                        <i class="{{ $config['icon'] }}"></i>
-                                    </a>
-                                @endforeach
-                                <button
-                                    class="dropdown-trigger h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 hover:bg-gray-100"
-                                    data-id="{{ $current_id }}"
-                                    data-menu-id="{{ $unique_menu_id }}"
-                                >
-                                    <i class="fas fa-ellipsis-v text-gray-500"></i>
-                                </button>
-                            </fieldset>
+                                        $modules = [
+                                            'intelijen' => [
+                                                'route' => 'intelijen.dokumen',
+                                                'param' => 'no_nhi',
+                                                'colors' => 'bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-700',
+                                                'icon' => 'fas fa-file-alt',
+                                                'title' => 'Akses Modul Intelijen',
+                                            ],
+                                            'penyidikan' => [
+                                                'route' => 'penyidikan.dokumen',
+                                                'param' => 'no_spdp',
+                                                'colors' => 'bg-green-100 text-green-600 hover:bg-green-200 hover:text-green-700',
+                                                'icon' => 'fas fa-search',
+                                                'title' => 'Akses Modul Penyidikan',
+                                            ],
+                                            'monitoring' => [
+                                                'route' => 'monitoring.dokumen',
+                                                'param' => 'id',
+                                                'colors' => 'bg-purple-100 text-purple-600 hover:bg-purple-200 hover:text-purple-700',
+                                                'icon' => 'fas fa-chart-line',
+                                                'title' => 'Akses Modul Monitoring',
+                                            ],
+                                            'penindakan' => [
+                                                'route' => 'penindakan.dokumen',
+                                                'param' => 'no_sbp',
+                                                'colors' => 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-700',
+                                                'icon' => 'fas fa-gavel',
+                                                'title' => 'Akses Modul Penindakan',
+                                            ],
+                                        ];
+                                    @endphp
+                                    @foreach ($modules as $module_name => $config)
+                                        <a href="{{ route('dokumen.show', [
+                                            'section' => $section,
+                                            'id' => rawurlencode($current_id),
+                                            'module_type' => $module_name
+                                        ]) }}"
+                                            class="h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 {{ $config['colors'] }}"
+                                            title="{{ $config['title'] }}">
+                                            <i class="{{ $config['icon'] }}"></i>
+                                        </a>
+                                    @endforeach
+                                    <button
+                                        class="dropdown-trigger h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 hover:bg-gray-100"
+                                        data-id="{{ $current_id }}"
+                                        data-menu-id="{{ $unique_menu_id }}"
+                                    >
+                                        <i class="fas fa-ellipsis-v text-gray-500"></i>
+                                    </button>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    @endforeach
+                @else
+                    <tr>
+                        <td colspan="{{ count($headers) + 1 }}" class="px-4 sm:px-6 py-12 text-center">
+                            <div class="flex flex-col items-center justify-center space-y-3">
+                                <div class="bg-gray-100 rounded-full p-3">
+                                    <i class="fas fa-search text-gray-400 text-xl"></i>
+                                </div>
+                                <div class="text-gray-500 text-sm">
+                                    @if (request('search'))
+                                        Tidak ada data yang sesuai dengan pencarian "{{ request('search') }}"
+                                    @else
+                                        Tidak ada data yang tersedia
+                                    @endif
+                                </div>
+                            </div>
                         </td>
                     </tr>
-                @endforeach
+                @endif
             </tbody>
         </table>
     </div>
@@ -140,24 +159,24 @@
 
         const tables = document.querySelectorAll('.horizontal-scroll-table');
     
-    tables.forEach(table => {
-        table.addEventListener('wheel', (e) => {
-            if (table.scrollWidth > table.clientWidth) { 
-                e.preventDefault();  
-                
-                const delta = e.deltaY || e.detail || e.wheelDelta;
-                table.scrollLeft += (delta * 0.5);
-                
-                if ((table.scrollLeft <= 0 && delta < 0) || 
-                    (table.scrollLeft >= (table.scrollWidth - table.clientWidth) && delta > 0)) {
-                    e.preventDefault = false;
+        tables.forEach(table => {
+            table.addEventListener('wheel', (e) => {
+                if (table.scrollWidth > table.clientWidth) { 
+                    e.preventDefault();  
+                    
+                    const delta = e.deltaY || e.detail || e.wheelDelta;
+                    table.scrollLeft += (delta * 0.5);
+                    
+                    if ((table.scrollLeft <= 0 && delta < 0) || 
+                        (table.scrollLeft >= (table.scrollWidth - table.clientWidth) && delta > 0)) {
+                        e.preventDefault = false;
+                    }
                 }
-            }
-        }, { passive: false }); 
+            }, { passive: false }); 
 
-        if (table.scrollWidth > table.clientWidth) {
-            table.classList.add('cursor-ew-resize');
-        }
-    });
+            if (table.scrollWidth > table.clientWidth) {
+                table.classList.add('cursor-ew-resize');
+            }
+        });
     </script>
 @endpush
