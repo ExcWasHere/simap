@@ -32,7 +32,8 @@ class Penindakan extends Controller
         if ($date_to = $request->input('date_to')) 
             $query->whereDate('tanggal_sbp', '<=', $date_to);
 
-        $penindakan = $query->latest()->paginate(10)->withQueryString();
+        $perPage = $request->input('per_page', 10);
+        $penindakan = $query->latest()->paginate($perPage)->withQueryString();
 
         $rows = $penindakan->map(function ($item, $index) use ($penindakan) {
             return [
