@@ -71,8 +71,11 @@ class Dokumen extends Controller
                 $query->whereIn('tipe', ['LK', 'SPTP', 'SPDP', 'TAP SITA', 'P2I']);
             })
             ->when($module_type === 'penindakan', function($query) {
-                $query->whereIn('tipe', ['PRIN', 'ST', 'BA-Pemeriksaan', 'BA-Penegahan', 'BAST', 'BA-Dokumentasi', 
-                    'BA-Pencacahan', 'BA-Penyegelan', 'SBP', 'LPHP', 'LP/LP1', 'LPP', 'LPF', 'SPLIT', 'LHP', 'LRP']);
+                $query->whereIn('tipe', [
+                    'PRIN', 'ST', 'BA-Pemeriksaan', 'BA-Penegahan', 'BAST', 
+                    'BA-Dokumentasi', 'BA-Pencacahan', 'BA-Penyegelan', 'SBP', 
+                    'LPHP', 'LP/LP1', 'LPP', 'LPF', 'SPLIT', 'LHP', 'LRP'
+                ]);
             })
             ->when($module_type === 'monitoring', function($query) {
                 $query->whereIn('tipe', ['KEP-BDN', 'KEP-BMN', 'KEP-UR', 'SCTK']);
