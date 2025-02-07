@@ -2,8 +2,12 @@
 @source "../views";
 
 @media screen and (max-width: 3120px) {
-    ::-webkit-scrollbar {
-        display: none !important;
+    * {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    *::-webkit-scrollbar {
+        display: none;
     }
     input:-webkit-autofill,
     input:-webkit-autofill:hover,

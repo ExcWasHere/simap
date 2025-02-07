@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Intelijen as IntelijenModel;
-use App\Models\Penindakan as PenindakanModel;
-use App\Models\Penyidikan as PenyidikanModel;
 use App\Http\Requests\Intelijen as IntelijenRequest;
 use App\Http\Requests\Penindakan as PenindakanRequest;
 use App\Http\Requests\Penyidikan as PenyidikanRequest;
+use App\Models\Intelijen as IntelijenModel;
+use App\Models\Penindakan as PenindakanModel;
+use App\Models\Penyidikan as PenyidikanModel;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,6 +35,7 @@ class Data extends Controller
     {
         return view('pages.tambah-data-penyidikan');
     }
+
 
     /**
      * Controllers
@@ -66,10 +67,10 @@ class Data extends Controller
                         break;
 
                     default:
-                        throw new Exception('Tipe entitas tidak valid');
+                        throw new Exception('Tipe entitas tidak valid!');
                 }
 
-                return response()->json(['message' => 'Data berhasil disimpan'], 201);
+                return response()->json(['message' => 'Data berhasil disimpan.'], 201);
             });
         } catch (Exception $e) {
             Log::error('Error in storing data: ' . $e->getMessage());
@@ -83,7 +84,7 @@ class Data extends Controller
             'intelijen' => $request->validate((new IntelijenRequest())->rules()),
             'penindakan' => $request->validate((new PenindakanRequest())->rules()),
             'penyidikan' => $request->validate((new PenyidikanRequest())->rules()),
-            default => throw new Exception('Tipe entitas tidak valid'),
+            default => throw new Exception('Tipe entitas tidak valid.'),
         };
     }
 }

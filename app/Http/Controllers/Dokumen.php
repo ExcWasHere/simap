@@ -24,8 +24,8 @@ class Dokumen extends Controller
      */
     public function halaman_dokumen($id, $tipe): View
     {
-        $validTypes = ['intelijen', 'monitoring', 'penindakan', 'penyidikan'];
-        abort_unless(in_array($tipe, $validTypes), 404);
+        $valid_types = ['intelijen', 'monitoring', 'penindakan', 'penyidikan'];
+        abort_unless(in_array($tipe, $valid_types), 404);
 
         $documents = DokumenModel::where('tipe', $tipe)
             ->where('reference_id', $id)
@@ -50,7 +50,7 @@ class Dokumen extends Controller
             default => null
         };
 
-        Log::info('Upload page accessed:', [
+        Log::info('Halaman unggah diakses:', [
             'section' => $current_section,
             'reference_id' => $reference_id,
             'reference_param' => $reference_param,
@@ -61,7 +61,7 @@ class Dokumen extends Controller
         ]);
     }
 
-    public function show_documents($section, $id, $module_type)
+    public function tampilkan_dokumen($section, $id, $module_type): View
     {
         $documents = DokumenModel::where('reference_id', $id)
             ->when($module_type === 'intelijen', function($query) {
@@ -90,6 +90,7 @@ class Dokumen extends Controller
             'module_type' => $module_type
         ]);
     }
+
 
     /**
      * Controllers
@@ -193,7 +194,7 @@ class Dokumen extends Controller
                 $module_type = $section;
             }
 
-            Log::info('Document upload context:', [
+            Log::info('Konteks unggahan dokumen:', [
                 'referrer' => $referrer,
                 'url_segments' => $url_segments,
                 'section' => $section,
@@ -229,7 +230,7 @@ class Dokumen extends Controller
 
             $path = $file->storeAs($storage_path, $file_name, 'public');
 
-            Log::info('Document upload reference ID:', [
+            Log::info('ID referensi unggahan dokumen:', [
                 'request_data' => $request->all(),
                 'route_reference_id' => $reference_id,
                 'type' => $validated['tipe'],
@@ -248,7 +249,7 @@ class Dokumen extends Controller
                 'uploaded_by' => Auth::id()
             ]);
 
-            Log::info('Document uploaded successfully:', [
+            Log::info('Dokumen berhasil diunggah:', [
                 'id' => $dokumen->id,
                 'type' => $dokumen->tipe,
                 'reference_id' => $dokumen->reference_id,
@@ -264,7 +265,7 @@ class Dokumen extends Controller
                 ->with('success', 'Dokumen berhasil diunggah!');
 
         } catch (ValidationException $e) {
-            Log::error('Validation error during upload:', [
+            Log::error('Kesalahan validasi selama mengunggah:', [
                 'errors' => $e->errors()
             ]);
             return redirect()
@@ -272,7 +273,7 @@ class Dokumen extends Controller
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (Exception $e) {
-            Log::error('Error uploading document:', [
+            Log::error('Kesalahan dalam mengunggah dokumen:', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -283,7 +284,7 @@ class Dokumen extends Controller
         }
     }
 
-    public function delete($id)
+    public function hapus_dokumen($id)
     {
         try {
             $document = DokumenModel::findOrFail($id);
@@ -297,11 +298,11 @@ class Dokumen extends Controller
             
             $document->delete();
 
-            $this->cleanupEmptyDirectories($dir_path);
+            $this->membersihkan_direktori_kosong($dir_path);
 
             return redirect()->back()->with('success', 'Dokumen berhasil dihapus!');
         } catch (Exception $e) {
-            Log::error('Error deleting document:', [
+            Log::error('Kesalahan saat menghapus dokumen:', [
                 'id' => $id,
                 'error' => $e->getMessage()
             ]);
@@ -309,7 +310,7 @@ class Dokumen extends Controller
         }
     }
 
-    private function cleanupEmptyDirectories(string $path)
+    private function membersihkan_direktori_kosong(string $path)
     {
         try {
             while ($path && $path !== '.' && $path !== 'dokumen') {
@@ -320,7 +321,7 @@ class Dokumen extends Controller
 
                 if (empty($files) && empty($directories)) {
                     $storage->deleteDirectory($path);
-                    Log::info('Deleted empty directory:', ['path' => $path]);
+                    Log::info('Menghapus direktori kosong:', ['path' => $path]);
                     
                     $path = dirname($path);
                 } else {
@@ -328,24 +329,22 @@ class Dokumen extends Controller
                 }
             }
         } catch (Exception $e) {
-            Log::error('Error cleaning up directories:', [
+            Log::error('Kesalahan saat membersihkan direktori:', [
                 'path' => $path,
                 'error' => $e->getMessage()
             ]);
         }
     }
 
-    public function download($id)
+    public function unduh_dokumen($id)
     {
         try {
             $document = DokumenModel::findOrFail($id);
             $file_path = storage_path('app/public/' . $document->file_path);
 
-            if (!file_exists($file_path)) {
-                throw new Exception('File tidak ditemukan.');
-            }
+            if (!file_exists($file_path)) throw new Exception('Berkas tidak ditemukan.');
 
-            Log::info('Document downloaded:', [
+            Log::info('Dokumen yang diunduh:', [
                 'id' => $document->id,
                 'file_path' => $document->file_path,
                 'user_id' => Auth::id()
@@ -356,7 +355,7 @@ class Dokumen extends Controller
                 $document->tipe . '_' . basename($document->file_path)
             );
         } catch (Exception $e) {
-            Log::error('Error downloading document:', [
+            Log::error('Kesalahan saat mengunduh dokumen:', [
                 'id' => $id,
                 'error' => $e->getMessage()
             ]);

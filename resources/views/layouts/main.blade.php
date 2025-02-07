@@ -31,7 +31,7 @@
     @include('shared.ui.loader')
     @include('shared.navigation.header')
 
-    <main class="flex-grow @if(!Route::is('login') && !Route::is('lupa-kata-sandi') && !Route::is('reset-kata-sandi')) container mx-auto px-4 py-6 @endif">
+    <main class="flex-grow @if(!(Route::is(['masuk', 'lupa-kata-sandi', 'reset-kata-sandi']) || Request::route('token'))) container mx-auto px-4 py-6 @endif">
         @yield('konten')
     </main>
 

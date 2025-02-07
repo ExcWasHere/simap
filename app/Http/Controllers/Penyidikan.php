@@ -13,7 +13,7 @@ use Illuminate\View\View;
 
 class Penyidikan extends Controller
 {
-    public function index(Request $request): View
+    public function show(Request $request): View
     {
         $query = PenyidikanModel::query();
 

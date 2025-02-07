@@ -27,9 +27,9 @@ class Autentikasi extends Controller
         return view('pages.beranda');
     }
 
-    public function halaman_login(): View
+    public function halaman_masuk(): View
     {
-        return view('pages.login');
+        return view('pages.masuk');
     }
 
     public function halaman_lupa_kata_sandi(): View
@@ -41,14 +41,14 @@ class Autentikasi extends Controller
     {
         $token = $request->route('token');
         $nip = $request->query('nip');
-        return view('components.autentikasi.reset-kata-sandi', ['token' => $token, 'nip' => $nip]);
+        return view('pages.reset-kata-sandi', ['token' => $token, 'nip' => $nip]);
     }
 
 
     /**
      * Controllers
      */
-    public function login(Request $request): RedirectResponse
+    public function masuk(Request $request): RedirectResponse
     {
         try {
             $credentials = $request->validate([
@@ -80,14 +80,14 @@ class Autentikasi extends Controller
         }
     }
 
-    public function logout(Request $request): RedirectResponse
+    public function keluar(Request $request): RedirectResponse
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()
-            ->route('login')
+            ->route('masuk')
             ->with('success', 'Berhasil keluar dari akun Anda!');
     }
 
@@ -136,19 +136,17 @@ class Autentikasi extends Controller
                         ->from('noreply@bea.go.id', 'Direktorat Jenderal Bea dan Cukai');
                 });
             } catch (Exception $e) {
-                Log::error('Failed to send password reset email:', [
+                Log::error('Gagal mengirim email pengaturan ulang kata sandi:', [
                     'error' => $e->getMessage(),
                     'user' => $user->nip
                 ]);
                 return back()
-                    ->withErrors(['error' => 'Gagal mengirim email reset kata sandi. Silakan coba lagi nanti.'])
+                    ->withErrors(['error' => 'Gagal mengirim email untuk atur ulang kata sandi. Silakan coba lagi nanti!'])
                     ->withInput();
             }
 
-            Log::info('Password reset link sent successfully', ['nip' => $user->nip]);
-            
-            return back()->with('success', 'Tautan reset kata sandi telah dikirim ke email Anda.');
-
+            Log::info('Tautan pengaturan ulang kata sandi berhasil dikirim!', ['nip' => $user->nip]);
+            return back()->with('success', 'Tautan atur ulang kata sandi telah dikirim ke email Anda.');
         } catch (ValidationException $e) {
             return back()
                 ->withErrors($e->errors())
@@ -159,7 +157,7 @@ class Autentikasi extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             return back()
-                ->withErrors(['error' => 'Terjadi kesalahan sistem. Silakan coba beberapa saat lagi.'])
+                ->withErrors(['error' => 'Terjadi kesalahan pada sistem. Silakan coba beberapa saat lagi!'])
                 ->withInput();
         }
     }
@@ -181,50 +179,43 @@ class Autentikasi extends Controller
             ]);
 
             $user = User::where('nip', $request->nip)->first();
-            
             if (!$user) {
                 return back()->withErrors(['error' => 'NIP tidak ditemukan.']);
             }
 
-            $resetRecord = DB::table('password_reset_tokens')
+            $reset_record = DB::table('password_reset_tokens')
                 ->where('email', $user->email)
                 ->first();
 
-            if (!$resetRecord) {
-                return back()->withErrors(['error' => 'Token reset kata sandi tidak valid.']);
+            if (!$reset_record || !Hash::check($request->token, $reset_record->token)) {
+                return back()->withErrors(['error' => 'Token atur ulang kata sandi tidak valid!']);
             }
 
-            if (!Hash::check($request->token, $resetRecord->token)) {
-                return back()->withErrors(['error' => 'Token reset kata sandi tidak valid.']);
-            }
-
-            if (Carbon::parse($resetRecord->created_at)->addHours(1)->isPast()) {
+            if (Carbon::parse($reset_record->created_at)->addHours(1)->isPast()) {
                 DB::table('password_reset_tokens')->where('email', $user->email)->delete();
-                return back()->withErrors(['error' => 'Token reset kata sandi telah kadaluarsa. Silakan meminta token baru.']);
+                return back()->withErrors(['error' => 'Token atur ulang kata sandi telah kadaluarsa. Silakan meminta token baru!']);
             }
 
             $user->password = Hash::make($request->password);
             $user->save();
 
             DB::table('password_reset_tokens')->where('email', $user->email)->delete();
-
-            Log::info('Password reset successful', ['nip' => $user->nip]);
+            Log::info('Berhasil mengatur ulang kata sandi!', ['nip' => $user->nip]);
 
             return redirect()
-                ->route('login')
-                ->with('success', 'Kata sandi berhasil direset. Silakan login dengan kata sandi baru Anda.');
-
+                ->route('masuk')
+                ->with('success', 'Kata sandi berhasil diatur ulang. Silakan masuk dengan kata sandi baru Anda.');
         } catch (ValidationException $e) {
             return back()
                 ->withErrors($e->errors())
                 ->withInput($request->except('password', 'password_confirmation'));
         } catch (Exception $e) {
-            Log::error('Password reset error:', [
+            Log::error('Kesalahan pengaturan ulang kata sandi:', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
             return back()
-                ->withErrors(['error' => 'Terjadi kesalahan sistem. Silakan coba beberapa saat lagi.'])
+                ->withErrors(['error' => 'Terjadi kesalahan pada sistem. Silakan coba beberapa saat lagi!'])
                 ->withInput($request->except('password', 'password_confirmation'));
         }
     }

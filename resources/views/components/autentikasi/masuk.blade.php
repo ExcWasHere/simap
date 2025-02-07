@@ -12,7 +12,7 @@
                 </h5>
             </div>
         </header>
-        <form action="{{ route('login') }}" method="POST" class="w-3/4 lg:w-[65%]">
+        <form action="{{ route('masuk') }}" method="POST" class="w-3/4 lg:w-[65%]">
             @csrf
             <fieldset class="flex flex-col space-y-4">
                 <label for="nip">NIP</label>
@@ -72,7 +72,7 @@
                 </a>
             </div>
             <button type="submit" class="mt-6 cursor-pointer w-full p-4 rounded-lg bg-[#1a4167] text-white font-semibold transition-all duration-200 transform focus:outline-none focus:ring-2 focus:ring-[#1a4167]/50 hover:scale-[1.005] hover:bg-[#2c5c8f]">
-                Login
+                Masuk
             </button>
         </form>
         <h5 class="mt-8 cursor-default text-center text-sm text-gray-500">

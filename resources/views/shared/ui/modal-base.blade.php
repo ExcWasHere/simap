@@ -40,25 +40,25 @@
 </figure>
 
 @if($id_modal === 'modal_tambah')
-<script>
-document.getElementById('formulir-tambah-data').addEventListener('submit', function(e) {
-    const active_tab = document.querySelector('.tab-content:not(.hidden)');
-    const requiredFields = active_tab.querySelectorAll('[data-required="true"]');
-    
-    let isValid = true;
-    requiredFields.forEach(field => {
-        if (!field.value) {
-            isValid = false;
-            field.classList.add('border-red-500');
-        } else {
-            field.classList.remove('border-red-500');
-        }
-    });
-    
-    if (!isValid) {
-        e.preventDefault();
-        alert('Mohon lengkapi semua field yang wajib diisi');
-    }
-});
-</script>
+    <script>
+        document.getElementById('formulir-tambah-data').addEventListener('submit', function(e) {
+            const active_tab = document.querySelector('.tab-content:not(.hidden)');
+            const requiredFields = active_tab.querySelectorAll('[data-required="true"]');
+            
+            let isValid = true;
+            requiredFields.forEach(field => {
+                if (!field.value) {
+                    isValid = false;
+                    field.classList.add('border-red-500');
+                } else {
+                    field.classList.remove('border-red-500');
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                alert('Mohon lengkapi semua field yang wajib diisi');
+            }
+        });
+    </script>
 @endif

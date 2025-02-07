@@ -13,11 +13,11 @@ use App\Http\Controllers\Penyidikan;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [Autentikasi::class, 'halaman_login'])->name('login');
+    Route::get('/masuk', [Autentikasi::class, 'halaman_masuk'])->name('masuk');
     Route::get('/lupa-kata-sandi', [Autentikasi::class, 'halaman_lupa_kata_sandi'])->name('lupa-kata-sandi');
     Route::get('/reset-kata-sandi/{token}', [Autentikasi::class, 'halaman_reset_kata_sandi'])->name('password.reset');
 
-    Route::post('/login', [Autentikasi::class, 'login']);
+    Route::post('/masuk', [Autentikasi::class, 'masuk'])->name('login');
     Route::post('/lupa-kata-sandi', [Autentikasi::class, 'lupa_kata_sandi'])->name('password.email');
     Route::post('/reset-kata-sandi', [Autentikasi::class, 'reset_kata_sandi'])->name('password.update');
 });
@@ -27,12 +27,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [Autentikasi::class, 'halaman_beranda'])->name('dashboard');
 
     // Dokumen
-    Route::get('/{section}/{id}/dokumen/{module_type}', [Dokumen::class, 'show_documents'])
+    Route::get('/{section}/{id}/dokumen/{module_type}', [Dokumen::class, 'tampilkan_dokumen'])
         ->where('section', 'intelijen|penyidikan|penindakan|monitoring')
         ->where('module_type', 'intelijen|penyidikan|penindakan|monitoring')
         ->where('id', '.*')
         ->name('dokumen.show');
-    Route::get('/dokumen/{id}/download', [Dokumen::class, 'download'])->name('dokumen.download');
+    Route::get('/dokumen/{id}/download', [Dokumen::class, 'unduh_dokumen'])->name('dokumen.unduh_dokumen');
 
     // Intelijen
     Route::prefix('intelijen')->group(function () {
@@ -63,7 +63,7 @@ Route::middleware('auth')->group(function () {
 
     //  Penindakan
     Route::prefix('penindakan')->group(function () {
-        Route::get('/', [Penindakan::class, 'index'])->name('penindakan');
+        Route::get('/', [Penindakan::class, 'show'])->name('penindakan');
         Route::post('/', [Penindakan::class, 'store'])->name('penindakan.store');
         Route::get('/{no_sbp}/edit', [Penindakan::class, 'edit'])
             ->where('no_sbp', '.*')
@@ -81,7 +81,7 @@ Route::middleware('auth')->group(function () {
 
     //  Penyidikan
     Route::prefix('penyidikan')->group(function () {
-        Route::get('/', [Penyidikan::class, 'index'])->name('penyidikan');
+        Route::get('/', [Penyidikan::class, 'show'])->name('penyidikan');
         Route::post('/', [Penyidikan::class, 'store'])->name('penyidikan.store');
         Route::get('/{no_spdp}/edit', [Penyidikan::class, 'edit'])
             ->where('no_spdp', '.*')
@@ -105,10 +105,10 @@ Route::middleware('auth')->group(function () {
     });
 
     // Aksi Dokumen Global
-    Route::delete('/dokumen/{id}', [Dokumen::class, 'delete'])->name('dokumen.delete');
+    Route::delete('/dokumen/{id}', [Dokumen::class, 'hapus_dokumen'])->name('dokumen.hapus_dokumen');
 
     //  Autentikasi dan Data
-    Route::post('/logout', [Autentikasi::class, 'logout'])->name('logout');
+    Route::post('/keluar', [Autentikasi::class, 'keluar'])->name('keluar');
 
     //  Ekspor
     Route::get('/export/{section}', [Ekspor::class, 'export'])->name('export');

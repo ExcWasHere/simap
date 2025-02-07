@@ -8,5 +8,5 @@
 @endsection
 
 @section('konten')
-    @include('components.autentikasi.login')
+    @include('components.autentikasi.masuk')
 @endsection

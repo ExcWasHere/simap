@@ -39,10 +39,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function setUploadingState(isUploading) {
         upload_button.disabled = isUploading;
-        button_text.textContent = isUploading
-            ? "Mengunggah..."
-            : "Upload Dokumen";
-        loading_spinner.classList.toggle("hidden", !isUploading);
+        button_text.textContent = isUploading ? "Mengunggah..." : "Upload Dokumen";
+        loading_spinner.classList.toggle("!hidden", !isUploading);
         upload_button.classList.toggle("opacity-75", isUploading);
         upload_button.classList.toggle("cursor-not-allowed", isUploading);
 

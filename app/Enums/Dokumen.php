@@ -15,15 +15,6 @@ enum Dokumen: string
     case NI = "NI";
 
     /**
-     * Penyidikan
-     */
-    case LK = "LK";
-    case SPTP = "SPTP";
-    case SPDP = "SPDP";
-    case TAP_SITA = "TAP SITA";
-    case P2I = "P2I";
-
-    /**
      * Monitoring
      */
     case KEP_BDN = "KEP-BDN";
@@ -50,6 +41,15 @@ enum Dokumen: string
     case SPLIT = "SPLIT";
     case LHP = "LHP";
     case LRP = "LRP";
+
+    /**
+     * Penyidikan
+     */
+    case LK = "LK";
+    case SPTP = "SPTP";
+    case SPDP = "SPDP";
+    case TAP_SITA = "TAP SITA";
+    case P2I = "P2I";
 
     public static function values(): array
     {

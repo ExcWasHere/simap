@@ -6,20 +6,20 @@
                 SIMAP
             </section>
             <nav class="hidden items-center gap-6 lg:flex">
-                <a href="/intelijen" class="text-gray-600 hover:text-gray-900 {{ request()->is('/') ? 'active' : '' }}">
+                <a href="/intelijen" class="text-gray-600 hover:text-gray-900 {{ Request::is('/') ? 'active' : '' }}">
                     Intelijen
                 </a>
-                <a href="/penindakan" class="text-gray-600 hover:text-gray-900 {{ request()->is('intelijen*') ? 'active' : '' }}">
+                <a href="/penindakan" class="text-gray-600 hover:text-gray-900 {{ Request::is('intelijen*') ? 'active' : '' }}">
                     Penindakan
                 </a>
-                <a href="/penyidikan" class="text-gray-600 hover:text-gray-900 {{ request()->is('intelijen*') ? 'active' : '' }}">
+                <a href="/penyidikan" class="text-gray-600 hover:text-gray-900 {{ Request::is('penyidikan*') ? 'active' : '' }}">
                     Penyidikan
                 </a>
-                <a href="/monitoring" class="text-gray-600 hover:text-gray-900 {{ request()->is('penindakan*') ? 'active' : '' }}">
+                <a href="/monitoring" class="text-gray-600 hover:text-gray-900 {{ Request::is('monitoring*') ? 'active' : '' }}">
                     Monitoring
                 </a>
                 <span class="h-6 w-px bg-gray-200"></span>
-                <form method="POST" action="{{ route('logout') }}" class="inline">
+                <form method="POST" action="{{ route('keluar') }}" class="inline">
                     @csrf
                     <button
                         type="submit"
@@ -48,9 +48,10 @@
             @include('shared.navigation.mobile-menu')
         </div>
     </header>
+@endauth
 
+@push('skrip')
     <script>
-        // Ensure mobile menu is hidden by default on page load
         document.addEventListener('DOMContentLoaded', () => {
             const menu = document.getElementById('mobile-menu');
             if (menu) {
@@ -59,4 +60,4 @@
             }
         });
     </script>
-@endauth
+@endpush

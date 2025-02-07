@@ -11,9 +11,6 @@ class Intelijen extends FormRequest
         return false;
     }
 
-    /**
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [

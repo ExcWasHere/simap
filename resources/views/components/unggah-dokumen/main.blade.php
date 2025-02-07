@@ -20,7 +20,7 @@
                     Unggah dokumen PDF untuk melengkapi data.
                 </h5>
                 @if (session('success'))
-                    <div class="mt-6 flex text-left rounded-lg p-4 bg-green-50">
+                    <div class="mt-6 flex items-center text-left rounded-lg p-4 bg-green-50">
                         <i class="fa-solid fa-circle-check text-sm text-green-400"></i>
                         <h5 class="ml-3 text-sm font-medium text-green-800">{{ session('success') }}</h5>
                     </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Penindakan as PenindakanModel;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +14,7 @@ use Illuminate\View\View;
 
 class Penindakan extends Controller
 {
-    public function index(Request $request): View
+    public function show(Request $request): View
     {
         $query = PenindakanModel::query();
 
@@ -53,7 +54,7 @@ class Penindakan extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         try {
             DB::beginTransaction();
