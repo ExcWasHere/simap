@@ -14,6 +14,9 @@ use Illuminate\View\View;
 
 class Penindakan extends Controller
 {
+    /**
+     * Views
+     */
     public function show(Request $request): View
     {
         $query = PenindakanModel::query();
@@ -27,10 +30,8 @@ class Penindakan extends Controller
             });
         }
 
-        if ($date_from = $request->input('date_from')) 
-            $query->whereDate('tanggal_sbp', '>=', $date_from);
-        if ($date_to = $request->input('date_to')) 
-            $query->whereDate('tanggal_sbp', '<=', $date_to);
+        if ($date_from = $request->input('date_from'))  $query->whereDate('tanggal_sbp', '>=', $date_from);
+        if ($date_to = $request->input('date_to')) $query->whereDate('tanggal_sbp', '<=', $date_to);
 
         $perPage = $request->input('per_page', 10);
         $penindakan = $query->latest()->paginate($perPage)->withQueryString();
@@ -43,8 +44,7 @@ class Penindakan extends Controller
                 $item->lokasi_penindakan,
                 $item->pelaku,
                 $item->uraian_bhp,
-                $item->jumlah . ' ' . $item->kemasan,
-                'Rp ' . number_format($item->perkiraan_nilai_barang, 0, ',', '.'),
+                $item->jumlah . ' ' . $item->kemasan, 'Rp ' . number_format($item->perkiraan_nilai_barang, 0, ',', '.'),
                 $item->potensi_kurang_bayar ? 'Rp ' . number_format($item->potensi_kurang_bayar, 0, ',', '.') : '-',
             ];
         })->toArray();
@@ -55,6 +55,10 @@ class Penindakan extends Controller
         ]);
     }
 
+
+    /**
+     * Controllers
+     */
     public function store(Request $request): RedirectResponse
     {
         try {
@@ -73,17 +77,15 @@ class Penindakan extends Controller
             ]);
 
             $validated['created_by'] = Auth::id();
-
             PenindakanModel::create($validated);
             DB::commit();
 
             return redirect()
                 ->route('penindakan')
-                ->with('success', 'Data penindakan berhasil disimpan');
-
+                ->with('success', 'Data penindakan berhasil disimpan!');
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Error in storing penindakan: ' . $e->getMessage());
+            Log::error('Kesalahan dalam menyimpan data penindakan: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
 
             return redirect()
@@ -97,7 +99,7 @@ class Penindakan extends Controller
     {
         try {
             DB::beginTransaction();
-            Log::info('Attempting to delete Penindakan record with no_sbp: ' . $no_sbp);
+            Log::info('Mencoba menghapus catatan penindakan dengan No. SBP: ' . $no_sbp);
 
             $penindakan = PenindakanModel::whereNull('deleted_at')
                 ->where('no_sbp', $no_sbp)
@@ -111,16 +113,16 @@ class Penindakan extends Controller
             $penindakan->save();
             $penindakan->delete();
 
-            Log::info('Successfully deleted Penindakan record');
+            Log::info('Berhasil menghapus catatan penindakan.');
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data penindakan berhasil dihapus'
+                'message' => 'Data penindakan berhasil dihapus!'
             ]);
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Error deleting penindakan: ' . $e->getMessage());
+            Log::error('Kesalahan saat menghapus data penindakan: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
 
             return response()->json([
@@ -134,13 +136,12 @@ class Penindakan extends Controller
     {
         try {
             $penindakan = PenindakanModel::where('no_sbp', $no_sbp)->firstOrFail();
-
             return response()->json($penindakan);
         } catch (Exception $e) {
-            Log::error('Error fetching penindakan: ' . $e->getMessage());
+            Log::error('Kesalahan mengambil data penindakan: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengambil data penindakan'
+                'message' => 'Gagal mengambil data penindakan.'
             ], 500);
         }
     }
@@ -149,7 +150,6 @@ class Penindakan extends Controller
     {
         try {
             DB::beginTransaction();
-
             $penindakan = PenindakanModel::where('no_sbp', $no_sbp)->firstOrFail();
 
             $validated = $request->validate([
@@ -170,13 +170,12 @@ class Penindakan extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data penindakan berhasil diperbarui',
+                'message' => 'Data penindakan berhasil diperbarui!',
                 'data' => $penindakan
             ]);
-
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Error in updating penindakan: ' . $e->getMessage());
+            Log::error('Kesalahan dalam memperbarui data penindakan: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
 
             return response()->json([

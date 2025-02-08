@@ -1,6 +1,6 @@
 <main class="w-full min-h-[120vh] flex relative xl:min-h-screen">
     @include('shared.ui.image')
-    <section class="w-full flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat bg-gradient-to-lr from-[#a9d6ff] to-[#edf2f7] text-black lg:w-1/2 lg:px-4" style="background: url({{ asset('img/latar-belakang-login.svg') }})">
+    <section class="w-full flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat bg-gradient-to-lr from-[#a9d6ff] to-[#edf2f7] text-black lg:w-1/2 lg:px-4" style="background: url({{ asset('img/latar-belakang.svg') }})">
         <header class="mb-6 flex items-center justify-center space-x-5">
             <img src="{{ asset('img/logo-beacukai.png') }}" alt="Logo" class="mt-1 h-14 w-14" />
             <div>

@@ -5,6 +5,8 @@
 @endsection
 
 @section('deskripsi')
+    Kelola dan pantau kegiatan intelijen Bea Cukai Blitar dengan mudah. Mulai dari pengumpulan informasi hingga analisis
+    data pengawasan, semua ada di sini.
 @endsection
 
 @section('active_tab')
@@ -13,7 +15,5 @@
 
 @section('konten')
     @include('shared.navigation.back')
-    <div class="container mx-auto py-6">
-        @include('components.intelijen.main')
-    </div>
+    @include('components.intelijen.main')
 @endsection

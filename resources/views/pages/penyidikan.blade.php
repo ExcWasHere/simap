@@ -5,6 +5,8 @@
 @endsection
 
 @section('deskripsi')
+    Dari bukti sampai perkembangan kasus, semua tersusun rapi di sini. Biar proses penyidikan makin tajam dan nggak ada yang
+    ketinggalan!
 @endsection
 
 @section('active_tab')
@@ -13,7 +15,5 @@
 
 @section('konten')
     @include('shared.navigation.back')
-    <div class="container mx-auto py-6">
-        @include('components.penyidikan.main')
-    </div>
+    @include('components.penyidikan.main')
 @endsection

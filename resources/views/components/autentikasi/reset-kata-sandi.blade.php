@@ -1,6 +1,6 @@
 <main class="w-full min-h-[120vh] flex relative xl:min-h-screen">
     @include('shared.ui.image')
-    <section class="w-full flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat bg-gradient-to-lr from-[#a9d6ff] to-[#edf2f7] text-black lg:w-1/2 lg:px-4" style="background: url({{ asset('img/latar-belakang-login.svg') }})">
+    <section class="w-full flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat bg-gradient-to-lr from-[#a9d6ff] to-[#edf2f7] text-black lg:w-1/2 lg:px-4" style="background: url({{ asset('img/latar-belakang.svg') }})">
         <header class="mb-6 cursor-default text-center">
             <h3 class="font-bold text-3xl text-[#1a4167]">Reset Kata Sandi</h3>
             <h5 class="mt-2 text-gray-600">

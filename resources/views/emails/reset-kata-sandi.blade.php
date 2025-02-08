@@ -23,4 +23,3 @@
         © {{ date('Y') }} Direktorat Jenderal Bea dan Cukai. All rights reserved.
     </h5>
 </body>
-
