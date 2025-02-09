@@ -40,6 +40,13 @@
                                             'icon' => 'fas fa-file-alt',
                                             'title' => 'Akses Modul Intelijen',
                                         ],
+                                        'penindakan' => [
+                                            'route' => 'penindakan.dokumen',
+                                            'param' => 'no_sbp',
+                                            'colors' => 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-700',
+                                            'icon' => 'fas fa-gavel',
+                                            'title' => 'Akses Modul Penindakan',
+                                        ],
                                         'penyidikan' => [
                                             'route' => 'penyidikan.dokumen',
                                             'param' => 'no_spdp',
@@ -53,13 +60,6 @@
                                             'colors' => 'bg-purple-100 text-purple-600 hover:bg-purple-200 hover:text-purple-700',
                                             'icon' => 'fas fa-chart-line',
                                             'title' => 'Akses Modul Monitoring',
-                                        ],
-                                        'penindakan' => [
-                                            'route' => 'penindakan.dokumen',
-                                            'param' => 'no_sbp',
-                                            'colors' => 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-700',
-                                            'icon' => 'fas fa-gavel',
-                                            'title' => 'Akses Modul Penindakan',
                                         ],
                                     ];
                                 @endphp
