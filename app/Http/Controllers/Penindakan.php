@@ -106,8 +106,6 @@ class Penindakan extends Controller
             $penindakan = PenindakanModel::create($validated);
 
             $this->generateSpPdf($penindakan);
-            
-            $this->processDocuments($penindakan->no_sbp);
 
             DB::commit();
 
@@ -129,85 +127,87 @@ class Penindakan extends Controller
     protected function generateSpPdf(PenindakanModel $penindakan)
     {
         try {
+            $storagePath = sprintf(
+                'dokumen/penindakan/%s/modul_penindakan',
+                rawurlencode($penindakan->no_sbp)
+            );
+
+            //  SP PDF
             $pdf = Pdf::loadView('documents.sp', ['penindakan' => $penindakan]);
-            
-            $publicPath = public_path('documents');
-            if (!File::exists($publicPath)) {
-                File::makeDirectory($publicPath, 0777, true);
-            }
+            $fileName = sprintf('SP_%s.pdf', str_replace(['/', '\\'], '_', $penindakan->no_sbp));
+            $path = Storage::disk('public')->put(
+                $storagePath . '/' . $fileName,
+                $pdf->output()
+            );
 
-            $pdfPath = $publicPath . '/SP.pdf';
-            $pdf->save($pdfPath);
+            //  Lampiran BA Pencacahan PDF
+            $pdf = Pdf::loadView('documents.lampiran-ba-pencacahan', ['penindakan' => $penindakan]);
+            $fileName = sprintf('LAMPIRAN-BA-PENCACAHAN_%s.pdf', str_replace(['/', '\\'], '_', $penindakan->no_sbp));
+            $path = Storage::disk('public')->put(
+                $storagePath . '/' . $fileName,
+                $pdf->output()
+            );
 
-            Log::info('SP PDF generated successfully', [
-                'no_sbp' => $penindakan->no_sbp,
-                'path' => $pdfPath
+            //  Lampiran BA Pemeriksaan PDF
+            $pdf = Pdf::loadView('documents.lampiran-ba-pemeriksaan', ['penindakan' => $penindakan]);
+            $fileName = sprintf('LAMPIRAN-BA-PEMERIKSAAN_%s.pdf', str_replace(['/', '\\'], '_', $penindakan->no_sbp));
+            $path = Storage::disk('public')->put(
+                $storagePath . '/' . $fileName,
+                $pdf->output()
+            );
+
+            // BA Pencacahan PDF 
+            $pdf = Pdf::loadView('documents.ba-pencacahan', [
+                'penindakan' => $penindakan
             ]);
-        } catch (Exception $e) {
-            Log::error('Error generating SP PDF: ' . $e->getMessage());
-            throw $e;
-        }
-    }
+            $fileName = sprintf('BA-PENCACAHAN_%s.pdf', str_replace(['/', '\\'], '_', $penindakan->no_sbp));
+            $path = Storage::disk('public')->put(
+                $storagePath . '/' . $fileName, 
+                $pdf->output()
+            );
 
-    public function processDocuments(string $no_sbp)
-    {
-        $publicPath = public_path('documents');
+            // Document records
+            $documents = [
+                [
+                    'tipe' => 'SP',
+                    'deskripsi' => 'Surat Pernyataan',
+                    'file_path' => $storagePath . '/' . sprintf('SP_%s.pdf', str_replace(['/', '\\'], '_', $penindakan->no_sbp)),
+                ],
+                [
+                    'tipe' => 'LAMPIRAN-BA-PENCACAHAN',
+                    'deskripsi' => 'Lampiran Berita Acara Pencacahan',
+                    'file_path' => $storagePath . '/' . sprintf('LAMPIRAN-BA-PENCACAHAN_%s.pdf', str_replace(['/', '\\'], '_', $penindakan->no_sbp)),
+                ],
+                [
+                    'tipe' => 'LAMPIRAN-BA-PEMERIKSAAN',
+                    'deskripsi' => 'Lampiran Berita Acara Pemeriksaan',
+                    'file_path' => $storagePath . '/' . sprintf('LAMPIRAN-BA-PEMERIKSAAN_%s.pdf', str_replace(['/', '\\'], '_', $penindakan->no_sbp)),
+                ],
+                [
+                    'tipe' => 'BA-PENCACAHAN',
+                    'deskripsi' => 'Berita Acara Pencacahan',
+                    'file_path' => $storagePath . '/' . sprintf('BA-PENCACAHAN_%s.pdf', str_replace(['/', '\\'], '_', $penindakan->no_sbp)),
+                ]
+            ];
 
-        if (!File::exists($publicPath)) {
-            return;
-        }
-
-        $files = File::files($publicPath);
-
-        foreach ($files as $file) {         
-             try {
-                $fileName = $file->getFilename();
-                $extension = $file->getExtension();
-                $nameWithoutExtension = pathinfo($fileName, PATHINFO_FILENAME);
-
-                $storagePath = sprintf(
-                    'dokumen/penindakan/%s/modul_penindakan',
-                    rawurlencode($no_sbp)
-                );
-
-                $newFileName = sprintf(
-                    '%s_%s.%s',
-                    $nameWithoutExtension,
-                    str_replace(['/', '\\'], '_', $no_sbp),
-                    $extension
-                );
-
-                $path = Storage::disk('public')->putFileAs(
-                    $storagePath,
-                    $file,
-                    $newFileName
-                );
-                
-                if ($path) {
-                    $documentType = str_replace(' ', '-', $nameWithoutExtension);
-                    
-                    DokumenModel::create([
-                        'tipe' => $documentType,
-                        'deskripsi' => $documentType,
-                        'file_path' => $path,
-                        'reference_id' => $no_sbp,
-                        'uploaded_by' => Auth::id(),
-                        'module' => 'penindakan'
-                    ]);
-
-                    Log::info('Document uploaded successfully: ', [
-                        'original_name' => $fileName,
-                        'new_path' => $path,
-                        'no_sbp' => $no_sbp,
-                        'document_type' => $documentType
-                    ]);
-                }
-            } catch (Exception $e) {
-                Log::error('Error processing document: ' . $e->getMessage(), [
-                    'file' => $fileName ?? 'unknown',
-                    'no_sbp' => $no_sbp
+            foreach ($documents as $doc) {
+                DokumenModel::create([
+                    'tipe' => $doc['tipe'],
+                    'deskripsi' => $doc['deskripsi'],
+                    'file_path' => $doc['file_path'],
+                    'reference_id' => $penindakan->no_sbp,
+                    'uploaded_by' => Auth::id(),
+                    'module' => 'penindakan'
                 ]);
             }
+
+            Log::info('PDFs generated and stored successfully', [
+                'no_sbp' => $penindakan->no_sbp,
+                'storage_path' => $storagePath
+            ]);
+        } catch (Exception $e) {
+            Log::error('Error generating PDFs: ' . $e->getMessage());
+            throw $e;
         }
     }
 
