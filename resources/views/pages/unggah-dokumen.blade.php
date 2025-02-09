@@ -8,7 +8,7 @@
 @endsection
 
 @section('konten')
-    <div class="container mx-auto pt-16 pb-6">
+    <main class="container mx-auto min-h-screen h-full pt-16 pb-6">
         @include('components.unggah-dokumen.main')
-    </div>
+    </main>
 @endsection

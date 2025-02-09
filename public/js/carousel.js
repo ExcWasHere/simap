@@ -1,16 +1,16 @@
 import { gsap } from "gsap";
 
-class Carousel {
+export class Carousel {
     constructor() {
-        this.currentIndex = 0;
+        this.current_index = 0;
         this.images = document.querySelectorAll(".carousel-image");
         this.indicators = document.querySelectorAll(".carousel-indicator");
-        this.totalSlides = this.images.length;
+        this.total_slides = this.images.length;
         this.interval = null;
         this.duration = 0.5;
-        this.autoPlayDelay = 5;
+        this.auto_play_delay = 5;
 
-        if (this.totalSlides === 0) return;
+        if (this.total_slides === 0) return;
 
         this.init();
     }
@@ -20,19 +20,19 @@ class Carousel {
         gsap.set(this.images[0], { opacity: 1 });
 
         this.indicators.forEach((indicator, index) => {
-            indicator.addEventListener("click", () => this.goToSlide(index));
+            indicator.addEventListener("click", () => this.go_to_slide(index));
         });
 
-        this.startAutoPlay();
+        this.start_auto_play();
     }
 
-    goToSlide(index) {
-        if (index === this.currentIndex) return;
+    go_to_slide(index) {
+        if (index === this.current_index) return;
 
-        this.indicators[this.currentIndex].classList.remove("bg-white");
+        this.indicators[this.current_index].classList.remove("bg-white");
         this.indicators[index].classList.add("bg-white");
 
-        gsap.to(this.images[this.currentIndex], {
+        gsap.to(this.images[this.current_index], {
             opacity: 0,
             duration: this.duration,
             ease: "power2.inOut",
@@ -44,36 +44,28 @@ class Carousel {
             ease: "power2.inOut",
         });
 
-        this.currentIndex = index;
+        this.current_index = index;
         this.resetAutoPlay();
     }
 
-    nextSlide() {
-        const nextIndex = (this.currentIndex + 1) % this.totalSlides;
-        this.goToSlide(nextIndex);
+    next_slide() {
+        const nextIndex = (this.current_index + 1) % this.total_slides;
+        this.go_to_slide(nextIndex);
     }
 
-    startAutoPlay() {
-        this.interval = setInterval(
-            () => this.nextSlide(),
-            this.autoPlayDelay * 1000,
-        );
+    start_auto_play() {
+        this.interval = setInterval(() => this.next_slide(), this.auto_play_delay * 1000);
     }
 
     resetAutoPlay() {
         clearInterval(this.interval);
-        this.startAutoPlay();
+        this.start_auto_play();
     }
 
     destroy() {
         clearInterval(this.interval);
         this.indicators.forEach((indicator) => {
-            indicator.removeEventListener("click", () => this.goToSlide(index));
+            indicator.removeEventListener("click", () => this.go_to_slide(index));
         });
     }
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    const carousel = new Carousel();
-    window.addEventListener("unload", () => carousel.destroy());
-});

@@ -1,6 +1,6 @@
 @props(['headers', 'rows', 'id_modul' => []])
 
-<section class="w-full overflow-x-auto overflow-y-auto bg-white rounded-lg shadow relative max-h-[70vh] horizontal-scroll-table">
+<section class="w-full overflow-x-auto overflow-y-auto bg-white rounded-lg shadow relative horizontal-scroll-table">
     <table class="w-full divide-y divide-gray-200">
         <thead class="bg-gray-100">
             <tr>
@@ -17,15 +17,15 @@
         <tbody class="bg-white divide-y divide-gray-200">
             @if (count($rows) > 0)
                 @foreach ($rows as $index => $row)
-                    <tr class="hover:bg-gray-50 transition-colors duration-200">
+                    <tr class="transition-colors duration-200 hover:bg-gray-50 ">
                         @foreach ($row as $key => $cell)
-                            <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                <div class="flex items-center truncate">
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700 sm:px-6">
+                                <div class="flex items-center">
                                     {{ $cell }}
                                 </div>
                             </td>
                         @endforeach
-                        <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <td class="px-4 py-4 whitespace-nowrap text-sm font-medium sm:px-6">
                             <fieldset class="flex items-center gap-2">
                                 @php
                                     $section = request()->segment(1);

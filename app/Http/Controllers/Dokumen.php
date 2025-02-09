@@ -11,8 +11,6 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -31,7 +29,7 @@ class Dokumen extends Controller
             ->latest()
             ->get();
 
-        return view("pages.dokumen-{$tipe}", [
+        return view('pages.dokumen-{$tipe}', [
             'documents' => $documents,
             'reference_id' => $id
         ]);
@@ -174,9 +172,7 @@ class Dokumen extends Controller
             $module_type = $url_segments[3] ?? $section;
 
             $valid_modules = ['intelijen', 'penyidikan', 'penindakan', 'monitoring'];
-            if (!in_array($module_type, $valid_modules)) {
-                $module_type = $section;
-            }
+            if (!in_array($module_type, $valid_modules)) $module_type = $section;
 
             Log::info('Konteks unggahan dokumen:', [
                 'referrer' => $referrer,
@@ -193,7 +189,6 @@ class Dokumen extends Controller
             ]);
 
             $file = $request->file('file');
-
             $safe_reference_id = str_replace(['/', '\\'], '_', $reference_id);
             $encoded_reference_id = rawurlencode($reference_id);
 
@@ -248,7 +243,6 @@ class Dokumen extends Controller
                     'module_type' => $module_type
                 ])
                 ->with('success', 'Dokumen berhasil diunggah!');
-
         } catch (ValidationException $e) {
             Log::error('Kesalahan validasi selama mengunggah:', [
                 'errors' => $e->errors()
@@ -274,7 +268,6 @@ class Dokumen extends Controller
         try {
             $document = DokumenModel::findOrFail($id);
             $document->delete();
-
             return redirect()->back()->with('success', 'Dokumen berhasil dihapus!');
         } catch (Exception $e) {
             Log::error('Kesalahan saat menghapus dokumen:', [
@@ -282,32 +275,6 @@ class Dokumen extends Controller
                 'error' => $e->getMessage()
             ]);
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus dokumen.');
-        }
-    }
-
-    private function membersihkan_direktori_kosong(string $path)
-    {
-        try {
-            while ($path && $path !== '.' && $path !== 'dokumen') {
-                $storage = Storage::disk('public');
-                
-                $files = $storage->files($path);
-                $directories = $storage->directories($path);
-
-                if (empty($files) && empty($directories)) {
-                    $storage->deleteDirectory($path);
-                    Log::info('Menghapus direktori kosong:', ['path' => $path]);
-                    
-                    $path = dirname($path);
-                } else {
-                    break;
-                }
-            }
-        } catch (Exception $e) {
-            Log::error('Kesalahan saat membersihkan direktori:', [
-                'path' => $path,
-                'error' => $e->getMessage()
-            ]);
         }
     }
 

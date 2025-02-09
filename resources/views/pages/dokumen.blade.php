@@ -9,12 +9,12 @@
 @endsection
 
 @section('konten')
-    <div class="container mx-auto pt-16 pb-6">
+    <main class="container mx-auto min-h-screen h-full pt-16 pb-6">
         @include('shared.ui.dokumen', [
             'documents' => $documents,
             'reference_id' => $reference_id,
             'section' => $section,
             'module_type' => $module_type
         ])
-    </div>
+    </main>
 @endsection 

@@ -8,7 +8,7 @@
 @endsection
 
 @section('konten')
-    <div class="pt-16 pb-6">
+    <main class="container mx-auto min-h-screen h-full pt-16 pb-6">
         @include('components.intelijen.dokumen', ['documents' => $documents, 'no_nhi' => $no_nhi])
-    </div>
+    </main>
 @endsection

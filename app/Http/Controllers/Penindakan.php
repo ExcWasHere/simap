@@ -6,14 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Dokumen as DokumenModel;
 use App\Models\Penindakan as PenindakanModel;
 use Exception;
-use File;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-use Storage;
 
 class Penindakan extends Controller
 {
@@ -36,7 +36,7 @@ class Penindakan extends Controller
         if ($date_from = $request->input('date_from'))  $query->whereDate('tanggal_sbp', '>=', $date_from);
         if ($date_to = $request->input('date_to')) $query->whereDate('tanggal_sbp', '<=', $date_to);
 
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', default: 5);
         $penindakan = $query->latest()->paginate($perPage)->withQueryString();
 
         $rows = $penindakan->map(function ($item, $index) use ($penindakan) {

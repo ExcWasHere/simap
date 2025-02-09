@@ -27,18 +27,13 @@
     @vite(['resources/js/app.js', 'resources/css/app.css'])
 </head>
 
-<body class="min-h-screen bg-gray-100 flex flex-col">
+<body class="bg-gray-100">
     @include('shared.ui.loader')
     @include('shared.navigation.header')
-
-    <main class="container mx-auto flex-grow @if(!(isset($exception) && in_array($exception->getStatusCode(), [404, 500, 419]) || Route::is(['masuk', 'lupa-kata-sandi', 'reset-kata-sandi']) || Request::route('token'))) px-4 py-6 @endif">
-        @yield('konten')
-    </main>
-
+    @yield('konten')
     @include('shared.navigation.footer')
     @include('shared.ui.modal-tambah')
     @include('shared.ui.modal-filter')
-
     @stack('skrip')
 </body>
 

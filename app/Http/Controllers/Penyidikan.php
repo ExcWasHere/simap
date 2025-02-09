@@ -28,7 +28,7 @@ class Penyidikan extends Controller
         if ($date_from = $request->input('date_from')) $query->whereDate('tanggal_spdp', '>=', $date_from);
         if ($date_to = $request->input('date_to')) $query->whereDate('tanggal_spdp', '<=', $date_to);
 
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', 5);
         $penyidikan = $query->latest()->paginate($perPage)->withQueryString();
 
         $rows = $penyidikan->map(function ($item, $index) use ($penyidikan) {

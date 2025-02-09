@@ -10,7 +10,9 @@
 @endsection
 
 @section('konten')
-    @include('components.beranda.selamat-datang')
-    @include('components.beranda.informasi-akun')
-    @include('components.beranda.menu')
+    <main class="container mx-auto min-h-screen h-full px-4 py-6">
+        @include('components.beranda.selamat-datang')
+        @include('components.beranda.informasi-akun')
+        @include('components.beranda.menu')
+    </main>
 @endsection
