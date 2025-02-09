@@ -115,10 +115,10 @@
                     @include('shared.forms.textarea', [
                         'name' => 'deskripsi',
                         'id' => 'deskripsi',
-                        'label' => 'Deskripsi',
+                        'label' => 'Deskripsi (Opsional)',
                         'rows' => 4,
-                        'placeholder' => 'Masukkan deskripsi dokumen',
-                        'required' => true,
+                        'placeholder' => 'Masukkan deskripsi dokumen jika diperlukan',
+                        'required' => false,
                     ])
                     @include('components.unggah-dokumen.unggah-berkas-pdf')
                     <span class="flex w-full justify-end">

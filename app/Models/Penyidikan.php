@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Penyidikan extends Model
 {
@@ -46,6 +47,15 @@ class Penyidikan extends Model
         parent::boot();
 
         static::deleting(function ($model) {
+            $model->dokumen()->each(function ($dokumen) {
+                $dokumen->delete(); 
+            });
+
+            $storage_path = 'dokumen/penyidikan/' . $model->no_spdp;
+            if (Storage::disk('public')->exists($storage_path)) {
+                Storage::disk('public')->deleteDirectory($storage_path);
+            }
+
             $timestamp = now()->format('YmdHis');
             $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
             $suffix = "_deleted_{$timestamp}{$random}";

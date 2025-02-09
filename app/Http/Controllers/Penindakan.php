@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Dokumen as DokumenModel;
 use App\Models\Penindakan as PenindakanModel;
 use Exception;
+use File;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use Storage;
 
 class Penindakan extends Controller
 {
@@ -74,7 +77,10 @@ class Penindakan extends Controller
 
             $validated['created_by'] = Auth::id();
 
-            PenindakanModel::create($validated);
+            $penindakan = PenindakanModel::create($validated);
+
+            $this->processDocuments($penindakan->no_sbp);
+
             DB::commit();
 
             return redirect()
@@ -90,6 +96,68 @@ class Penindakan extends Controller
                 ->back()
                 ->withInput()
                 ->withErrors(['error' => 'Gagal menyimpan data penindakan: ' . $e->getMessage()]);
+        }
+    }
+
+    public function processDocuments(string $no_sbp)
+    {
+        $publicPath = public_path('documents');
+
+        if (!File::exists($publicPath)) {
+            return;
+        }
+
+        $files = File::files($publicPath);
+
+        foreach ($files as $file) {         
+             try {
+                $fileName = $file->getFilename();
+                $extension = $file->getExtension();
+                $nameWithoutExtension = pathinfo($fileName, PATHINFO_FILENAME);
+
+                $storagePath = sprintf(
+                    'dokumen/penindakan/%s/modul_penindakan',
+                    rawurlencode($no_sbp)
+                );
+
+                $newFileName = sprintf(
+                    '%s_%s.%s',
+                    $nameWithoutExtension,
+                    str_replace(['/', '\\'], '_', $no_sbp),
+                    $extension
+                );
+
+                $path = Storage::disk('public')->putFileAs(
+                    $storagePath,
+                    $file,
+                    $newFileName
+                );
+                
+                if ($path) {
+                    $documentType = str_replace(' ', '-', $nameWithoutExtension);
+                    
+                    DokumenModel::create([
+                        'tipe' => $documentType,
+                        'deskripsi' => $documentType,
+                        'file_path' => $path,
+                        'reference_id' => $no_sbp,
+                        'uploaded_by' => Auth::id(),
+                        'module' => 'penindakan'
+                    ]);
+
+                    Log::info('Document uploaded successfully: ', [
+                        'original_name' => $fileName,
+                        'new_path' => $path,
+                        'no_sbp' => $no_sbp,
+                        'document_type' => $documentType
+                    ]);
+                }
+            } catch (Exception $e) {
+                Log::error('Error processing document: ' . $e->getMessage(), [
+                    'file' => $fileName ?? 'unknown',
+                    'no_sbp' => $no_sbp
+                ]);
+            }
         }
     }
 

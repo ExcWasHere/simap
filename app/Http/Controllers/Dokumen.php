@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\Dokumen as EnumsDokumen;
 use App\Http\Controllers\Controller;
 use App\Models\Dokumen as DokumenModel;
 use App\Models\Intelijen as IntelijenModel;
@@ -64,22 +63,7 @@ class Dokumen extends Controller
     public function tampilkan_dokumen($section, $id, $module_type): View
     {
         $documents = DokumenModel::where('reference_id', $id)
-            ->when($module_type === 'intelijen', function($query) {
-                $query->whereIn('tipe', ['LPPI', 'LPTI', 'LKAI', 'NHI', 'NI', 'ST-I']);
-            })
-            ->when($module_type === 'penyidikan', function($query) {
-                $query->whereIn('tipe', ['LK', 'SPTP', 'SPDP', 'TAP SITA', 'P2I']);
-            })
-            ->when($module_type === 'penindakan', function($query) {
-                $query->whereIn('tipe', [
-                    'PRIN', 'ST', 'BA-Pemeriksaan', 'BA-Penegahan', 'BAST', 
-                    'BA-Dokumentasi', 'BA-Pencacahan', 'BA-Penyegelan', 'SBP', 
-                    'LPHP', 'LP/LP1', 'LPP', 'LPF', 'SPLIT', 'LHP', 'LRP'
-                ]);
-            })
-            ->when($module_type === 'monitoring', function($query) {
-                $query->whereIn('tipe', ['KEP-BDN', 'KEP-BMN', 'KEP-UR', 'SCTK']);
-            })
+            ->where('module', $module_type)
             ->latest()
             ->get();
 
@@ -203,7 +187,7 @@ class Dokumen extends Controller
             ]);
 
             $validated = $request->validate([
-                'tipe' => ['required', 'string', Rule::in(EnumsDokumen::values())],
+                'tipe' => ['required', 'string'],
                 'deskripsi' => 'nullable|string',
                 'file' => 'required|file|mimes:pdf|max:10240',
             ]);
@@ -246,6 +230,7 @@ class Dokumen extends Controller
                 'deskripsi' => $validated['deskripsi'],
                 'file_path' => $path,
                 'reference_id' => $reference_id,
+                'module' => $module_type,
                 'uploaded_by' => Auth::id()
             ]);
 
@@ -288,17 +273,7 @@ class Dokumen extends Controller
     {
         try {
             $document = DokumenModel::findOrFail($id);
-            $file_path = str_replace('storage/', '', $document->file_path);
-            
-            if (Storage::disk('public')->exists($file_path)) {
-                Storage::disk('public')->delete($file_path);
-            }
-
-            $dir_path = dirname($file_path);
-            
             $document->delete();
-
-            $this->membersihkan_direktori_kosong($dir_path);
 
             return redirect()->back()->with('success', 'Dokumen berhasil dihapus!');
         } catch (Exception $e) {

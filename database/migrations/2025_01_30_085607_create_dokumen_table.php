@@ -9,21 +9,11 @@ return new class extends Migration {
     {
         Schema::create('dokumen', function (Blueprint $table) {
             $table->id();
-            $table->enum('tipe', [
-                // Intelijen
-                'ST-I', 'LPTI', 'LPPI', 'LKAI', 'NHI', 'NI',
-                // Penyidikan
-                'LK', 'SPTP', 'SPDP', 'TAP SITA', 'P2I',
-                // Monitoring
-                'KEP-BDN', 'KEP-BMN', 'KEP-UR', 'SCTK',
-                // Penindakan
-                'PRIN', 'ST', 'BA-Pemeriksaan', 'BA-Penegahan', 'BAST',
-                'BA-Dokumentasi', 'BA-Pencacahan', 'BA-Penyegelan', 'SBP',
-                'LPHP', 'LP/LP1', 'LPP', 'LPF', 'SPLIT', 'LHP', 'LRP'
-            ]);
+            $table->string('tipe');
             $table->text('deskripsi')->nullable();
             $table->string('file_path');
             $table->string('reference_id')->nullable();
+            $table->string('module')->nullable();
             $table->foreignId('uploaded_by')->constrained('users');
             $table->timestamps();
         });
