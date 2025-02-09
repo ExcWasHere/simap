@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class Penindakan extends Controller
 {
@@ -70,6 +71,7 @@ class Penindakan extends Controller
             $validated = $request->validate([
                 'no_sbp' => ['required', 'string', 'max:255', 'unique:penindakan,no_sbp'],
                 'tanggal_sbp' => ['required', 'date'],
+                'tanggal_laporan' => ['required', 'date'],
                 'lokasi_penindakan' => ['required', 'string'],
                 'pelaku' => ['required', 'string', 'max:255'],
                 'uraian_bhp' => ['required', 'string'],
@@ -77,12 +79,34 @@ class Penindakan extends Controller
                 'kemasan' => ['required', 'string', 'max:255'],
                 'perkiraan_nilai_barang' => ['required', 'numeric', 'min:0'],
                 'potensi_kurang_bayar' => ['required', 'numeric', 'min:0'],
+                'jenis_barang' => ['required', 'string', 'max:255'],
+                'no_print' => ['required', 'string', 'max:255'],
+                'tanggal_print' => ['required', 'date'],
+                'nama_jenis_sarkut' => ['required', 'string', 'max:255'],
+                'pengemudi' => ['required', 'string', 'max:255'],
+                'no_polisi' => ['required', 'string', 'max:255'],
+                'bangunan' => ['required', 'string', 'max:255'],
+                'nama_pemilik' => ['required', 'string', 'max:255'],
+                'no_ktp' => ['required', 'string', 'max:20'],
+                'no_hp' => ['required', 'string', 'max:20'],
+                'tempat_lahir' => ['required', 'string', 'max:255'],
+                'tanggal_lahir' => ['required', 'date'],
+                'pekerjaan' => ['required', 'string', 'max:255'],
+                'alamat' => ['required', 'string'],
+                'waktu_awal_penindakan' => ['required', 'date'],
+                'waktu_akhir_penindakan' => ['required', 'date', 'after:waktu_awal_penindakan'],
+                'jenis_pelanggaran' => ['required', 'string', 'max:255'],
+                'pasal' => ['required', 'string', 'max:255'],
+                'petugas_1' => ['required', 'string', 'max:255'],
+                'petugas_2' => ['required', 'string', 'max:255'],
             ]);
 
             $validated['created_by'] = Auth::id();
 
             $penindakan = PenindakanModel::create($validated);
 
+            $this->generateSpPdf($penindakan);
+            
             $this->processDocuments($penindakan->no_sbp);
 
             DB::commit();
@@ -99,6 +123,29 @@ class Penindakan extends Controller
                 ->back()
                 ->withInput()
                 ->withErrors(['error' => 'Gagal menyimpan data penindakan: ' . $e->getMessage()]);
+        }
+    }
+
+    protected function generateSpPdf(PenindakanModel $penindakan)
+    {
+        try {
+            $pdf = Pdf::loadView('documents.sp', ['penindakan' => $penindakan]);
+            
+            $publicPath = public_path('documents');
+            if (!File::exists($publicPath)) {
+                File::makeDirectory($publicPath, 0777, true);
+            }
+
+            $pdfPath = $publicPath . '/SP.pdf';
+            $pdf->save($pdfPath);
+
+            Log::info('SP PDF generated successfully', [
+                'no_sbp' => $penindakan->no_sbp,
+                'path' => $pdfPath
+            ]);
+        } catch (Exception $e) {
+            Log::error('Error generating SP PDF: ' . $e->getMessage());
+            throw $e;
         }
     }
 
@@ -224,6 +271,7 @@ class Penindakan extends Controller
             $validated = $request->validate([
                 'no_sbp' => ['required', 'string', 'max:255', 'unique:penindakan,no_sbp,' . $penindakan->id . ',id,deleted_at,NULL'],
                 'tanggal_sbp' => ['required', 'date'],
+                'tanggal_laporan' => ['required', 'date'],
                 'lokasi_penindakan' => ['required', 'string', 'max:255'],
                 'pelaku' => ['required', 'string', 'max:255'],
                 'uraian_bhp' => ['required', 'string', 'max:255'],
@@ -231,6 +279,26 @@ class Penindakan extends Controller
                 'kemasan' => ['required', 'string', 'max:255'],
                 'perkiraan_nilai_barang' => ['required', 'numeric', 'min:0'],
                 'potensi_kurang_bayar' => ['required', 'numeric', 'min:0'],
+                'jenis_barang' => ['required', 'string', 'max:255'],
+                'no_print' => ['required', 'string', 'max:255'],
+                'tanggal_print' => ['required', 'date'],
+                'nama_jenis_sarkut' => ['required', 'string', 'max:255'],
+                'pengemudi' => ['required', 'string', 'max:255'],
+                'no_polisi' => ['required', 'string', 'max:255'],
+                'bangunan' => ['required', 'string', 'max:255'],
+                'nama_pemilik' => ['required', 'string', 'max:255'],
+                'no_ktp' => ['required', 'string', 'max:20'],
+                'no_hp' => ['required', 'string', 'max:20'],
+                'tempat_lahir' => ['required', 'string', 'max:255'],
+                'tanggal_lahir' => ['required', 'date'],
+                'pekerjaan' => ['required', 'string', 'max:255'],
+                'alamat' => ['required', 'string'],
+                'waktu_awal_penindakan' => ['required', 'date'],
+                'waktu_akhir_penindakan' => ['required', 'date', 'after:waktu_awal_penindakan'],
+                'jenis_pelanggaran' => ['required', 'string', 'max:255'],
+                'pasal' => ['required', 'string', 'max:255'],
+                'petugas_1' => ['required', 'string', 'max:255'],
+                'petugas_2' => ['required', 'string', 'max:255'],
             ]);
 
             $validated['updated_by'] = Auth::id();
