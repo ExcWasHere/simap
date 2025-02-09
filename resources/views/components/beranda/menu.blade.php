@@ -1,4 +1,4 @@
-<section class="grid grid-cols-1 gap-6 mt-6 lg:grid-cols-2">
+<section class="mt-6 grid grid-cols-1 gap-6 pb-6 lg:grid-cols-2">
     @php
         $props = [
             [

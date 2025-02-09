@@ -1,5 +1,5 @@
 @auth
-    <footer class="flex flex-col md:flex-row items-center gap-4 md:gap-0 md:justify-between w-full px-4 py-3 bg-white shadow-md">
+    <footer class="mt-6 flex flex-col md:flex-row items-center gap-4 md:gap-0 md:justify-between w-full px-4 py-3 bg-white shadow-md">
         <section class="cursor-default flex items-center font-semibold gap-2 text-gray-600">
             <img src="{{ asset('img/logo-beacukai.png') }}" alt="Logo" class="w-6 h-6">
             SIMAP

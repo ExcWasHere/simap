@@ -5,11 +5,10 @@
 @endsection
 
 @section('deskripsi')
+    Data jadi nggak bikin pusing dengan grafik interaktif keren ini. Yuk, cek semuanya di sini!
 @endsection
 
 @section('konten')
     @include('shared.navigation.back')
-    <div class="container mx-auto py-6">
-        @include('components.monitoring.display-chart')
-    </div>
+    @include('components.monitoring.display-chart')
 @endsection

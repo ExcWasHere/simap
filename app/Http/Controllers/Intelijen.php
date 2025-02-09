@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Intelijen as IntelijenModel;
 use Exception;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class Intelijen extends Controller
 {
+    /**
+     * Views
+     */
     public function index(Request $request): View
     {
         $query = IntelijenModel::query();
@@ -26,10 +30,8 @@ class Intelijen extends Controller
             });
         }
 
-        if ($date_from = $request->input('date_from'))
-            $query->whereDate('tanggal_nhi', '>=', $date_from);
-        if ($date_to = $request->input('date_to'))
-            $query->whereDate('tanggal_nhi', '<=', $date_to);
+        if ($date_from = $request->input('date_from')) $query->whereDate('tanggal_nhi', '>=', $date_from);
+        if ($date_to = $request->input('date_to')) $query->whereDate('tanggal_nhi', '<=', $date_to);
 
         $perPage = $request->input('per_page', 10);
         $intelijen = $query->latest()->paginate($perPage)->withQueryString();
@@ -53,7 +55,11 @@ class Intelijen extends Controller
         ]);
     }
 
-    public function store(Request $request)
+
+    /**
+     * Controllers
+     */
+    public function store(Request $request): RedirectResponse
     {
         try {
             DB::beginTransaction();
@@ -77,11 +83,10 @@ class Intelijen extends Controller
 
             return redirect()
                 ->route('intelijen')
-                ->with('success', 'Data intelijen berhasil disimpan');
-
+                ->with('success', 'Data intelijen berhasil disimpan!');
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Error in storing intelijen: ' . $e->getMessage());
+            Log::error('Kesalahan dalam menyimpan data intelijen: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
 
             return redirect()
@@ -95,7 +100,7 @@ class Intelijen extends Controller
     {
         try {
             DB::beginTransaction();
-            Log::info('Attempting to delete Intelijen record with no_nhi: ' . $no_nhi);
+            Log::info('Mencoba menghapus catatan intelijen dengan No. NHI: ' . $no_nhi);
 
             $intelijen = IntelijenModel::whereNull('deleted_at')
                 ->where('no_nhi', $no_nhi)
@@ -109,17 +114,16 @@ class Intelijen extends Controller
             $intelijen->save();
             $intelijen->delete();
 
-            Log::info('Successfully deleted Intelijen record');
+            Log::info('Berhasil menghapus catatan intelijen!');
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data intelijen berhasil dihapus'
+                'message' => 'Data intelijen berhasil dihapus!'
             ]);
-
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Error deleting intelijen: ' . $e->getMessage());
+            Log::error('Kesalahan dalam menghapus data intelijen: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
 
             return response()->json([
@@ -139,7 +143,6 @@ class Intelijen extends Controller
     {
         try {
             DB::beginTransaction();
-
             $intelijen = IntelijenModel::where('no_nhi', $no_nhi)->firstOrFail();
 
             $validated = $request->validate([
@@ -158,13 +161,12 @@ class Intelijen extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data intelijen berhasil diperbarui',
+                'message' => 'Data intelijen berhasil diperbarui!',
                 'data' => $intelijen
             ]);
-
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Error in updating intelijen: ' . $e->getMessage());
+            Log::error('Kesalahan dalam memperbarui data intelijen: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
 
             return response()->json([

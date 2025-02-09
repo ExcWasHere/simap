@@ -38,15 +38,7 @@ class MonitoringBHP extends Controller
         // Sheet 1: Intelijen
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Intelijen');
-        $headers = [
-            'No',
-            'No NHI',
-            'Tanggal NHI',
-            'Tempat',
-            'Jenis Barang',
-            'Jumlah Barang',
-            'Keterangan'
-        ];
+        $headers = ['No', 'No NHI', 'Tanggal NHI', 'Tempat', 'Jenis Barang', 'Jumlah Barang', 'Keterangan'];
 
         foreach (range('A', 'G') as $index => $column) {
             $sheet->setCellValue($column . '1', $headers[$index]);
@@ -56,8 +48,7 @@ class MonitoringBHP extends Controller
         $query = IntelijenModel::query();
         switch ($type) {
             case 'data-per-bulan':
-                $query->whereMonth('tanggal_nhi', now()->month)
-                    ->whereYear('tanggal_nhi', now()->year);
+                $query->whereMonth('tanggal_nhi', now()->month)->whereYear('tanggal_nhi', now()->year);
                 break;
             case 'rekap-tahunan':
                 $query->whereYear('tanggal_nhi', now()->year);
@@ -91,13 +82,7 @@ class MonitoringBHP extends Controller
         // Sheet 2: Penyidikan
         $sheet = $spreadsheet->createSheet();
         $sheet->setTitle('Penyidikan');
-        $headers = [
-            'No',
-            'No SPDP',
-            'Tanggal SPDP',
-            'Pelaku',
-            'Keterangan'
-        ];
+        $headers = ['No', 'No SPDP', 'Tanggal SPDP', 'Pelaku', 'Keterangan'];
 
         foreach (range('A', 'E') as $index => $column) {
             $sheet->setCellValue($column . '1', $headers[$index]);
@@ -107,8 +92,7 @@ class MonitoringBHP extends Controller
         $query = PenyidikanModel::query();
         switch ($type) {
             case 'data-per-bulan':
-                $query->whereMonth('tanggal_spdp', now()->month)
-                    ->whereYear('tanggal_spdp', now()->year);
+                $query->whereMonth('tanggal_spdp', now()->month)->whereYear('tanggal_spdp', now()->year);
                 break;
             case 'rekap-tahunan':
                 $query->whereYear('tanggal_spdp', now()->year);
@@ -140,17 +124,7 @@ class MonitoringBHP extends Controller
         // Sheet 3: Penindakan
         $sheet = $spreadsheet->createSheet();
         $sheet->setTitle('Penindakan');
-        $headers = [
-            'No',
-            'No SBP',
-            'Tanggal SBP',
-            'Lokasi Penindakan',
-            'Pelaku',
-            'Uraian BHP',
-            'Jumlah',
-            'Perkiraan Nilai Barang',
-            'Potensi Kurang Bayar'
-        ];
+        $headers = ['No', 'No SBP', 'Tanggal SBP', 'Lokasi Penindakan', 'Pelaku', 'Uraian BHP', 'Jumlah', 'Perkiraan Nilai Barang', 'Potensi Kurang Bayar'];
 
         foreach (range('A', 'I') as $index => $column) {
             $sheet->setCellValue($column . '1', $headers[$index]);
@@ -160,8 +134,7 @@ class MonitoringBHP extends Controller
         $query = PenindakanModel::query();
         switch ($type) {
             case 'data-per-bulan':
-                $query->whereMonth('tanggal_sbp', now()->month)
-                    ->whereYear('tanggal_sbp', now()->year);
+                $query->whereMonth('tanggal_sbp', now()->month)->whereYear('tanggal_sbp', now()->year);
                 break;
             case 'rekap-tahunan':
                 $query->whereYear('tanggal_sbp', now()->year);
@@ -194,7 +167,7 @@ class MonitoringBHP extends Controller
             ]
         ]);
 
-        // Set the first sheet as active
+        // Mengatur lembar pertama sebagai halaman aktif
         $spreadsheet->setActiveSheetIndex(0);
 
         $writer = new Xlsx($spreadsheet);
@@ -254,16 +227,11 @@ class MonitoringBHP extends Controller
         $first_penindakan = DB::table('penindakan')->whereNull('deleted_at')->min('created_at');
         $first_penyidikan = DB::table('penyidikan')->whereNull('deleted_at')->min('created_at');
 
-        $first_date = collect([$first_intelijen, $first_penindakan, $first_penyidikan])
-            ->filter()
-            ->min();
+        $first_date = collect([$first_intelijen, $first_penindakan, $first_penyidikan])->filter()->min();
 
         if ($first_date) {
             $months_diff = Carbon::parse($first_date)->diffInMonths(Carbon::now()) + 1; // +1 untuk mengikutsertakan bulan berjalan
-            
-            $average_per_month = $months_diff > 0 
-                ? round(($total_dokumen / $months_diff), 1)
-                : $total_dokumen; 
+            $average_per_month = $months_diff > 0  ? round(($total_dokumen / $months_diff), 1) : $total_dokumen; 
         } else {
             $average_per_month = 0;
         }
@@ -295,9 +263,7 @@ class MonitoringBHP extends Controller
                 ->whereNull('deleted_at')
                 ->count();
 
-        $pertumbuhan = $last_month_count > 0
-            ? round((($this_month_count - $last_month_count) / $last_month_count) * 100, 1)
-            : 0;
+        $pertumbuhan = $last_month_count > 0 ? round((($this_month_count - $last_month_count) / $last_month_count) * 100, 1) : 0;
 
         $dates = collect();
         $current_date = $start_date->copy();
