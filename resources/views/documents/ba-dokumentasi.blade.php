@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Berita Acara Pencacahan</title>
+    <title>Berita Acara Pengambilan Dokumentasi</title>
     <style>
         body {
             font-family: "Times New Roman", Times, serif;
@@ -63,24 +63,17 @@
         }
         .content td {
             padding: 5px 3px;
+            vertical-align: top;
         }
         .signatures {
             margin-top: 60px;
-            text-align: center;
         }
         .signatures table {
-            margin: 0 auto;
-        }
-        .sign-column {
-            display: inline-block;
-            width: 45%;
-        }
-        table {
             width: 100%;
-            border-collapse: collapse;
         }
-        td {
-            padding: 3px;
+        .signatures td {
+            width: 50%;
+            text-align: center;
             vertical-align: top;
         }
     </style>
@@ -107,48 +100,86 @@
     <div class="header-line"></div>
 
     <div class="title">
-        <p>BERITA ACARA PENCACAHAN</p>
+        <p>BERITA ACARA PENGAMBILAN DOKUMENTASI BARANG</p>
         <p>Nomor : {{ $penindakan->no_print }}</p>
     </div>
 
     <div class="content">
-        <p>Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }} bertempat di KPPBC Tipe Madya Pabean C Blitar, Kami :</p>
+        <p>Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, berdasarkan Surat Perintah: {{ $penindakan->no_print }} tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, Kami yang bertanda tangan di bawah ini, telah melakukan pengambilan dokumentasi barang atas:</p>
 
         <table>
             <tr>
-                <td width="140">Nama</td>
+                <td width="200">Komoditas / Jenis Barang</td>
                 <td width="10">:</td>
-                <td>{{ $penindakan->petugas_1 }}</td>
+                <td>{{ $penindakan->jenis_barang }} sebanyak {{ $penindakan->jumlah }} {{ $penindakan->kemasan }} {{ $penindakan->uraian_bhp }}</td>
+            </tr>
+            <tr>
+                <td>Pemilik/Yang Menguasai</td>
+                <td>:</td>
+                <td>{{ $penindakan->nama_pemilik }}</td>
+            </tr>
+            <tr>
+                <td>Identitas (KTP)</td>
+                <td>:</td>
+                <td>{{ $penindakan->no_ktp }}</td>
+            </tr>
+            <tr>
+                <td>Jenis/Nomor dan Tgl Dokumen</td>
+                <td>:</td>
+                <td>{{ $penindakan->no_sbp }}</td>
+            </tr>
+            <tr>
+                <td>Lokasi</td>
+                <td>:</td>
+                <td>{{ $penindakan->lokasi_penindakan }}</td>
             </tr>
         </table>
 
-        <p>Bersama – sama dengan :</p>
+        <p>Pengambilan dokumentasi disaksikan oleh Pemilik/Yang Menguasai:</p>
 
         <table>
             <tr>
-                <td width="140">Nama</td>
+                <td width="200">Nama</td>
                 <td width="10">:</td>
-                <td>{{ $penindakan->petugas_2 }}</td>
+                <td>{{ $penindakan->nama_pemilik }}</td>
+            </tr>
+            <tr>
+                <td>Alamat Tempat Tinggal</td>
+                <td>:</td>
+                <td>{{ $penindakan->alamat }}</td>
+            </tr>
+            <tr>
+                <td>Pekerjaan</td>
+                <td>:</td>
+                <td>{{ $penindakan->pekerjaan }}</td>
+            </tr>
+            <tr>
+                <td>Identitas (KTP)</td>
+                <td>:</td>
+                <td>{{ $penindakan->no_ktp }}</td>
             </tr>
         </table>
 
-        <p>Telah melakukan pencacahan terhadap Barang hasil Penindakan yang berasal dari penindakan di {{ $penindakan->lokasi_penindakan }} pada tanggal {{ $penindakan->tanggal_sbp->format('d F Y') }}, berupa {{ $penindakan->jenis_barang }} dengan jumlah {{ $penindakan->jumlah }} {{ $penindakan->kemasan }}.</p>
-
-        <p>Atas Barang Hasil Penindakan tersebut diatas kemudian dilakukan penyimpanan di Gudang BHP di KPPBC TMP C Blitar.</p>
-
-        <p>Demikian Berita Acara ini dibuat dengan sebenarnya dan ditandatangani pada tempat dan waktu tersebut diatas.</p>
+        <p>Demikian Berita Acara ini dibuat dengan sebenarnya.</p>
     </div>
 
     <div class="signatures">
-        <p>Yang Melakukan Pencacahan,</p>
-        <br><br><br>
-        <table width="100%">
+        <p style="text-align: right">Blitar, {{ $penindakan->tanggal_print->format('d F Y') }}</p>
+        <table>
             <tr>
-                <td width="50%" style="text-align: center">
-                    <p>{{ $penindakan->petugas_2 }}</p>
+                <td>
+                    <p>Orang yang menyaksikan,</p>
+                    <br><br><br>
+                    <p>{{ $penindakan->nama_pemilik }}</p>
                 </td>
-                <td width="50%" style="text-align: center">
+                <td>
+                    <p>Pejabat yang mengambil dokumentasi,</p>
+                    <br><br><br>
                     <p>{{ $penindakan->petugas_1 }}</p>
+                    <p>NIP {{ $penindakan->petugas_1 }}</p>
+                    <br>
+                    <p>{{ $penindakan->petugas_2 }}</p>
+                    <p>NIP {{ $penindakan->petugas_2 }}</p>
                 </td>
             </tr>
         </table>

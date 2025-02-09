@@ -34,8 +34,10 @@ class Penindakan extends Controller
             });
         }
 
-        if ($date_from = $request->input('date_from'))  $query->whereDate('tanggal_sbp', '>=', $date_from);
-        if ($date_to = $request->input('date_to')) $query->whereDate('tanggal_sbp', '<=', $date_to);
+        if ($date_from = $request->input('date_from'))
+            $query->whereDate('tanggal_sbp', '>=', $date_from);
+        if ($date_to = $request->input('date_to'))
+            $query->whereDate('tanggal_sbp', '<=', $date_to);
 
         $perPage = $request->input('per_page', default: 5);
         $penindakan = $query->latest()->paginate($perPage)->withQueryString();
@@ -48,7 +50,8 @@ class Penindakan extends Controller
                 $item->lokasi_penindakan,
                 $item->pelaku,
                 $item->uraian_bhp,
-                $item->jumlah . ' ' . $item->kemasan, 'Rp ' . number_format($item->perkiraan_nilai_barang, 0, ',', '.'),
+                $item->jumlah . ' ' . $item->kemasan,
+                'Rp ' . number_format($item->perkiraan_nilai_barang, 0, ',', '.'),
                 $item->potensi_kurang_bayar ? 'Rp ' . number_format($item->potensi_kurang_bayar, 0, ',', '.') : '-',
             ];
         })->toArray();
@@ -127,86 +130,122 @@ class Penindakan extends Controller
     protected function generateSpPdf(PenindakanModel $penindakan)
     {
         try {
+            $penindakan->load('creator', 'updater');
+            
             $storagePath = sprintf(
                 'dokumen/penindakan/%s/modul_penindakan',
                 rawurlencode($penindakan->no_sbp)
             );
 
-            //  SP PDF
-            $pdf = Pdf::loadView('documents.sp', ['penindakan' => $penindakan]);
-            $fileName = sprintf('SP_%s.pdf', str_replace(['/', '\\'], '_', $penindakan->no_sbp));
-            $path = Storage::disk('public')->put(
-                $storagePath . '/' . $fileName,
-                $pdf->output()
-            );
+            setlocale(LC_TIME, 'id_ID.utf8', 'id_ID', 'id');
+            \Carbon\Carbon::setLocale('id');
 
-            //  Lampiran BA Pencacahan PDF
-            $pdf = Pdf::loadView('documents.lampiran-ba-pencacahan', ['penindakan' => $penindakan]);
-            $fileName = sprintf('LAMPIRAN-BA-PENCACAHAN_%s.pdf', str_replace(['/', '\\'], '_', $penindakan->no_sbp));
-            $path = Storage::disk('public')->put(
-                $storagePath . '/' . $fileName,
-                $pdf->output()
-            );
-
-            //  Lampiran BA Pemeriksaan PDF
-            $pdf = Pdf::loadView('documents.lampiran-ba-pemeriksaan', ['penindakan' => $penindakan]);
-            $fileName = sprintf('LAMPIRAN-BA-PEMERIKSAAN_%s.pdf', str_replace(['/', '\\'], '_', $penindakan->no_sbp));
-            $path = Storage::disk('public')->put(
-                $storagePath . '/' . $fileName,
-                $pdf->output()
-            );
-
-            // BA Pencacahan PDF 
-            $pdf = Pdf::loadView('documents.ba-pencacahan', [
-                'penindakan' => $penindakan
-            ]);
-            $fileName = sprintf('BA-PENCACAHAN_%s.pdf', str_replace(['/', '\\'], '_', $penindakan->no_sbp));
-            $path = Storage::disk('public')->put(
-                $storagePath . '/' . $fileName, 
-                $pdf->output()
-            );
-
-            // Document records
             $documents = [
                 [
-                    'tipe' => 'SP',
-                    'deskripsi' => 'Surat Pernyataan',
-                    'file_path' => $storagePath . '/' . sprintf('SP_%s.pdf', str_replace(['/', '\\'], '_', $penindakan->no_sbp)),
+                    'tipe' => 'SBP',
+                    'deskripsi' => 'Surat Bukti Penyitaan',
+                    'view' => 'documents.surat-bukti-penindakan',
+                    'priority' => 1
                 ],
                 [
-                    'tipe' => 'LAMPIRAN-BA-PENCACAHAN',
-                    'deskripsi' => 'Lampiran Berita Acara Pencacahan',
-                    'file_path' => $storagePath . '/' . sprintf('LAMPIRAN-BA-PENCACAHAN_%s.pdf', str_replace(['/', '\\'], '_', $penindakan->no_sbp)),
+                    'tipe' => 'BA-PENEGAHAN',
+                    'deskripsi' => 'Berita Acara Penegahan',
+                    'view' => 'documents.ba-penegahan',
+                    'priority' => 2
+                ],
+                [
+                    'tipe' => 'BA-PEMERIKSAAN',
+                    'deskripsi' => 'Berita Acara Pemeriksaan',
+                    'view' => 'documents.ba-pemeriksaan',
+                    'priority' => 3
                 ],
                 [
                     'tipe' => 'LAMPIRAN-BA-PEMERIKSAAN',
                     'deskripsi' => 'Lampiran Berita Acara Pemeriksaan',
-                    'file_path' => $storagePath . '/' . sprintf('LAMPIRAN-BA-PEMERIKSAAN_%s.pdf', str_replace(['/', '\\'], '_', $penindakan->no_sbp)),
+                    'view' => 'documents.lampiran-ba-pemeriksaan',
+                    'priority' => 4
+                ],
+                [
+                    'tipe' => 'BA-PENYEGELAN',
+                    'deskripsi' => 'Berita Acara Penyegelan',
+                    'view' => 'documents.ba-penyegelan',
+                    'priority' => 5
                 ],
                 [
                     'tipe' => 'BA-PENCACAHAN',
                     'deskripsi' => 'Berita Acara Pencacahan',
-                    'file_path' => $storagePath . '/' . sprintf('BA-PENCACAHAN_%s.pdf', str_replace(['/', '\\'], '_', $penindakan->no_sbp)),
+                    'view' => 'documents.ba-pencacahan',
+                    'priority' => 6
+                ],
+                [
+                    'tipe' => 'LAMPIRAN-BA-PENCACAHAN',
+                    'deskripsi' => 'Lampiran Berita Acara Pencacahan',
+                    'view' => 'documents.lampiran-ba-pencacahan',
+                    'priority' => 7
+                ],
+                [
+                    'tipe' => 'BA-SERAH-TERIMA',
+                    'deskripsi' => 'Berita Acara Serah Terima',
+                    'view' => 'documents.berita-acara-serah-terima',
+                    'priority' => 8
+                ],
+                [
+                    'tipe' => 'SURAT-PERNYATAAN',
+                    'deskripsi' => 'Surat Pernyataan',
+                    'view' => 'documents.surat-pernyataan',
+                    'priority' => 9
+                ],
+                [
+                    'tipe' => 'BA-DOKUMENTASI',
+                    'deskripsi' => 'Berita Acara Dokumentasi',
+                    'view' => 'documents.ba-dokumentasi',
+                    'priority' => 10
                 ]
             ];
 
+            usort($documents, fn($a, $b) => $a['priority'] <=> $b['priority']);
+
+            $generatedDocuments = [];
+            $now = now(); 
+
             foreach ($documents as $doc) {
-                DokumenModel::create([
+                $pdf = Pdf::loadView($doc['view'], ['penindakan' => $penindakan]);
+                $fileName = sprintf(
+                    '%s_%s.pdf', 
+                    $doc['tipe'], 
+                    str_replace(['/', '\\'], '_', $penindakan->no_sbp)
+                );
+                
+                Storage::disk('public')->put(
+                    $storagePath . '/' . $fileName,
+                    $pdf->output()
+                );
+
+                $generatedDocuments[] = [
                     'tipe' => $doc['tipe'],
                     'deskripsi' => $doc['deskripsi'],
-                    'file_path' => $doc['file_path'],
+                    'file_path' => $storagePath . '/' . $fileName,
                     'reference_id' => $penindakan->no_sbp,
                     'uploaded_by' => Auth::id(),
-                    'module' => 'penindakan'
-                ]);
+                    'module' => 'penindakan',
+                    'created_at' => $now, 
+                    'updated_at' => $now 
+                ];
             }
+
+            DokumenModel::insert($generatedDocuments);
 
             Log::info('PDFs generated and stored successfully', [
                 'no_sbp' => $penindakan->no_sbp,
-                'storage_path' => $storagePath
+                'storage_path' => $storagePath,
+                'document_count' => count($documents)
             ]);
+
         } catch (Exception $e) {
-            Log::error('Error generating PDFs: ' . $e->getMessage());
+            Log::error('Error generating PDFs: ' . $e->getMessage(), [
+                'no_sbp' => $penindakan->no_sbp,
+                'trace' => $e->getTraceAsString()
+            ]);
             throw $e;
         }
     }

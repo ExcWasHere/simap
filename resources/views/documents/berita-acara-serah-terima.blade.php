@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Berita Acara Pencacahan</title>
+    <title>Berita Acara Serah Terima</title>
     <style>
         body {
             font-family: "Times New Roman", Times, serif;
@@ -58,30 +58,24 @@
             margin: 30px 0;
             line-height: 1.6;
         }
-        .content table {
-            margin: 15px 0;
-        }
-        .content td {
-            padding: 5px 3px;
+        .content-section {
+            margin: 10px 0;
         }
         .signatures {
             margin-top: 60px;
-            text-align: center;
         }
         .signatures table {
-            margin: 0 auto;
-        }
-        .sign-column {
-            display: inline-block;
-            width: 45%;
-        }
-        table {
             width: 100%;
-            border-collapse: collapse;
         }
-        td {
-            padding: 3px;
+        .signatures td {
+            width: 50%;
+            text-align: center;
             vertical-align: top;
+        }
+        .footer-note {
+            margin-top: 20px;
+            font-style: italic;
+            font-size: 10pt;
         }
     </style>
 </head>
@@ -107,51 +101,77 @@
     <div class="header-line"></div>
 
     <div class="title">
-        <p>BERITA ACARA PENCACAHAN</p>
+        <p>BERITA ACARA SERAH TERIMA</p>
         <p>Nomor : {{ $penindakan->no_print }}</p>
     </div>
 
     <div class="content">
-        <p>Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }} bertempat di KPPBC Tipe Madya Pabean C Blitar, Kami :</p>
+        <p>Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, Saya/Kami* yang bertanda tangan di bawah bertindak untuk/atas nama pemilik barang, telah menyerahkan:</p>
 
-        <table>
-            <tr>
-                <td width="140">Nama</td>
-                <td width="10">:</td>
-                <td>{{ $penindakan->petugas_1 }}</td>
-            </tr>
-        </table>
+        <div class="content-section">
+            <p>1. Sarana Pengangkut*</p>
+            <div style="margin-left: 20px;">
+                <p>a. Jenis Sarana Pengangkut : {{ $penindakan->nama_jenis_sarkut }}</p>
+                <p>b. No Reg/No Polisi : {{ $penindakan->no_polisi }}</p>
+            </div>
+        </div>
 
-        <p>Bersama – sama dengan :</p>
+        <div class="content-section">
+            <p>2. Barang*</p>
+            <div style="margin-left: 20px;">
+                <p>a. Jml/No Petikemas/Kemasan : {{ $penindakan->jenis_barang }} sebanyak {{ $penindakan->jumlah }} {{ $penindakan->kemasan }} {{ $penindakan->uraian_bhp }}</p>
+                <p>b. Jumlah/Jenis Barang : {{ $penindakan->jumlah }} {{ $penindakan->kemasan }}</p>
+            </div>
+        </div>
 
-        <table>
-            <tr>
-                <td width="140">Nama</td>
-                <td width="10">:</td>
-                <td>{{ $penindakan->petugas_2 }}</td>
-            </tr>
-        </table>
+        <div class="content-section">
+            <p>3. Dokumen*</p>
+            <div style="margin-left: 20px;">
+                <p>a. Jenis/No dan Tgl Dokumen : {{ $penindakan->no_sbp }}</p>
+            </div>
+        </div>
 
-        <p>Telah melakukan pencacahan terhadap Barang hasil Penindakan yang berasal dari penindakan di {{ $penindakan->lokasi_penindakan }} pada tanggal {{ $penindakan->tanggal_sbp->format('d F Y') }}, berupa {{ $penindakan->jenis_barang }} dengan jumlah {{ $penindakan->jumlah }} {{ $penindakan->kemasan }}.</p>
+        <div class="content-section">
+            <p>4. Orang*</p>
+            <div style="margin-left: 20px;">
+                <p>a. Nama : {{ $penindakan->nama_pemilik }}</p>
+                <p>b. No Identitas : {{ $penindakan->no_ktp }}</p>
+            </div>
+        </div>
 
-        <p>Atas Barang Hasil Penindakan tersebut diatas kemudian dilakukan penyimpanan di Gudang BHP di KPPBC TMP C Blitar.</p>
+        <p>Diserahkan kepada :</p>
+        <div style="margin-left: 20px;">
+            <p>Nama : {{ $penindakan->petugas_1 }}</p>
+            <p>NIP/ No Identitas : {{ $penindakan->petugas_1 }}</p>
+        </div>
 
-        <p>Demikian Berita Acara ini dibuat dengan sebenarnya dan ditandatangani pada tempat dan waktu tersebut diatas.</p>
+        <p>Menerima penyerahan untuk/atas nama: -</p>
+        <p>Penyerahan dilaksanakan dalam rangka: {{ $penindakan->jenis_pelanggaran }}</p>
+
+        <p>Demikian Berita Acara ini dibuat dengan sebenarnya.</p>
     </div>
 
     <div class="signatures">
-        <p>Yang Melakukan Pencacahan,</p>
-        <br><br><br>
-        <table width="100%">
+        <p style="text-align: right">Blitar, {{ $penindakan->tanggal_print->format('d F Y') }}</p>
+        <table>
             <tr>
-                <td width="50%" style="text-align: center">
-                    <p>{{ $penindakan->petugas_2 }}</p>
-                </td>
-                <td width="50%" style="text-align: center">
+                <td>
+                    <p>Yang menerima,</p>
+                    <br><br><br>
                     <p>{{ $penindakan->petugas_1 }}</p>
+                    <p>NIP {{ $penindakan->petugas_1 }}</p>
+                </td>
+                <td>
+                    <p>Yang menyerahkan,</p>
+                    <br><br><br>
+                    <p>{{ $penindakan->nama_pemilik }}</p>
                 </td>
             </tr>
         </table>
+    </div>
+
+    <div class="footer-note">
+        <p>*Coret yang tidak perlu</p>
     </div>
 </body>
 </html>

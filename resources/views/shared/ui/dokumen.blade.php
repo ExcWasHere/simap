@@ -62,7 +62,7 @@
                     @endif
                     <address class="mt-3 flex items-center text-xs text-gray-500">
                         <i class="fas fa-history mr-1.5"></i>
-                        <h5>{{ $document->created_at->locale('id')->diffForHumans() }}</h5>
+                        <h5>{{ $document->created_at?->locale('id')->diffForHumans() ?? 'Waktu tidak tersedia' }}</h5>
                     </address>
                 </div>
             </a>
@@ -98,3 +98,4 @@
     'section' => $section,
     'module_type' => $module_type,
 ])
+
