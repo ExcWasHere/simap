@@ -30,6 +30,18 @@
                 <section class="tab-content {{ $active_tab === 'penindakan' ? 'active' : 'hidden' }}" id="penindakan-content" data-content="penindakan">
                     <div class="grid grid-cols-1 gap-6">
                         @include('shared.forms.input', [
+                            'label' => 'Tanggal Laporan',
+                            'name' => 'tanggal_laporan',
+                            'type' => 'date',
+                            'data_required' => true,
+                        ])
+                         @include('shared.forms.input', [
+                            'label' => 'Jenis Barang',
+                            'name' => 'jenis_barang',
+                            'type' => 'text',
+                            'data_required' => true,
+                        ])
+                        @include('shared.forms.input', [
                             'label' => 'No. SBP',
                             'name' => 'no_sbp',
                             'type' => 'text',
@@ -41,9 +53,85 @@
                             'type' => 'date',
                             'data_required' => true,
                         ])
+                         @include('shared.forms.input', [
+                            'label' => 'No. PRINT',
+                            'name' => 'no_print',
+                            'type' => 'text',
+                            'data_required' => true,
+                        ])
+                         @include('shared.forms.input', [
+                            'label' => 'Tanggal PRINT',
+                            'name' => 'tanggal_print',
+                            'type' => 'date',
+                            'data_required' => true,
+                        ])
+                         @include('shared.forms.input', [
+                            'label' => 'Nama dan Jenis Sarkut',
+                            'name' => 'nama_jenis_sarkut',
+                            'type' => 'text',
+                            'data_required' => true,
+                        ])
+                         @include('shared.forms.input', [
+                            'label' => 'Pengemudi',
+                            'name' => 'pengemudi',
+                            'type' => 'text',
+                            'data_required' => true,
+                        ])
+                         @include('shared.forms.input', [
+                            'label' => 'Nomor Polisi',
+                            'name' => 'no_polisi',
+                            'type' => 'text',
+                            'data_required' => true,
+                        ])
+                         @include('shared.forms.input', [
+                            'label' => 'Bangunan',
+                            'name' => 'bangunan',
+                            'type' => 'text',
+                            'data_required' => true,
+                        ]) @include('shared.forms.input', [
+                            'label' => 'Pemilik Bangunan',
+                            'name' => 'nama_pemilik',
+                            'type' => 'text',
+                            'data_required' => true,
+                        ]) @include('shared.forms.input', [
+                            'label' => 'Nomor KTP',
+                            'name' => 'no_ktp',
+                            'type' => 'number',
+                            'data_required' => true,
+                        ])
                         @include('shared.forms.input', [
                             'label' => 'Pelaku',
                             'name' => 'pelaku',
+                            'type' => 'text',
+                            'data_required' => true,
+                        ])
+                         @include('shared.forms.input', [
+                            'label' => 'Nomor HP',
+                            'name' => 'no_hp',
+                            'type' => 'number',
+                            'data_required' => true,
+                        ])
+                         @include('shared.forms.input', [
+                            'label' => 'Tempat Lahir',
+                            'name' => 'tempat_lahir',
+                            'type' => 'text',
+                            'data_required' => true,
+                        ])
+                         @include('shared.forms.input', [
+                            'label' => 'Tanggal Lahir',
+                            'name' => 'tanggal_lahir',
+                            'type' => 'date',
+                            'data_required' => true,
+                        ]) 
+                        @include('shared.forms.input', [
+                            'label' => 'Pekerjaan',
+                            'name' => 'pekerjaan',
+                            'type' => 'text',
+                            'data_required' => true,
+                        ]) 
+                        @include('shared.forms.input', [
+                            'label' => 'Alamat',
+                            'name' => 'alamat',
                             'type' => 'text',
                             'data_required' => true,
                         ])
@@ -51,6 +139,30 @@
                             'label' => 'Lokasi Penindakan',
                             'name' => 'lokasi_penindakan',
                             'rows' => 3,
+                            'data_required' => true,
+                        ])
+                         @include('shared.forms.input', [
+                            'label' => 'Waktu Awal Penindakan',
+                            'name' => 'waktu_awal_penindakan',
+                            'type' => 'datetime-local',
+                            'data_required' => true,
+                        ])
+                         @include('shared.forms.input', [
+                            'label' => 'Waktu Akhir Penindakan',
+                            'name' => 'waktu_akhir_penindakan',
+                            'type' => 'datetime-local',
+                            'data_required' => true,
+                        ])
+                         @include('shared.forms.input', [
+                            'label' => 'Jenis Pelanggaran',
+                            'name' => 'jenis_pelanggaran',
+                            'type' => 'text',
+                            'data_required' => true,
+                        ])
+                         @include('shared.forms.input', [
+                            'label' => 'Pasal',
+                            'name' => 'pasal',
+                            'type' => 'text',
                             'data_required' => true,
                         ])
                         @include('shared.forms.textarea', [
@@ -81,6 +193,18 @@
                         @include('shared.forms.mata-uang', [
                             'label' => 'Potensi Kurang Bayar',
                             'name' => 'potensi_kurang_bayar',
+                            'data_required' => true,
+                        ])
+                         @include('shared.forms.input', [
+                            'label' => 'Petugas 1',
+                            'name' => 'petugas_1',
+                            'type' => 'name',
+                            'data_required' => true,
+                        ])
+                         @include('shared.forms.input', [
+                            'label' => 'Petugas 2',
+                            'name' => 'petugas_2',
+                            'type' => 'name',
                             'data_required' => true,
                         ])
                     </div>
