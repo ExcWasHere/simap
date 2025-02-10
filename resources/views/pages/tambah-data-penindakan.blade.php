@@ -208,6 +208,16 @@
                             'data_required' => true,
                         ])
                     </div>
+                    @include('shared.forms.signature-pad', [
+                        'label' => 'Tanda Tangan Petugas 1',
+                        'name' => 'ttd_petugas_1',
+                        'index' => 1,
+                    ])
+                    @include('shared.forms.signature-pad', [
+                        'label' => 'Tanda Tangan Petugas 2',
+                        'name' => 'ttd_petugas_2',
+                        'index' => 2,
+                    ])
                 </section>
                 <span class="flex justify-end space-x-3 pt-6">
                     <a href="{{ url()->previous() }}" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">

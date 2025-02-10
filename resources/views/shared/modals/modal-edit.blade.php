@@ -312,6 +312,16 @@
                     'data_required' => true,
                 ])
             </div>
+            @include('shared.forms.signature-pad', [
+                'label' => 'Tanda Tangan Pelapor',
+                'name' => 'ttd_pelapor',
+                'index' => 1,
+            ])
+            @include('shared.forms.signature-pad', [
+                'label' => 'Tanda Tangan Pelaku',
+                'name' => 'ttd_pelaku',
+                'index' => 2,
+            ])
         @endif
     </form>
 @endcomponent
@@ -519,3 +529,4 @@
         });
     </script>
 @endpush
+

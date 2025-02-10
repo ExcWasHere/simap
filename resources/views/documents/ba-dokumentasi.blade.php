@@ -76,6 +76,11 @@
             text-align: center;
             vertical-align: top;
         }
+        .signatures img {
+            max-width: 150px;
+            margin: 10px 0;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -169,15 +174,28 @@
             <tr>
                 <td>
                     <p>Orang yang menyaksikan,</p>
-                    <br><br><br>
+                    @if($penindakan->ttd_pelaku)
+                        <img src="{{ $penindakan->ttd_pelaku }}" alt="Tanda Tangan Pelaku" style="height: 60px;">
+                    @else
+                        <br><br><br>
+                    @endif
                     <p>{{ $penindakan->nama_pemilik }}</p>
                 </td>
                 <td>
                     <p>Pejabat yang mengambil dokumentasi,</p>
-                    <br><br><br>
+                    @if($penindakan->ttd_petugas_1)
+                        <img src="{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1" style="height: 60px;">
+                    @else
+                        <br><br><br>
+                    @endif
                     <p>{{ $penindakan->petugas_1 }}</p>
                     <p>NIP {{ $penindakan->petugas_1 }}</p>
                     <br>
+                    @if($penindakan->ttd_petugas_2)
+                        <img src="{{ $penindakan->ttd_petugas_2 }}" alt="Tanda Tangan Petugas 2" style="height: 60px;">
+                    @else
+                        <br><br><br>
+                    @endif
                     <p>{{ $penindakan->petugas_2 }}</p>
                     <p>NIP {{ $penindakan->petugas_2 }}</p>
                 </td>

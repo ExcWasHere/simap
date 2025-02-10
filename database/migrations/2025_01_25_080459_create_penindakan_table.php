@@ -39,6 +39,8 @@ return new class extends Migration {
             $table->string('pasal');
             $table->string('petugas_1');
             $table->string('petugas_2');
+            $table->text('ttd_petugas_1')->nullable();
+            $table->text('ttd_petugas_2')->nullable();
             $table->enum('status', ['open', 'processed', 'closed'])->default('open');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->nullable()->constrained('users');

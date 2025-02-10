@@ -1,26 +1,28 @@
-<h1 align="center">Bea Cukai Blitar - Login System</h1>
+<h1 align="center">Sistem Monitoring Penindakan - Bea Cukai</h1>
 
-A secure authentication system built with Laravel 11, featuring a modern UI with Tailwind CSS and smooth animations powered by GSAP.
+Sistem manajemen dan monitoring untuk penindakan pelanggaran kepabeanan, dilengkapi dengan modul intelijen dan penyidikan. Dibangun menggunakan Laravel 11 dengan antarmuka modern.
 
-## Features
+## Fitur
 
--   🔐 Secure authentication with NIP (Employee ID Number)
--   🎨 Modern UI with Tailwind CSS
--   ✨ Smooth animations using GSAP
--   🔄 Image carousel on login page
--   📱 Fully responsive design
--   ⚡ Rate limiting for login attempts
--   🔍 Comprehensive error logging
+- 📊 Dashboard monitoring dengan visualisasi data
+- 📄 Manajemen dokumen penindakan lengkap
+- 🔍 Pelacakan kasus intelijen dan penyidikan  
+- 📱 Antarmuka responsif
+- 🔐 Autentikasi berbasis NIP
+- 📂 Unggah dan kelola dokumen digital
+- 📈 Laporan statistik penindakan
+- 🔔 Notifikasi status kasus
+- 🗃️ Pencarian dan filter data yang komprehensif
 
 ## Tech Stack
 
--   **Framework:** Laravel 11
--   **Styling:** Tailwind CSS v4
--   **Animations:** GSAP 3.12
--   **Database:** MySQL
--   **PHP Version:** 8.2+
--   **Build Tool:** Vite
--   **HTTP Client:** Axios
+- **Framework:** Laravel 11
+- **Styling:** Tailwind CSS v4
+- **Animations:** GSAP 3.12 
+- **Database:** MySQL
+- **PHP Version:** 8.2+
+- **Build Tool:** Vite
+- **HTTP Client:** Axios
 
 ## Prerequisites
 
