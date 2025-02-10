@@ -29,9 +29,9 @@ class Penyidikan extends Controller
         if ($date_to = $request->input('date_to')) $query->whereDate('tanggal_spdp', '<=', $date_to);
 
         $perPage = $request->input('per_page', 5);
-        $penyidikan = $query->latest()->paginate($perPage)->withQueryString();
+        $penyidikan = $query->latest()->paginate($perPage)->appends($request->query());
 
-        $rows = $penyidikan->map(function ($item, $index) use ($penyidikan) {
+        $rows = collect($penyidikan->items())->map(function ($item, $index) use ($penyidikan) {
             return [
                 ($penyidikan->currentPage() - 1) * $penyidikan->perPage() + $index + 1,
                 $item->no_spdp,

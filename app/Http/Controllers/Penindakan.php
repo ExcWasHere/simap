@@ -40,9 +40,9 @@ class Penindakan extends Controller
             $query->whereDate('tanggal_sbp', '<=', $date_to);
 
         $perPage = $request->input('per_page', default: 5);
-        $penindakan = $query->latest()->paginate($perPage)->withQueryString();
+        $penindakan = $query->latest()->paginate($perPage)->appends($request->query());
 
-        $rows = $penindakan->map(function ($item, $index) use ($penindakan) {
+        $rows = collect($penindakan->items())->map(function ($item, $index) use ($penindakan) {
             return [
                 ($penindakan->currentPage() - 1) * $penindakan->perPage() + $index + 1,
                 $item->no_sbp,
@@ -342,6 +342,8 @@ class Penindakan extends Controller
 
             $validated['updated_by'] = Auth::id();
             $penindakan->update($validated);
+
+            $this->documentUpdate($penindakan);
             DB::commit();
 
             return response()->json([
@@ -359,5 +361,12 @@ class Penindakan extends Controller
                 'message' => 'Gagal memperbarui data penindakan: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function documentUpdate(\App\Models\Penindakan $penindakan)
+    {
+        $penindakan->dokumen()->delete();
+
+        $this->generateSpPdf($penindakan);
     }
 }

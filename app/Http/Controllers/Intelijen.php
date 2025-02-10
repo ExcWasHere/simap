@@ -34,9 +34,9 @@ class Intelijen extends Controller
         if ($date_to = $request->input('date_to')) $query->whereDate('tanggal_nhi', '<=', $date_to);
 
         $perPage = $request->input('per_page', 5);
-        $intelijen = $query->latest()->paginate($perPage)->withQueryString();
+        $intelijen = $query->latest()->paginate($perPage)->appends($request->query());
 
-        $rows = $intelijen->map(function ($item, $index) use ($intelijen) {
+        $rows = collect($intelijen->items())->map(function ($item, $index) use ($intelijen) {
             return [
                 ($intelijen->currentPage() - 1) * $intelijen->perPage() + $index + 1,
                 $item->no_nhi,
