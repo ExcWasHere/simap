@@ -74,6 +74,11 @@
             bottom: 20px;
             left: 20px;
         }
+        .signature-box img {
+            max-width: 150px;
+            margin: 10px 0;
+            height: 60px;
+        }
     </style>
 </head>
 <body>
@@ -107,10 +112,19 @@
             </div>
             <div class="signature-box">
                 <p>Yang Melakukan Pemeriksaan:</p>
-                <br><br><br>
+                @if($penindakan->ttd_petugas_1)
+                    <img src="{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1">
+                @else
+                    <br><br><br>
+                @endif
                 <p>{{ $penindakan->petugas_1 }}</p>
                 <p>NIP {{ $penindakan->petugas_1 }}</p>
                 <br>
+                @if($penindakan->ttd_petugas_2)
+                    <img src="{{ $penindakan->ttd_petugas_2 }}" alt="Tanda Tangan Petugas 2">
+                @else
+                    <br><br><br>
+                @endif
                 <p>{{ $penindakan->petugas_2 }}</p>
                 <p>NIP {{ $penindakan->petugas_2 }}</p>
             </div>

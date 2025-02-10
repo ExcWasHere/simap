@@ -77,6 +77,11 @@
             font-style: italic;
             font-size: 10pt;
         }
+        .signatures img {
+            max-width: 150px;
+            margin: 10px 0;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -157,7 +162,11 @@
             <tr>
                 <td>
                     <p>Yang menerima,</p>
-                    <br><br><br>
+                    @if($penindakan->ttd_petugas_1)
+                        <img src="{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1" style="height: 60px;">
+                    @else
+                        <br><br><br>
+                    @endif
                     <p>{{ $penindakan->petugas_1 }}</p>
                     <p>NIP {{ $penindakan->petugas_1 }}</p>
                 </td>

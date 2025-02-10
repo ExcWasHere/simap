@@ -209,12 +209,12 @@
                         ])
                     </div>
                     @include('shared.forms.signature-pad', [
-                        'label' => 'Tanda Tangan Petugas 1',
+                        'label' => 'Tanda Tangan Petugas 1 (opsional)',
                         'name' => 'ttd_petugas_1',
                         'index' => 1,
                     ])
                     @include('shared.forms.signature-pad', [
-                        'label' => 'Tanda Tangan Petugas 2',
+                        'label' => 'Tanda Tangan Petugas 2 (opsional)',
                         'name' => 'ttd_petugas_2',
                         'index' => 2,
                     ])

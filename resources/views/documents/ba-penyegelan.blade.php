@@ -82,6 +82,11 @@
         .indent {
             margin-left: 20px;
         }
+        .signatures img {
+            max-width: 150px;
+            margin: 10px 0;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -198,6 +203,7 @@
     </div>
 
     <div class="signatures">
+        <p style="text-align: right">Blitar, {{ $penindakan->tanggal_print->format('d F Y') }}</p>
         <table>
             <tr>
                 <td>
@@ -207,10 +213,21 @@
                 </td>
                 <td>
                     <p>Pejabat yang melakukan penyegelan</p>
-                    <br><br><br>
+                    @if($penindakan->ttd_petugas_1)
+                        <img src="{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1" style="height: 60px;">
+                    @else
+                        <br><br><br>
+                    @endif
                     <p>{{ $penindakan->petugas_1 }}</p>
+                    <p>NIP {{ $penindakan->petugas_1 }}</p>
                     <br>
+                    @if($penindakan->ttd_petugas_2)
+                        <img src="{{ $penindakan->ttd_petugas_2 }}" alt="Tanda Tangan Petugas 2" style="height: 60px;">
+                    @else
+                        <br><br><br>
+                    @endif
                     <p>{{ $penindakan->petugas_2 }}</p>
+                    <p>NIP {{ $penindakan->petugas_2 }}</p>
                 </td>
             </tr>
         </table>

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Berita Acara Pemeriksaan</title>
     <style>
         body {
@@ -11,81 +12,105 @@
             margin: 2.5cm;
             color: #000;
         }
+
         .header {
             width: 100%;
             margin-bottom: 20px;
         }
+
         .header table {
             width: 100%;
             border-spacing: 0;
         }
+
         .header .logo {
             width: auto;
-            height: 90;   
+            height: 90;
             vertical-align: top;
             margin-right: 15px;
         }
+
         .header-text {
             text-align: center;
             padding-left: 10px;
-            line-height: 1.2;   
+            line-height: 1.2;
         }
+
         .header .bold-text {
             font-weight: bold;
             margin: 1px 0;
-            font-size: 12pt;      
+            font-size: 12pt;
         }
+
         .header .small-text {
             font-size: 9pt;
             margin: 1px 0;
             color: #333;
         }
+
         .header-line {
             border-bottom: 2px double #000;
             margin: 6px 0 25px 0;
         }
+
         .title {
             text-align: center;
             font-weight: bold;
             margin: 30px 0;
         }
+
         .title p {
             margin: 5px 0;
             font-size: 14pt;
         }
+
         .content {
             text-align: justify;
             margin: 30px 0;
             line-height: 1.6;
         }
+
         .section {
             margin: 15px 0;
         }
+
         .section-title {
             font-weight: bold;
             margin-bottom: 10px;
         }
+
         .indent {
             margin-left: 30px;
         }
+
         .petugas-list {
             margin: 20px 0;
         }
+
         .signatures {
             margin-top: 50px;
             text-align: center;
         }
+
         .signatures table {
             width: 100%;
             margin-top: 20px;
         }
+
         .signatures td {
             width: 50%;
             text-align: center;
             vertical-align: top;
         }
+
+        .signatures img {
+            max-width: 150px;
+            margin: 10px 0;
+            height: auto;
+        }
     </style>
 </head>
+
 <body>
     <div class="header">
         <table>
@@ -113,7 +138,9 @@
     </div>
 
     <div class="content">
-        <p>Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, berdasarkan Surat Perintah / Surat Tugas nomor : {{ $penindakan->no_print }} tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, Kami yang bertanda tangan di bawah ini:</p>
+        <p>Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, berdasarkan Surat Perintah / Surat
+            Tugas nomor : {{ $penindakan->no_print }} tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, Kami
+            yang bertanda tangan di bawah ini:</p>
 
         <div class="petugas-list">
             <p>1. Nama / NIP : {{ $penindakan->petugas_1 }} / {{ $penindakan->petugas_1 }}</p>
@@ -132,7 +159,8 @@
         <p>Telah melakukan pemeriksaan atas :</p>
 
         <div class="section">
-            <p class="section-title">a. Barang yang ditimbun/disimpan di Kawasan Pabean / Kawasan Berikat/Bangunan atau tempat lain</p>
+            <p class="section-title">a. Barang yang ditimbun/disimpan di Kawasan Pabean / Kawasan Berikat/Bangunan atau
+                tempat lain</p>
             <div class="indent">
                 <table>
                     <tr>
@@ -158,7 +186,8 @@
                     <tr>
                         <td>Jumlah/Jenis/Ukuran</td>
                         <td>:</td>
-                        <td>{{ $penindakan->jenis_barang }} sebanyak {{ $penindakan->jumlah }} {{ $penindakan->kemasan }}</td>
+                        <td>{{ $penindakan->jenis_barang }} sebanyak {{ $penindakan->jumlah }}
+                            {{ $penindakan->kemasan }}</td>
                     </tr>
                     <tr>
                         <td>Pemilik/Yang Menguasai</td>
@@ -244,10 +273,19 @@
                 </td>
                 <td>
                     <p>Yang Melakukan Pemeriksaan :</p>
-                    <br><br><br>
+                    @if ($penindakan->ttd_petugas_1)
+                        <img src="{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1" style="height: 60px;">
+                    @else
+                        <br><br><br>
+                    @endif
                     <p>{{ $penindakan->petugas_1 }}</p>
                     <p>NIP {{ $penindakan->petugas_1 }}</p>
                     <br>
+                    @if ($penindakan->ttd_petugas_2)
+                        <img src="{{ $penindakan->ttd_petugas_2 }}" alt="Tanda Tangan Petugas 2" style="height: 60px;">
+                    @else
+                        <br><br><br>
+                    @endif
                     <p>{{ $penindakan->petugas_2 }}</p>
                     <p>NIP {{ $penindakan->petugas_2 }}</p>
                 </td>
@@ -255,4 +293,5 @@
         </table>
     </div>
 </body>
+
 </html>

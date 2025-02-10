@@ -54,6 +54,11 @@
             bottom: 20px;
             left: 20px;
         }
+        .signature img {
+            max-width: 150px;
+            margin: 10px 0;
+            height: 60px;
+        }
     </style>
 </head>
 <body>
@@ -74,15 +79,24 @@
     </div>
 
     <div class="signature-container">
+        <p style="text-align: right">{{ $penindakan->lokasi_penindakan }}, {{ $penindakan->tanggal_print->format('d F Y') }}</p>
         <p>Yang Melakukan Pencacahan,</p>
         <div style="margin-top: 20px;">
             <div class="signature">
-                <br><br><br>
+                @if($penindakan->ttd_petugas_1)
+                    <img src="{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1">
+                @else
+                    <br><br><br>
+                @endif
                 <p>{{ $penindakan->petugas_1 }}</p>
                 <p>NIP {{ $penindakan->petugas_1 }}</p>
             </div>
             <div class="signature">
-                <br><br><br>
+                @if($penindakan->ttd_petugas_2)
+                    <img src="{{ $penindakan->ttd_petugas_2 }}" alt="Tanda Tangan Petugas 2">
+                @else
+                    <br><br><br>
+                @endif
                 <p>{{ $penindakan->petugas_2 }}</p>
                 <p>NIP {{ $penindakan->petugas_2 }}</p>
             </div>
@@ -90,4 +104,4 @@
     </div>
 
 </body>
-</html> 
+</html>

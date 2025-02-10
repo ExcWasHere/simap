@@ -22,6 +22,11 @@
             margin-top: 50px;
             text-align: right;
         }
+        .signature img {
+            max-width: 150px;
+            margin: 10px 0;
+            height: 60px;
+        }
         .personal-info {
             margin-bottom: 20px;
         }
@@ -79,4 +84,4 @@
         <p>{{ $penindakan->pelaku }}</p>
     </div>
 </body>
-</html> 
+</html>
