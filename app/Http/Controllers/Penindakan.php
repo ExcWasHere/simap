@@ -143,7 +143,7 @@ class Penindakan extends Controller
             $documents = [
                 [
                     'tipe' => 'SBP',
-                    'deskripsi' => 'Surat Bukti Penyitaan',
+                    'deskripsi' => 'Surat Bukti Penindakan',
                     'view' => 'documents.surat-bukti-penindakan',
                     'priority' => 1
                 ],

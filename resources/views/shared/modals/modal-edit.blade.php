@@ -104,24 +104,127 @@
         @if ($section === 'penindakan')
             <div data-section="penindakan" class="space-y-4">
                 @include('shared.forms.input', [
-                    'label' => 'No SBP',
-                    'name' => 'no_sbp',
+                    'label' => 'Tanggal Laporan',
+                    'name' => 'tanggal_laporan',
+                    'id' => 'edit_tanggal_laporan',
+                    'type' => 'date',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Jenis Barang',
+                    'name' => 'jenis_barang',
+                    'id' => 'edit_jenis_barang',
                     'type' => 'text',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'No. SBP',
+                    'name' => 'no_sbp',
                     'id' => 'edit_no_sbp',
+                    'type' => 'text',
                     'data_required' => true,
                 ])
                 @include('shared.forms.input', [
                     'label' => 'Tanggal SBP',
                     'name' => 'tanggal_sbp',
-                    'type' => 'date',
                     'id' => 'edit_tanggal_sbp',
+                    'type' => 'date',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'No. PRINT',
+                    'name' => 'no_print',
+                    'id' => 'edit_no_print',
+                    'type' => 'text',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Tanggal PRINT',
+                    'name' => 'tanggal_print',
+                    'id' => 'edit_tanggal_print',
+                    'type' => 'date',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Nama dan Jenis Sarkut',
+                    'name' => 'nama_jenis_sarkut',
+                    'id' => 'edit_nama_jenis_sarkut',
+                    'type' => 'text',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Pengemudi',
+                    'name' => 'pengemudi',
+                    'id' => 'edit_pengemudi',
+                    'type' => 'text',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Nomor Polisi',
+                    'name' => 'no_polisi',
+                    'id' => 'edit_no_polisi',
+                    'type' => 'text',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Bangunan',
+                    'name' => 'bangunan',
+                    'id' => 'edit_bangunan',
+                    'type' => 'text',
+                    'data_required' => true,
+                ]) @include('shared.forms.input', [
+                    'label' => 'Pemilik Bangunan',
+                    'name' => 'nama_pemilik',
+                    'id' => 'edit_nama_pemilik',
+                    'type' => 'text',
+                    'data_required' => true,
+                ]) @include('shared.forms.input', [
+                    'label' => 'Nomor KTP',
+                    'name' => 'no_ktp',
+                    'id' => 'edit_no_ktp',
+                    'type' => 'number',
                     'data_required' => true,
                 ])
                 @include('shared.forms.input', [
                     'label' => 'Pelaku',
                     'name' => 'pelaku',
-                    'type' => 'text',
                     'id' => 'edit_pelaku',
+                    'type' => 'text',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Nomor HP',
+                    'name' => 'no_hp',
+                    'id' => 'edit_no_hp',
+                    'type' => 'number',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Tempat Lahir',
+                    'name' => 'tempat_lahir',
+                    'id' => 'edit_tempat_lahir',
+                    'type' => 'text',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Tanggal Lahir',
+                    'name' => 'tanggal_lahir',
+                    'id' => 'edit_tanggal_lahir',
+                    'type' => 'date',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Pekerjaan',
+                    'name' => 'pekerjaan',
+                    'id' => 'edit_pekerjaan',
+                    'type' => 'text',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Alamat',
+                    'name' => 'alamat',
+                    'id' => 'edit_alamat',
+                    'type' => 'text',
                     'data_required' => true,
                 ])
                 @include('shared.forms.textarea', [
@@ -129,6 +232,34 @@
                     'name' => 'lokasi_penindakan',
                     'id' => 'edit_lokasi_penindakan',
                     'rows' => 3,
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Waktu Awal Penindakan',
+                    'name' => 'waktu_awal_penindakan',
+                    'id' => 'edit_waktu_awal_penindakan',
+                    'type' => 'datetime-local',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Waktu Akhir Penindakan',
+                    'name' => 'waktu_akhir_penindakan',
+                    'id' => 'edit_waktu_akhir_penindakan',
+                    'type' => 'datetime-local',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Jenis Pelanggaran',
+                    'name' => 'jenis_pelanggaran',
+                    'id' => 'edit_jenis_pelanggaran',
+                    'type' => 'text',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Pasal',
+                    'name' => 'pasal',
+                    'id' => 'edit_pasal',
+                    'type' => 'text',
                     'data_required' => true,
                 ])
                 @include('shared.forms.textarea', [
@@ -141,16 +272,18 @@
                 @include('shared.forms.input', [
                     'label' => 'Jumlah',
                     'name' => 'jumlah',
-                    'type' => 'number',
                     'id' => 'edit_jumlah',
+                    'type' => 'number',
                     'data_required' => true,
                 ])
-                @include('shared.forms.input', [
+                @include('shared.forms.select', [
                     'label' => 'Kemasan',
                     'name' => 'kemasan',
-                    'type' => 'text',
                     'id' => 'edit_kemasan',
-                    'data_required' => true,
+                    'options' => [
+                        'batang' => 'Batang',
+                        'liter' => 'Liter',
+                    ],
                 ])
                 @include('shared.forms.mata-uang', [
                     'label' => 'Perkiraan Nilai Barang',
@@ -158,11 +291,24 @@
                     'id' => 'edit_perkiraan_nilai_barang',
                     'data_required' => true,
                 ])
-
                 @include('shared.forms.mata-uang', [
                     'label' => 'Potensi Kurang Bayar',
                     'name' => 'potensi_kurang_bayar',
                     'id' => 'edit_potensi_kurang_bayar',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Petugas 1',
+                    'name' => 'petugas_1',
+                    'id' => 'edit_petugas_1',
+                    'type' => 'name',
+                    'data_required' => true,
+                ])
+                @include('shared.forms.input', [
+                    'label' => 'Petugas 2',
+                    'name' => 'petugas_2',
+                    'id' => 'edit_petugas_2',
+                    'type' => 'name',
                     'data_required' => true,
                 ])
             </div>
@@ -186,9 +332,18 @@
 
             const formElements = {};
             const formFields = {
-                intelijen: ['no_nhi', 'tanggal_nhi', 'tempat', 'jenis_barang', 'jumlah_barang', 'kemasan', 'keterangan'],
+                intelijen: ['no_nhi', 'tanggal_nhi', 'tempat', 'jenis_barang', 'jumlah_barang', 'kemasan',
+                    'keterangan'
+                ],
                 penyidikan: ['no_spdp', 'tanggal_spdp', 'pelaku', 'keterangan'],
-                penindakan: ['no_sbp', 'tanggal_sbp', 'pelaku', 'lokasi_penindakan', 'uraian_bhp', 'jumlah', 'kemasan', 'perkiraan_nilai_barang', 'potensi_kurang_bayar']
+                penindakan: ['tanggal_laporan', 'jenis_barang', 'no_sbp', 'tanggal_sbp', 'no_print',
+                    'tanggal_print', 'nama_jenis_sarkut', 'pengemudi', 'no_polisi', 'bangunan',
+                    'nama_pemilik', 'no_ktp', 'pelaku', 'no_hp', 'tempat_lahir', 'tanggal_lahir',
+                    'pekerjaan', 'alamat', 'lokasi_penindakan', 'waktu_awal_penindakan',
+                    'waktu_akhir_penindakan', 'jenis_pelanggaran', 'pasal', 'uraian_bhp', 'jumlah',
+                    'kemasan', 'perkiraan_nilai_barang', 'potensi_kurang_bayar', 'petugas_1',
+                    'petugas_2'
+                ]
             };
 
             Object.values(formFields).flat().forEach(field => {
@@ -216,7 +371,11 @@
                 }
 
                 try {
-                    if (element.type === 'date' && value) {
+                    if (element.type === 'datetime-local' && value) {
+                        const date = new Date(value);
+                        const formattedDate = date.toISOString().slice(0, 16);
+                        element.value = formattedDate;
+                    } else if (element.type === 'date' && value) {
                         element.value = value.split('T')[0];
                     } else if (element.type === 'number') {
                         element.value = value || 0;
@@ -258,7 +417,10 @@
 
             const showEditModal = async (id, section) => {
                 try {
-                    debugLog('Editing record:', { id, section });
+                    debugLog('Editing record:', {
+                        id,
+                        section
+                    });
                     const response = await fetch(`/${section}/${id}/edit`);
                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
@@ -273,7 +435,8 @@
                     editForm?.reset();
 
                     const sectionElement = editForm?.querySelector(`[data-section="${section}"]`);
-                    if (sectionElement?.classList.contains('hidden')) sectionElement.classList.remove('hidden');
+                    if (sectionElement?.classList.contains('hidden')) sectionElement.classList.remove(
+                        'hidden');
 
                     const fields = formFields[section] || [];
                     fields.forEach(field => {
@@ -310,7 +473,8 @@
                     const section = window.location.pathname.split('/')[1];
 
                     try {
-                        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                        const token = document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content');
 
                         const response = await fetch(`/${section}/${currentRecordId}`, {
                             method: 'PUT',
@@ -333,8 +497,10 @@
                             closeEditModal();
 
                             const notification = document.createElement('div');
-                            notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 transform translate-y-0';
-                            notification.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-check-circle"></i> Data berhasil diperbarui</div>';
+                            notification.className =
+                                'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 transform translate-y-0';
+                            notification.innerHTML =
+                                '<div class="flex items-center gap-2"><i class="fas fa-check-circle"></i> Data berhasil diperbarui</div>';
                             document.body.appendChild(notification);
 
                             setTimeout(() => {
