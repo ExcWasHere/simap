@@ -39,17 +39,26 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <script>
         let signaturePads = {};
+        let signatureCanvases = {};
 
         document.addEventListener('DOMContentLoaded', function() {
+            initializeAllSignaturePads();
+        });
+
+        function initializeAllSignaturePads() {
             document.querySelectorAll('[id^="signature-pad-"]').forEach(canvas => {
                 const index = canvas.id.split('-').pop();
                 initSignaturePad(index);
                 initializeTabEvents(index);
             });
-        })
+        }
 
         function initSignaturePad(index) {
             const canvas = document.getElementById(`signature-pad-${index}`);
+            if (!canvas) return;
+
+            signatureCanvases[index] = canvas;
+            
             const signaturePad = new SignaturePad(canvas, {
                 backgroundColor: 'rgb(248, 250, 252)',
                 penColor: 'rgb(0, 0, 0)',
@@ -57,23 +66,78 @@
                 maxWidth: 2.5
             });
 
-            function resizeCanvas() {
-                const wrapper = canvas.parentElement;
-                canvas.width = wrapper.clientWidth;
-                canvas.height = wrapper.clientHeight;
-                signaturePad.clear();
+            signaturePads[index] = signaturePad;
+            
+            signaturePad.addEventListener("endStroke", () => {
+                saveSignature(index);
+            });
+
+            resizeCanvas(index);
+
+            const clearButton = document.getElementById(`clear-signature-${index}`);
+            if (clearButton) {
+                clearButton.addEventListener('click', () => {
+                    signaturePad.clear();
+                    document.getElementById(`signature-input-${index}`).value = '';
+                    document.getElementById(`signature-upload-${index}`).value = '';
+                });
             }
 
-            window.addEventListener('resize', resizeCanvas);
-            resizeCanvas();
+            window.addEventListener('resize', () => resizeCanvas(index));
 
-            signaturePads[index] = signaturePad;
+            return signaturePad;
+        }
 
-            document.getElementById(`clear-signature-${index}`).addEventListener('click', function() {
-                signaturePad.clear();
-                document.getElementById(`signature-input-${index}`).value = '';
-                document.getElementById(`signature-upload-${index}`).value = '';
-            });
+        function resizeCanvas(index) {
+            const canvas = signatureCanvases[index];
+            if (!canvas) return;
+
+            const wrapper = canvas.parentElement;
+            const oldWidth = canvas.width;
+            const oldHeight = canvas.height;
+            
+            canvas.width = wrapper.clientWidth;
+            canvas.height = wrapper.clientHeight;
+
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'rgb(248, 250, 252)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const input = document.getElementById(`signature-input-${index}`);
+            if (input && input.value) {
+                const img = new Image();
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                };
+                img.src = input.value;
+            }
+        }
+
+        function setSignatureData(index, signatureData) {
+            if (!signatureData) return;
+            
+            if (!signaturePads[index]) {
+                initSignaturePad(index);
+            }
+
+            const canvas = signatureCanvases[index];
+            const signaturePad = signaturePads[index];
+            
+            if (!canvas || !signaturePad) return;
+
+            const img = new Image();
+            img.onload = function() {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'rgb(248, 250, 252)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                signaturePad._isEmpty = false;
+                
+                const input = document.getElementById(`signature-input-${index}`);
+                if (input) input.value = signatureData;
+            };
+            img.src = signatureData;
         }
 
         function initializeTabEvents(index) {
@@ -149,13 +213,19 @@
         }
 
         function saveSignature(index) {
-            if (signaturePads[index].isEmpty()) {
-                document.getElementById(`signature-input-${index}`).value = '';
-                return;
-            }
+            const signaturePad = signaturePads[index];
+            const inputElement = document.getElementById(`signature-input-${index}`);
+            
+            if (!signaturePad || !inputElement) return;
 
-            const dataURL = signaturePads[index].toDataURL();
-            document.getElementById(`signature-input-${index}`).value = dataURL;
+            if (signaturePad.isEmpty()) {
+                inputElement.value = '';
+            } else {
+                const dataURL = signaturePad.toDataURL();
+                inputElement.value = dataURL;
+                console.log(`Signature ${index} saved:`, inputElement.value.substring(0, 100) + '...');
+            }
         }
     </script>
 @endpush
+

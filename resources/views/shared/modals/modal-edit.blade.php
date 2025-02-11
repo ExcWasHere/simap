@@ -314,12 +314,12 @@
             </div>
             @include('shared.forms.signature-pad', [
                 'label' => 'Tanda Tangan Pelapor',
-                'name' => 'ttd_pelapor',
+                'name' => 'ttd_petugas_1',
                 'index' => 1,
             ])
             @include('shared.forms.signature-pad', [
                 'label' => 'Tanda Tangan Pelaku',
-                'name' => 'ttd_pelaku',
+                'name' => 'ttd_petugas_2',
                 'index' => 2,
             ])
         @endif
@@ -427,10 +427,7 @@
 
             const showEditModal = async (id, section) => {
                 try {
-                    debugLog('Editing record:', {
-                        id,
-                        section
-                    });
+                    debugLog('Editing record:', { id, section });
                     const response = await fetch(`/${section}/${id}/edit`);
                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
@@ -444,10 +441,6 @@
                     currentRecordId = id;
                     editForm?.reset();
 
-                    const sectionElement = editForm?.querySelector(`[data-section="${section}"]`);
-                    if (sectionElement?.classList.contains('hidden')) sectionElement.classList.remove(
-                        'hidden');
-
                     const fields = formFields[section] || [];
                     fields.forEach(field => {
                         const value = recordData[field];
@@ -455,6 +448,21 @@
                             setFormValue(`edit_${field}`, value);
                         }
                     });
+
+                    if (section === 'penindakan') {
+                        setTimeout(() => {
+                            if (typeof initializeAllSignaturePads === 'function') {
+                                initializeAllSignaturePads();
+                            }
+
+                            if (recordData.ttd_petugas_1) {
+                                setSignatureData(1, recordData.ttd_petugas_1);
+                            }
+                            if (recordData.ttd_petugas_2) {
+                                setSignatureData(2, recordData.ttd_petugas_2);
+                            }
+                        }, 100);
+                    }
                 } catch (error) {
                     console.error('Error:', error);
                     alert('Gagal mengambil data: ' + error.message);
@@ -474,13 +482,14 @@
                 editForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
 
-                    if (!currentRecordId) {
-                        alert('Error: ID record tidak ditemukan');
-                        return;
+                    if (typeof saveSignature === 'function') {
+                        saveSignature(1);
+                        saveSignature(2);
                     }
 
                     const formData = new FormData(this);
                     const section = window.location.pathname.split('/')[1];
+                    const jsonData = Object.fromEntries(formData);
 
                     try {
                         const token = document.querySelector('meta[name="csrf-token"]').getAttribute(
@@ -493,7 +502,7 @@
                                 'Accept': 'application/json',
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify(Object.fromEntries(formData))
+                            body: JSON.stringify(jsonData)
                         });
 
                         if (!response.ok) {

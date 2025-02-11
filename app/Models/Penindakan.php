@@ -49,7 +49,7 @@ class Penindakan extends Model
         'petugas_1',
         'petugas_2',
         'ttd_petugas_1',
-        'tt_petugas_2',
+        'ttd_petugas_2',
         'status',
         'created_by',
         'updated_by'

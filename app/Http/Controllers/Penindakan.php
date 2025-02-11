@@ -340,6 +340,8 @@ class Penindakan extends Controller
                 'pasal' => ['required', 'string', 'max:255'],
                 'petugas_1' => ['required', 'string', 'max:255'],
                 'petugas_2' => ['required', 'string', 'max:255'],
+                'ttd_petugas_1' => ['nullable', 'string'],
+                'ttd_petugas_2' => ['nullable', 'string'],
             ]);
 
             $validated['updated_by'] = Auth::id();
