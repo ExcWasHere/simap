@@ -158,4 +158,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const chart_container = document.getElementById("main-chart").parentElement;
         document.fullscreenElement ? document.exitFullscreen() : chart_container.requestFullscreen();
     });
+
+    document.addEventListener("fullscreenchange", () => {
+        setTimeout(() => {
+            if (chart_data) {
+                perbarui_chart();
+            }
+        }, 100);
+    });
+
+    window.addEventListener("resize", () => {
+        if (chart_data) {
+            perbarui_chart();
+        }
+    });
 });

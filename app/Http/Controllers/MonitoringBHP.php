@@ -150,12 +150,35 @@ class MonitoringBHP extends Controller
             $sheet->setCellValue('A' . $row, $index + 1);
             $sheet->setCellValue('B' . $row, $item->no_sbp);
             $sheet->setCellValue('C' . $row, $item->tanggal_sbp->format('d-m-Y'));
-            $sheet->setCellValue('D' . $row, $item->lokasi_penindakan);
+            $sheet->setCellValue('D' . $row, $item->tanggal_laporan->format('d-m-Y'));
             $sheet->setCellValue('E' . $row, $item->pelaku);
-            $sheet->setCellValue('F' . $row, $item->uraian_bhp);
-            $sheet->setCellValue('G' . $row, $item->jumlah . ' ' . $item->kemasan);
-            $sheet->setCellValue('H' . $row, number_format($item->perkiraan_nilai_barang, 0, ',', '.'));
-            $sheet->setCellValue('I' . $row, $item->potensi_kurang_bayar ? number_format($item->potensi_kurang_bayar, 0, ',', '.') : '-');
+            $sheet->setCellValue('F' . $row, $item->lokasi_penindakan);
+            $sheet->setCellValue('G' . $row, $item->uraian_bhp);
+            $sheet->setCellValue('H' . $row, $item->jumlah . ' ' . $item->kemasan);
+            $sheet->setCellValue('I' . $row, number_format($item->perkiraan_nilai_barang, 0, ',', '.'));
+            $sheet->setCellValue('J' . $row, $item->potensi_kurang_bayar ? number_format($item->potensi_kurang_bayar, 0, ',', '.') : '-');
+            $sheet->setCellValue('K' . $row, $item->jenis_barang);
+            $sheet->setCellValue('L' . $row, $item->no_print);
+            $sheet->setCellValue('M' . $row, $item->tanggal_print ? \Carbon\Carbon::parse($item->tanggal_print)->format('d-m-Y') : '-');
+            $sheet->setCellValue('N' . $row, $item->nama_jenis_sarkut);
+            $sheet->setCellValue('O' . $row, $item->pengemudi);
+            $sheet->setCellValue('P' . $row, $item->no_polisi);
+            $sheet->setCellValue('Q' . $row, $item->bangunan);
+            $sheet->setCellValue('R' . $row, $item->nama_pemilik);
+            $sheet->setCellValue('S' . $row, $item->no_ktp);
+            $sheet->setCellValue('T' . $row, $item->no_hp);
+            $sheet->setCellValue('U' . $row, $item->tempat_lahir);
+            $sheet->setCellValue('V' . $row, $item->tanggal_lahir ? $item->tanggal_lahir->format('d-m-Y') : '-');
+            $sheet->setCellValue('W' . $row, $item->pekerjaan);
+            $sheet->setCellValue('X' . $row, $item->alamat);
+            $sheet->setCellValue('Y' . $row, $item->waktu_awal_penindakan ? $item->waktu_awal_penindakan->format('d-m-Y H:i') : '-');
+            $sheet->setCellValue('Z' . $row, $item->waktu_akhir_penindakan ? $item->waktu_akhir_penindakan->format('d-m-Y H:i') : '-');
+            $sheet->setCellValue('AA' . $row, $item->jenis_pelanggaran);
+            $sheet->setCellValue('AB' . $row, $item->pasal);
+            $sheet->setCellValue('AC' . $row, $item->petugas_1);
+            $sheet->setCellValue('AD' . $row, $item->petugas_2);
+            $sheet->setCellValue('AE' . $row, $item->ttd_petugas_1);
+            $sheet->setCellValue('AF' . $row, $item->ttd_petugas_2);
             $row++;
         }
 
@@ -167,7 +190,6 @@ class MonitoringBHP extends Controller
             ]
         ]);
 
-        // Mengatur lembar pertama sebagai halaman aktif
         $spreadsheet->setActiveSheetIndex(0);
 
         $writer = new Xlsx($spreadsheet);

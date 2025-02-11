@@ -1,10 +1,10 @@
 @auth
     <header class="fixed top-0 left-0 right-0 z-40 w-full px-4 py-3 bg-white shadow-md">
         <div class="mx-auto container flex items-center justify-between">
-            <section class="cursor-default flex items-center gap-5 transition-opacity text-xl font-bold text-[#1a4167]">
+            <a href="/" class="cursor-pointer flex items-center gap-5 transition-opacity text-xl font-bold text-[#1a4167]">
                 <img src="{{ asset('img/logo-beacukai.png') }}" alt="Logo" class="w-8 h-8">
                 SIMAP
-            </section>
+            </a>
             <nav class="hidden items-center gap-6 lg:flex">
                 <a href="/intelijen" class="text-gray-600 hover:text-gray-900 {{ Request::is('/') ? 'active' : '' }}">
                     Intelijen
