@@ -482,6 +482,13 @@
                 editForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
 
+                    const submitButton = document.getElementById('submit-edit');
+                    const loadingSpinner = document.getElementById('loading-edit');
+                    
+                    submitButton.disabled = true;
+                    loadingSpinner.classList.remove('hidden');
+                    submitButton.querySelector('span:first-child').textContent = 'Menyimpan...';
+
                     if (typeof saveSignature === 'function') {
                         saveSignature(1);
                         saveSignature(2);
@@ -532,6 +539,10 @@
                     } catch (error) {
                         console.error('Error:', error);
                         alert('Gagal memperbarui data: ' + error.message);
+                    } finally {
+                        submitButton.disabled = false;
+                        loadingSpinner.classList.add('hidden');
+                        submitButton.querySelector('span:first-child').textContent = 'Simpan Perubahan';
                     }
                 });
             }
