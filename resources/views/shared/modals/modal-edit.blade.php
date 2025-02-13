@@ -482,25 +482,31 @@
                 editForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
 
-                    const submitButton = document.getElementById('submit-edit');
-                    const loadingSpinner = document.getElementById('loading-edit');
-                    
-                    submitButton.disabled = true;
-                    loadingSpinner.classList.remove('hidden');
-                    submitButton.querySelector('span:first-child').textContent = 'Menyimpan...';
+                    const submitButton = document.querySelector('#submit-edit');
+                    const loadingSpinner = document.querySelector('#loading-edit');
 
-                    if (typeof saveSignature === 'function') {
-                        saveSignature(1);
-                        saveSignature(2);
+                    if (!submitButton || !loadingSpinner) {
+                        console.error('Submit button or loading spinner not found');
+                        return;
                     }
 
-                    const formData = new FormData(this);
-                    const section = window.location.pathname.split('/')[1];
-                    const jsonData = Object.fromEntries(formData);
-
                     try {
-                        const token = document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content');
+                        submitButton.disabled = true;
+                        loadingSpinner.classList.remove('hidden');
+                        const buttonText = submitButton.querySelector('span');
+                        if (buttonText) buttonText.textContent = 'Menyimpan...';
+
+                        if (typeof saveSignature === 'function') {
+                            saveSignature(1);
+                            saveSignature(2);
+                        }
+
+                        const formData = new FormData(this);
+                        const section = window.location.pathname.split('/')[1];
+                        const jsonData = Object.fromEntries(formData);
+
+                        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                        if (!token) throw new Error('CSRF token not found');
 
                         const response = await fetch(`/${section}/${currentRecordId}`, {
                             method: 'PUT',
@@ -512,39 +518,46 @@
                             body: JSON.stringify(jsonData)
                         });
 
-                        if (!response.ok) {
-                            const errorData = await response.json();
-                            throw new Error(errorData.message || 'Failed to update data');
-                        }
-
                         const result = await response.json();
+                        
+                        if (!response.ok) {
+                            throw new Error(result.message || 'Failed to update data');
+                        }
 
                         if (result.success) {
                             closeEditModal();
-
-                            const notification = document.createElement('div');
-                            notification.className =
-                                'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 transform translate-y-0';
-                            notification.innerHTML =
-                                '<div class="flex items-center gap-2"><i class="fas fa-check-circle"></i> Data berhasil diperbarui</div>';
-                            document.body.appendChild(notification);
-
-                            setTimeout(() => {
-                                notification.style.opacity = '0';
-                                setTimeout(() => notification.remove(), 500);
-                            }, 3000);
-
+                            showNotification('Data berhasil diperbarui', 'success');
                             window.location.reload();
-                        } else throw new Error(result.message || 'Gagal memperbarui data');
+                        } else {
+                            throw new Error(result.message || 'Gagal memperbarui data');
+                        }
                     } catch (error) {
                         console.error('Error:', error);
-                        alert('Gagal memperbarui data: ' + error.message);
+                        showNotification(error.message, 'error');
                     } finally {
-                        submitButton.disabled = false;
-                        loadingSpinner.classList.add('hidden');
-                        submitButton.querySelector('span:first-child').textContent = 'Simpan Perubahan';
+                        if (submitButton && loadingSpinner) {
+                            submitButton.disabled = false;
+                            loadingSpinner.classList.add('hidden');
+                            const buttonText = submitButton.querySelector('span');
+                            if (buttonText) buttonText.textContent = 'Simpan Perubahan';
+                        }
                     }
                 });
+            }
+
+            function showNotification(message, type = 'success') {
+                const notification = document.createElement('div');
+                const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+                const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+                
+                notification.className = `fixed bottom-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 transform translate-y-0`;
+                notification.innerHTML = `<div class="flex items-center gap-2"><i class="fas ${icon}"></i> ${message}</div>`;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    setTimeout(() => notification.remove(), 500);
+                }, 3000);
             }
         });
     </script>

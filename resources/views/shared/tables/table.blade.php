@@ -126,9 +126,12 @@
         document.addEventListener("DOMContentLoaded", () => {
             const dropdown_triggers = document.querySelectorAll(".dropdown-trigger");
             const dropdown_menus = document.querySelectorAll(".dropdown-menu");
+            const editButtons = document.querySelectorAll(".edit-btn");
 
             document.addEventListener("click", function(event) {
-                if (!event.target.closest(".dropdown-trigger") && !event.target.closest(".dropdown-menu")) dropdown_menus.forEach((menu) => menu.classList.add("hidden"));
+                if (!event.target.closest(".dropdown-trigger") && !event.target.closest(".dropdown-menu")) {
+                    dropdown_menus.forEach((menu) => menu.classList.add("hidden"));
+                }
             });
 
             dropdown_triggers.forEach((trigger) => {
@@ -148,7 +151,25 @@
                     menu.classList.toggle("hidden");
                 });
             });
-        })
+
+            editButtons.forEach(button => {
+                button.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    const id = this.getAttribute("data-id");
+                    
+                    const parentDropdown = this.closest('.dropdown-menu');
+                    if (parentDropdown) {
+                        parentDropdown.classList.add('hidden');
+                    }
+
+                    if (typeof showEditModal === 'function') {
+                        showEditModal(id);
+                    } else {
+                        console.error('Modal function not found. Make sure modal.js is loaded.');
+                    }
+                });
+            });
+        });
 
         const tables = document.querySelectorAll('.horizontal-scroll-table');
 
