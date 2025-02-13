@@ -5,11 +5,13 @@
         <thead class="bg-gray-100">
             <tr>
                 @foreach ($headers as $header)
-                    <th scope="col" class="sticky top-0 px-4 sm:px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider whitespace-nowrap">
+                    <th scope="col"
+                        class="sticky top-0 px-4 sm:px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider whitespace-nowrap">
                         {{ $header }}
                     </th>
                 @endforeach
-                <th scope="col" class="sticky top-0 px-4 sm:px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                <th scope="col"
+                    class="sticky top-0 px-4 sm:px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
                     Aksi
                 </th>
             </tr>
@@ -36,28 +38,32 @@
                                         'intelijen' => [
                                             'route' => 'intelijen.dokumen',
                                             'param' => 'no_nhi',
-                                            'colors' => 'bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-700',
+                                            'colors' =>
+                                                'bg-blue-100 text-blue-600 hover:bg-blue-200 hover:text-blue-700',
                                             'icon' => 'fas fa-file-alt',
                                             'title' => 'Akses Modul Intelijen',
                                         ],
                                         'penindakan' => [
                                             'route' => 'penindakan.dokumen',
                                             'param' => 'no_sbp',
-                                            'colors' => 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-700',
+                                            'colors' =>
+                                                'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-700',
                                             'icon' => 'fas fa-gavel',
                                             'title' => 'Akses Modul Penindakan',
                                         ],
                                         'penyidikan' => [
                                             'route' => 'penyidikan.dokumen',
                                             'param' => 'no_spdp',
-                                            'colors' => 'bg-green-100 text-green-600 hover:bg-green-200 hover:text-green-700',
+                                            'colors' =>
+                                                'bg-green-100 text-green-600 hover:bg-green-200 hover:text-green-700',
                                             'icon' => 'fas fa-search',
                                             'title' => 'Akses Modul Penyidikan',
                                         ],
                                         'monitoring' => [
                                             'route' => 'monitoring.dokumen',
                                             'param' => 'id',
-                                            'colors' => 'bg-purple-100 text-purple-600 hover:bg-purple-200 hover:text-purple-700',
+                                            'colors' =>
+                                                'bg-purple-100 text-purple-600 hover:bg-purple-200 hover:text-purple-700',
                                             'icon' => 'fas fa-chart-line',
                                             'title' => 'Akses Modul Monitoring',
                                         ],
@@ -74,13 +80,21 @@
                                         <i class="{{ $config['icon'] }}"></i>
                                     </a>
                                 @endforeach
-                                <button
-                                    class="dropdown-trigger h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 hover:bg-gray-100"
-                                    data-id="{{ $current_id }}"
-                                    data-menu-id="{{ $unique_menu_id }}"
-                                >
-                                    <i class="fas fa-ellipsis-v text-gray-500"></i>
+
+                                <div class="border-r border-gray-300 h-8"></div>
+
+                                <button data-id="{{ $current_id }}"
+                                    class="edit-btn h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 bg-yellow-100 text-yellow-600 hover:bg-yellow-200 hover:text-yellow-700"
+                                    title="Edit Data">
+                                    <i class="fas fa-edit"></i>
                                 </button>
+
+                                <button data-id="{{ $current_id }}"
+                                    class="delete-btn h-8 w-8 cursor-pointer flex items-center justify-center rounded-lg transition-colors duration-300 bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700"
+                                    title="Hapus Data">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+
                             </fieldset>
                         </td>
                     </tr>
@@ -108,12 +122,15 @@
             $current_id = $row[1];
             $unique_menu_id = "dropdown-menu-{$index}-{$current_id}";
         @endphp
-        <div id="{{ $unique_menu_id }}" class="dropdown-menu hidden fixed mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-50">
-            <button data-id="{{ $current_id }}" class="edit-btn w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 flex items-center gap-2">
+        <div id="{{ $unique_menu_id }}"
+            class="dropdown-menu hidden fixed mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-50">
+            <button data-id="{{ $current_id }}"
+                class="edit-btn w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 flex items-center gap-2">
                 <i class="fas fa-edit w-4"></i>
                 Edit
             </button>
-            <button data-id="{{ $current_id }}" class="delete-btn w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 flex items-center gap-2">
+            <button data-id="{{ $current_id }}"
+                class="delete-btn w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 flex items-center gap-2">
                 <i class="fas fa-trash-alt w-4"></i>
                 Hapus
             </button>
@@ -124,48 +141,29 @@
 @push('skrip')
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const dropdown_triggers = document.querySelectorAll(".dropdown-trigger");
-            const dropdown_menus = document.querySelectorAll(".dropdown-menu");
             const editButtons = document.querySelectorAll(".edit-btn");
-
-            document.addEventListener("click", function(event) {
-                if (!event.target.closest(".dropdown-trigger") && !event.target.closest(".dropdown-menu")) {
-                    dropdown_menus.forEach((menu) => menu.classList.add("hidden"));
-                }
-            });
-
-            dropdown_triggers.forEach((trigger) => {
-                trigger.addEventListener("click", function(e) {
-                    e.stopPropagation();
-                    const menuId = this.getAttribute("data-menu-id");
-                    const menu = document.getElementById(menuId);
-
-                    dropdown_menus.forEach((m) => {
-                        if (m !== menu) m.classList.add("hidden");
-                    });
-
-                    const rect = trigger.getBoundingClientRect();
-                    menu.style.position = "fixed";
-                    menu.style.top = `${rect.bottom}px`;
-                    menu.style.left = `${rect.left}px`;
-                    menu.classList.toggle("hidden");
-                });
-            });
+            const deleteButtons = document.querySelectorAll(".delete-btn");
 
             editButtons.forEach(button => {
                 button.addEventListener("click", function(e) {
                     e.preventDefault();
                     const id = this.getAttribute("data-id");
-                    
-                    const parentDropdown = this.closest('.dropdown-menu');
-                    if (parentDropdown) {
-                        parentDropdown.classList.add('hidden');
-                    }
-
-                    if (typeof showEditModal === 'function') {
-                        showEditModal(id);
+                    if (typeof window.showEditModal === 'function') {
+                        window.showEditModal(id);
                     } else {
-                        console.error('Modal function not found. Make sure modal.js is loaded.');
+                        console.error('showEditModal tidak ditemukan');
+                    }
+                });
+            });
+
+            deleteButtons.forEach(button => {
+                button.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    const id = this.getAttribute("data-id");
+                    if (typeof showDeleteConfirmation === 'function') {
+                        showDeleteConfirmation(id);
+                    } else {
+                        console.error('Konfirmasi hapus tidak ditemukan');
                     }
                 });
             });
@@ -180,7 +178,8 @@
                     const delta = e.deltaY || e.detail || e.wheelDelta;
                     table.scrollLeft += (delta * 0.5);
 
-                    if ((table.scrollLeft <= 0 && delta < 0) || (table.scrollLeft >= (table.scrollWidth - table.clientWidth) && delta > 0)) {
+                    if ((table.scrollLeft <= 0 && delta < 0) || (table.scrollLeft >= (table.scrollWidth -
+                            table.clientWidth) && delta > 0)) {
                         e.preventDefault = false;
                     }
                 }

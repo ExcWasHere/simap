@@ -329,6 +329,78 @@
 @push('skrip')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            window.showEditModal = async function(id) {
+                try {
+                    const section = window.location.pathname.split('/')[1];
+                    const response = await fetch(`/${section}/${id}/edit`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const recordData = result.success ? result.data : result;
+
+                    const editModal = document.getElementById('modal_edit');
+                    if (!editModal) {
+                        throw new Error('Modal tidak ditemukan');
+                    }
+
+                    editModal.classList.remove('hidden');
+                    const editForm = document.getElementById('edit-form');
+                    if (editForm) {
+                        editForm.reset();
+                    }
+
+                    window.currentRecordId = id;
+
+                    const formFields = {
+                        intelijen: ['no_nhi', 'tanggal_nhi', 'tempat', 'jenis_barang', 'jumlah_barang', 'kemasan', 'keterangan'],
+                        penyidikan: ['no_spdp', 'tanggal_spdp', 'pelaku', 'keterangan'],
+                        penindakan: ['tanggal_laporan', 'jenis_barang', 'no_sbp', 'tanggal_sbp', 'no_print', 'tanggal_print', 
+                            'nama_jenis_sarkut', 'pengemudi', 'no_polisi', 'bangunan', 'nama_pemilik', 'no_ktp', 'pelaku', 
+                            'no_hp', 'tempat_lahir', 'tanggal_lahir', 'pekerjaan', 'alamat', 'lokasi_penindakan', 
+                            'waktu_awal_penindakan', 'waktu_akhir_penindakan', 'jenis_pelanggaran', 'pasal', 'uraian_bhp', 
+                            'jumlah', 'kemasan', 'perkiraan_nilai_barang', 'potensi_kurang_bayar', 'petugas_1', 'petugas_2']
+                    };
+
+                    const fields = formFields[section] || [];
+                    fields.forEach(field => {
+                        const value = recordData[field];
+                        if (value !== undefined) {
+                            const element = document.getElementById(`edit_${field}`);
+                            if (element) {
+                                if (element.type === 'datetime-local' && value) {
+                                    element.value = new Date(value).toISOString().slice(0, 16);
+                                } else if (element.type === 'date' && value) {
+                                    element.value = value.split('T')[0];
+                                } else {
+                                    element.value = value;
+                                }
+                            }
+                        }
+                    });
+
+                    if (section === 'penindakan') {
+                        setTimeout(() => {
+                            if (typeof initializeAllSignaturePads === 'function') {
+                                initializeAllSignaturePads();
+                            }
+                            if (recordData.ttd_petugas_1) {
+                                setSignatureData(1, recordData.ttd_petugas_1);
+                            }
+                            if (recordData.ttd_petugas_2) {
+                                setSignatureData(2, recordData.ttd_petugas_2);
+                            }
+                        }, 100);
+                    }
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Gagal mengambil data: ' + error.message);
+                }
+            };
+
             const editForm = document.getElementById('edit-form');
             let currentRecordId = null;
 
