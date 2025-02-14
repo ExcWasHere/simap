@@ -553,6 +553,11 @@
             if (editForm) {
                 editForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
+                    
+                    if (!window.currentRecordId) {
+                        showNotification('ID data tidak valid', 'error');
+                        return;
+                    }
 
                     const submitButton = document.querySelector('#submit-edit');
                     const loadingSpinner = document.querySelector('#loading-edit');
@@ -580,7 +585,7 @@
                         const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
                         if (!token) throw new Error('CSRF token not found');
 
-                        const response = await fetch(`/${section}/${currentRecordId}`, {
+                        const response = await fetch(`/${section}/${window.currentRecordId}`, {
                             method: 'PUT',
                             headers: {
                                 'X-CSRF-TOKEN': token,

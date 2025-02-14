@@ -290,6 +290,11 @@ class Penindakan extends Controller
     {
         try {
             DB::beginTransaction();
+            
+            if (!$no_sbp) {
+                throw new Exception('No SBP tidak valid');
+            }
+
             $penindakan = PenindakanModel::where('no_sbp', $no_sbp)->firstOrFail();
 
             $validated = $request->validate([

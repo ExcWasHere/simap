@@ -12,7 +12,7 @@
                     onchange="update_per_page(this.value)"
                     class="block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md mr-4"
                 >
-                    @foreach ([10, 25, 50, 100] as $perPageOption)
+                    @foreach ([5, 10, 25, 50, 100] as $perPageOption)
                         <option value="{{ $perPageOption }}"
                             {{ request()->input('per_page', 10) == $perPageOption ? 'selected' : '' }}>
                             {{ $perPageOption }} per halaman
