@@ -1,9 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     document.addEventListener("click", function (e) {
         if (!e.target.closest(".dropdown-container")) {
-            document.querySelectorAll(".dropdown-menu").forEach((menu) => {
-                menu.classList.add("hidden");
-            });
+            document.querySelectorAll(".dropdown-menu").forEach((menu) => menu.classList.add("hidden"));
         }
     });
 
@@ -14,16 +12,10 @@ document.addEventListener("DOMContentLoaded", function () {
             const isHidden = menu.classList.contains("hidden");
 
             document.querySelectorAll(".dropdown-menu").forEach((otherMenu) => {
-                if (otherMenu !== menu) {
-                    otherMenu.classList.add("hidden");
-                }
+                if (otherMenu !== menu) otherMenu.classList.add("hidden");
             });
 
-            if (isHidden) {
-                menu.classList.remove("hidden");
-            } else {
-                menu.classList.add("hidden");
-            }
+            isHidden ? menu.classList.remove("hidden") : menu.classList.add("hidden");
         });
     });
 
@@ -39,22 +31,15 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const section = window.location.pathname.split("/")[1];
-            const willDelete = confirm(
-                "Apakah Anda yakin ingin menghapus item ini?"
-            );
+            const willDelete = confirm("Apakah Anda yakin ingin menghapus item ini?");
 
-            if (!willDelete) {
-                return;
-            }
+            if (!willDelete) return;
 
             try {
-                const token = document
-                    .querySelector('meta[name="csrf-token"]')
-                    .getAttribute("content");
+                const token = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
                 console.log("CSRF Token:", token);
 
-                this.innerHTML =
-                    '<i class="fas fa-spinner fa-spin w-4"></i> Menghapus...';
+                this.innerHTML = '<i class="fas fa-spinner fa-spin w-4"></i>';
                 this.disabled = true;
 
                 const encodedId = id.split('/').map(part => encodeURIComponent(part)).join('/');
@@ -93,19 +78,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     try {
                         row.style.backgroundColor = "#fee2e2";
                         row.style.transition = "all 0.5s ease";
-                        
                         await new Promise(resolve => setTimeout(resolve, 100));
-                        
                         row.style.opacity = "0";
                         await new Promise(resolve => setTimeout(resolve, 500));
-                        
                         row.remove();
                         
                         const notification = document.createElement("div");
-                        notification.className =
-                            "fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 transform translate-y-0";
-                        notification.innerHTML =
-                            '<div class="flex items-center gap-2"><i class="fas fa-check-circle"></i> Data berhasil dihapus</div>';
+                        notification.className = "fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 transform translate-y-0";
+                        notification.innerHTML = '<div class="flex items-center gap-2"><i class="fas fa-check-circle"></i> Data berhasil dihapus</div>';
                         document.body.appendChild(notification);
 
                         setTimeout(() => {
@@ -113,17 +93,13 @@ document.addEventListener("DOMContentLoaded", function () {
                             setTimeout(() => notification.remove(), 500);
                         }, 3000);
                         
-                        if (document.contains(row)) {
-                            window.location.reload();
-                        }
+                        if (document.contains(row)) window.location.reload();
                     } catch (error) {
                         console.error("Error during row deletion animation:", error);
                         window.location.reload();
                     }
                 } else {
-                    throw new Error(
-                        data.message || "Terjadi kesalahan saat menghapus data"
-                    );
+                    throw new Error(data.message || "Terjadi kesalahan saat menghapus data");
                 }
             } catch (error) {
                 console.error("Error:", error);
@@ -131,8 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 this.disabled = false;
 
                 const notification = document.createElement("div");
-                notification.className =
-                    "fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 transform translate-y-0";
+                notification.className = "fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 transform translate-y-0";
                 notification.innerHTML = `<div class="flex items-center gap-2"><i class="fas fa-exclamation-circle"></i> ${error.message}</div>`;
                 document.body.appendChild(notification);
 

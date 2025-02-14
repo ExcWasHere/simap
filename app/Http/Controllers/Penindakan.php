@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Dokumen as DokumenModel;
 use App\Models\Penindakan as PenindakanModel;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,7 +16,6 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class Penindakan extends Controller
 {
@@ -34,10 +35,8 @@ class Penindakan extends Controller
             });
         }
 
-        if ($date_from = $request->input('date_from'))
-            $query->whereDate('tanggal_sbp', '>=', $date_from);
-        if ($date_to = $request->input('date_to'))
-            $query->whereDate('tanggal_sbp', '<=', $date_to);
+        if ($date_from = $request->input('date_from')) $query->whereDate('tanggal_sbp', '>=', $date_from);
+        if ($date_to = $request->input('date_to')) $query->whereDate('tanggal_sbp', '<=', $date_to);
 
         $perPage = $request->input('per_page', default: 5);
         $penindakan = $query->latest()->paginate($perPage)->appends($request->query());
@@ -107,11 +106,8 @@ class Penindakan extends Controller
             ]);
 
             $validated['created_by'] = Auth::id();
-
             $penindakan = PenindakanModel::create($validated);
-
             $this->generateSpPdf($penindakan);
-
             DB::commit();
 
             return redirect()
@@ -133,14 +129,10 @@ class Penindakan extends Controller
     {
         try {
             $penindakan->load('creator', 'updater');
-            
-            $storagePath = sprintf(
-                'dokumen/penindakan/%s/modul_penindakan',
-                rawurlencode($penindakan->no_sbp)
-            );
+            $storagePath = sprintf('dokumen/penindakan/%s/modul_penindakan', rawurlencode($penindakan->no_sbp));
 
             setlocale(LC_TIME, 'id_ID.utf8', 'id_ID', 'id');
-            \Carbon\Carbon::setLocale('id');
+            Carbon::setLocale('id');
 
             $documents = [
                 [
@@ -206,22 +198,13 @@ class Penindakan extends Controller
             ];
 
             usort($documents, fn($a, $b) => $a['priority'] <=> $b['priority']);
-
             $generatedDocuments = [];
             $now = now(); 
 
             foreach ($documents as $doc) {
                 $pdf = Pdf::loadView($doc['view'], ['penindakan' => $penindakan]);
-                $fileName = sprintf(
-                    '%s_%s.pdf', 
-                    $doc['tipe'], 
-                    str_replace(['/', '\\'], '_', $penindakan->no_sbp)
-                );
-                
-                Storage::disk('public')->put(
-                    $storagePath . '/' . $fileName,
-                    $pdf->output()
-                );
+                $fileName = sprintf('%s_%s.pdf', $doc['tipe'], str_replace(['/', '\\'], '_', $penindakan->no_sbp));
+                Storage::disk('public')->put($storagePath . '/' . $fileName, $pdf->output());
 
                 $generatedDocuments[] = [
                     'tipe' => $doc['tipe'],
@@ -266,7 +249,7 @@ class Penindakan extends Controller
             $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
             $suffix = "_deleted_{$timestamp}{$random}";
 
-            $penindakan->no_sbp = $penindakan->no_sbp . $suffix;
+            $penindakan->no_sbp .= $suffix;
             $penindakan->save();
             $penindakan->delete();
 
@@ -346,7 +329,6 @@ class Penindakan extends Controller
 
             $validated['updated_by'] = Auth::id();
             $penindakan->update($validated);
-
             $this->documentUpdate($penindakan);
             DB::commit();
 
@@ -367,10 +349,9 @@ class Penindakan extends Controller
         }
     }
 
-    public function documentUpdate(\App\Models\Penindakan $penindakan)
+    public function documentUpdate(PenindakanModel $penindakan)
     {
         $penindakan->dokumen()->delete();
-
         $this->generateSpPdf($penindakan);
     }
 }

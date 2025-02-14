@@ -5,293 +5,264 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Berita Acara Pemeriksaan</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         body {
-            font-family: "Times New Roman", Times, serif;
-            font-size: 12pt;
-            line-height: 1.5;
-            margin: 2.5cm;
-            color: #000;
-        }
-
-        .header {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .header table {
-            width: 100%;
-            border-spacing: 0;
-        }
-
-        .header .logo {
-            width: auto;
-            height: 90;
-            vertical-align: top;
-            margin-right: 15px;
-        }
-
-        .header-text {
-            text-align: center;
-            padding-left: 10px;
-            line-height: 1.2;
-        }
-
-        .header .bold-text {
-            font-weight: bold;
-            margin: 1px 0;
-            font-size: 12pt;
-        }
-
-        .header .small-text {
-            font-size: 9pt;
-            margin: 1px 0;
+            margin: 64px;
+            font-family: Arial, Helvetica, sans-serif;
             color: #333;
         }
-
-        .header-line {
-            border-bottom: 2px double #000;
-            margin: 6px 0 25px 0;
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .title {
-            text-align: center;
-            font-weight: bold;
-            margin: 30px 0;
-        }
-
-        .title p {
-            margin: 5px 0;
-            font-size: 14pt;
-        }
-
-        .content {
-            text-align: justify;
-            margin: 30px 0;
-            line-height: 1.6;
-        }
-
-        .section {
-            margin: 15px 0;
-        }
-
-        .section-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .indent {
-            margin-left: 30px;
-        }
-
-        .petugas-list {
-            margin: 20px 0;
-        }
-
-        .signatures {
-            margin-top: 50px;
-            text-align: center;
-        }
-
-        .signatures table {
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .signatures td {
-            width: 50%;
-            text-align: center;
+        header > img,
+        header > section {
+            display: inline-block;
             vertical-align: top;
         }
-
-        .signatures img {
-            max-width: 150px;
-            margin: 10px 0;
-            height: auto;
+        header > img {
+            margin-right: 1.5rem;
+            width: 20%;
+        }
+        header > section {
+            width: 75%;
+            text-align: center;
+            line-height: 1.5;
+        }
+        header > section > h5 {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        header > section > h6 {
+            font-size: 10px;
+            font-weight: normal;
+        }
+        hr {
+            margin: 8px 0;
+        }
+        main {
+            line-height: 1.5;
+        }
+        main > h6:first-child {
+            margin-bottom: 2px;
+            font-weight: bold;
+            text-align: center;
         }
     </style>
 </head>
 
 <body>
-    <div class="header">
-        <table>
-            <tr>
-                <td style="width: 55px;">
-                    <img src="{{ public_path('img/logo-dokumen.png') }}" class="logo" alt="Logo">
-                </td>
-                <td class="header-text">
-                    <p class="bold-text">KEMENTERIAN KEUANGAN REPUBLIK INDONESIA</p>
-                    <p class="bold-text">DIREKTORAT JENDERAL BEA DAN CUKAI</p>
-                    <p class="bold-text">KANTOR WILAYAH DJBC JAWA TIMUR II</p>
-                    <p class="bold-text">KANTOR PENGAWASAN DAN PELAYANAN BEA DAN CUKAI</p>
-                    <p class="bold-text">TIPE MADYA PABEAN C BLITAR</p>
-                    <p class="small-text">JALAN SUDANCO SUPRIADI NO. 60 KOTAK POS 23 – Blitar</p>
-                    <p class="small-text">TELEPON (0342) 801655; FAKSIMILE (0342) 801546; SITUS www.beacukai.go.id</p>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div class="header-line"></div>
-
-    <div class="title">
-        <p>BERITA ACARA PEMERIKSAAN</p>
-        <p>Nomor : {{ $penindakan->no_print }}</p>
-    </div>
-
-    <div class="content">
-        <p>Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, berdasarkan Surat Perintah / Surat
+    <header>
+        <img src="{{ public_path('img/logo-dokumen.png') }}" alt="Logo" />
+        <section>
+            <h5>KEMENTERIAN KEUANGAN REPUBLIK INDONESIA</h5>
+            <h5>DIREKTORAT JENDERAL BEA DAN CUKAI</h5>
+            <h5>KANTOR WILAYAH DJBC JAWA TIMUR II</h5>
+            <h5>KANTOR PENGAWASAN DAN PELAYANAN BEA DAN CUKAI</h5>
+            <h5>TIPE MADYA PABEAN C BLITAR</h5>
+            <h6>JALAN SUDANCO SUPRIADI NO. 60 KOTAK POS 23 – Blitar</h6>
+            <h6>TELEPON (0342) 801655; FAKSIMILE (0342) 801546; SITUS www.beacukai.go.id</h6>
+        </section>
+    </header>
+    <hr />
+    <main>
+        <h6>
+            BERITA ACARA PEMERIKSAAN
+            <br />
+            Nomor : {{ $penindakan->no_sbp }}
+        </h6>
+        <h6>
+            Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, berdasarkan Surat Perintah / Surat
             Tugas nomor : {{ $penindakan->no_print }} tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, Kami
-            yang bertanda tangan di bawah ini:</p>
-
-        <div class="petugas-list">
-            <p>1. Nama / NIP : {{ $penindakan->petugas_1 }} / {{ $penindakan->petugas_1 }}</p>
-            <div class="indent">
-                <p>Pangkat / Gol : PENGATUR / II/C</p>
-                <p>Jabatan : PELAKSANA PEMERIKSA</p>
-            </div>
-
-            <p>2. Nama / NIP : {{ $penindakan->petugas_2 }} / {{ $penindakan->petugas_2 }}</p>
-            <div class="indent">
-                <p>Pangkat / Gol : Pengatur Tk.I / II.d</p>
-                <p>Jabatan : PELAKSANA PEMERIKSA</p>
-            </div>
-        </div>
-
-        <p>Telah melakukan pemeriksaan atas :</p>
-
-        <div class="section">
-            <p class="section-title">a. Barang yang ditimbun/disimpan di Kawasan Pabean / Kawasan Berikat/Bangunan atau
-                tempat lain</p>
-            <div class="indent">
-                <table>
-                    <tr>
-                        <td width="250">Nama pemilik / yang menguasai</td>
-                        <td width="10">:</td>
-                        <td>{{ $penindakan->nama_pemilik }}</td>
-                    </tr>
-                    <tr>
-                        <td>Alamat pemilik yang menguasai</td>
-                        <td>:</td>
-                        <td>{{ $penindakan->alamat }}</td>
-                    </tr>
-                    <tr>
-                        <td>Alamat bangunan / tempat lain</td>
-                        <td>:</td>
-                        <td>{{ $penindakan->bangunan }}</td>
-                    </tr>
-                    <tr>
-                        <td>Identitas pemilik yang menguasai (KTP)</td>
-                        <td>:</td>
-                        <td>{{ $penindakan->no_ktp }}</td>
-                    </tr>
-                    <tr>
-                        <td>Jumlah/Jenis/Ukuran</td>
-                        <td>:</td>
-                        <td>{{ $penindakan->jenis_barang }} sebanyak {{ $penindakan->jumlah }}
-                            {{ $penindakan->kemasan }}</td>
-                    </tr>
-                    <tr>
-                        <td>Pemilik/Yang Menguasai</td>
-                        <td>:</td>
-                        <td>{{ $penindakan->nama_pemilik }}</td>
-                    </tr>
-                    <tr>
-                        <td>Tempat/Lokasi Penindakan</td>
-                        <td>:</td>
-                        <td>{{ $penindakan->lokasi_penindakan }}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-        <div class="section">
-            <p class="section-title">b. Sarana pengangkut dan atau barang diatasnya</p>
-            <div class="indent">
-                <table>
-                    <tr>
-                        <td width="250">Nama dan Jenis Sarana Pengangkut</td>
-                        <td width="10">:</td>
-                        <td>{{ $penindakan->nama_jenis_sarkut }}</td>
-                    </tr>
-                    <tr>
-                        <td>Nahkoda/Pilot/Pengemudi</td>
-                        <td>:</td>
-                        <td>{{ $penindakan->pengemudi }}</td>
-                    </tr>
-                    <tr>
-                        <td>Nomor Register/Polisi</td>
-                        <td>:</td>
-                        <td>{{ $penindakan->no_polisi }}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-        <p>Hasil pemeriksaan : {{ $penindakan->uraian_bhp }}</p>
-
-        <p>Pemeriksaan disaksikan oleh pemilik barang/kuasanya :</p>
-        <div class="indent">
-            <table>
-                <tr>
-                    <td width="250">Nama</td>
-                    <td width="10">:</td>
-                    <td>{{ $penindakan->nama_pemilik }}</td>
-                </tr>
-                <tr>
-                    <td>Tempat / Tanggal Lahir</td>
-                    <td>:</td>
-                    <td>{{ $penindakan->tempat_lahir }}, {{ $penindakan->tanggal_lahir->format('Y-m-d') }}</td>
-                </tr>
-                <tr>
-                    <td>Alamat Tempat Tinggal</td>
-                    <td>:</td>
-                    <td>{{ $penindakan->alamat }}</td>
-                </tr>
-                <tr>
-                    <td>Pekerjaan</td>
-                    <td>:</td>
-                    <td>{{ $penindakan->pekerjaan }}</td>
-                </tr>
-                <tr>
-                    <td>Identitas (KTP)</td>
-                    <td>:</td>
-                    <td>{{ $penindakan->no_ktp }}</td>
-                </tr>
-            </table>
-        </div>
-
-        <p>Demikian Berita Acara ini dibuat dengan sebenarnya.</p>
-    </div>
-
-    <div class="signatures">
-        <p style="text-align: right">Blitar, {{ $penindakan->tanggal_print->format('d F Y') }}</p>
-        <table>
+            yang bertanda tangan di bawah ini:
+        </h6>
+        <table style="width: 100%; border-collapse: collapse">
             <tr>
-                <td>
-                    <p>Pemilik/Yang Menguasai</p>
-                    <br><br><br>
-                    <p>{{ $penindakan->nama_pemilik }}</p>
+                <td style="vertical-align: top; width: 5%; font-size: 12px">1.</td>
+                <td style="vertical-align: top; font-size: 12px">Nama / NIP</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->petugas_1 }} / {{ $penindakan->petugas_1 }}</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Pangkat / Gol</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">PENGATUR / II/C</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Jabatan</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">PELAKSANA PEMERIKSA</td>
+            </tr>
+            <tr>
+                <td style="vertical-align: top; width: 5%; font-size: 12px">2.</td>
+                <td style="vertical-align: top; font-size: 12px">Nama / NIP</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->petugas_2 }} / {{ $penindakan->petugas_2 }}</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Pangkat / Gol</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">Pengatur Tk.I / II.d</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Jabatan</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">PELAKSANA PEMERIKSA</td>
+            </tr>
+        </table>
+        <h6>Telah melakukan pemeriksaan atas :</h6>
+        <table style="width: 100%; border-collapse: collapse">
+            <tr style="font-weight: bold">
+                <td style="vertical-align: top; width: 5%; font-size: 12px">a.</td>
+                <td style="vertical-align: top; font-size: 12px">Barang yang ditimbun / disimpan di Kawasan Pabean / Kawasan Berikat / Bangunan atau tempat lain</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Nama pemilik / yang menguasai</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->nama_pemilik }}</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Alamat pemilik yang menguasai</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->alamat }}</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Alamat bangunan / tempat lain</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->bangunan }}</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Identitas pemilik yang menguasai (KTP)</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->no_ktp }}</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Jumlah/Jenis/Ukuran</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->jenis_barang }} sebanyak {{ $penindakan->jumlah }} {{ $penindakan->kemasan }}</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Pemilik/Yang Menguasai</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->nama_pemilik }}</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Tempat/Lokasi Penindakan</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->lokasi_penindakan }}</td>
+            </tr>
+            <tr style="font-weight: bold">
+                <td style="vertical-align: top; width: 5%; font-size: 12px">b.</td>
+                <td style="vertical-align: top; font-size: 12px">Sarana pengangkut dan atau barang diatasnya</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Nama dan Jenis Sarana Pengangkut</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->nama_jenis_sarkut }}</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Nahkoda/Pilot/Pengemudi</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->pengemudi }}</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Nomor Register/Polisi</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->no_polisi }}</td>
+            </tr>
+        </table>
+        <h6>Hasil pemeriksaan : {{ $penindakan->uraian_bhp }}</h6>
+        <h6>Pemeriksaan disaksikan oleh Pemilik Barang/Kuasanya :</h6>
+        <table style="width: 100%; border-collapse: collapse">
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; width: 25%; font-size: 12px">Nama</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->nama_pemilik }}</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Tempat / Tanggal Lahir</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->tempat_lahir }}, {{ $penindakan->tanggal_lahir->format('Y-m-d') }}</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Alamat Tempat Tinggal</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->alamat }}</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Pekerjaan</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->pekerjaan }}</td>
+            </tr>
+            <tr>
+                <td style="width: 5%"></td>
+                <td style="vertical-align: top; font-size: 12px">Identitas (KTP)</td>
+                <td style="vertical-align: top; font-size: 12px">:</td>
+                <td style="vertical-align: top; font-size: 12px">{{ $penindakan->no_ktp }}</td>
+            </tr>
+        </table>
+        <h6>Demikian Berita Acara ini dibuat dengan sebenarnya.</h6>
+        <h6 style="margin-top: 24px; text-align: right">Blitar, {{ $penindakan->tanggal_sbp->format('d F Y') }}</h6>
+        <table style="width: 100%">
+            <tr>
+                <td style="vertical-align: top; width: 50%; font-size: 12px">
+                    Pemilik/Yang Menguasai
+                    <br /><br /><br />
+                    {{ $penindakan->nama_pemilik }}
                 </td>
-                <td>
-                    <p>Yang Melakukan Pemeriksaan :</p>
-                    @if ($penindakan->ttd_petugas_1)
-                        <img src="{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1" style="height: 60px;">
+                <td style="vertical-align: top; width: 50%; text-align: right; font-size: 12px">
+                    Yang Melakukan Pemeriksaan :
+                    @if($penindakan->ttd_petugas_1)
+                        <img src="{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1" style="position: absolute; top: 880px; right: 68px; height: 60px; max-width: 150px" />
+                        <br /><br /><br /><br /><br />
                     @else
-                        <br><br><br>
+                        <br /><br /><br />
                     @endif
-                    <p>{{ $penindakan->petugas_1 }}</p>
-                    <p>NIP {{ $penindakan->petugas_1 }}</p>
-                    <br>
-                    @if ($penindakan->ttd_petugas_2)
-                        <img src="{{ $penindakan->ttd_petugas_2 }}" alt="Tanda Tangan Petugas 2" style="height: 60px;">
-                    @else
-                        <br><br><br>
-                    @endif
-                    <p>{{ $penindakan->petugas_2 }}</p>
-                    <p>NIP {{ $penindakan->petugas_2 }}</p>
+                    {{ $penindakan->petugas_1 }}
+                    <br />
+                    NIP {{ $penindakan->petugas_1 }}
                 </td>
             </tr>
         </table>
-    </div>
+        <table style="margin-top: 8px; width: 100%">
+            <tr>
+                <td colspan="2" style="vertical-align: top; text-align: right; font-size: 12px">
+                    @if($penindakan->ttd_petugas_2)
+                        <img src="{{ $penindakan->ttd_petugas_2 }}" alt="Tanda Tangan Petugas 2" style="position: absolute; top: 90px; right: 72px; height: 60px; max-width: 150px" />
+                        <br /><br /><br /><br /><br />
+                    @else
+                        <br /><br /><br />
+                    @endif
+                    {{ $penindakan->petugas_2 }}
+                    <br />
+                    NIP {{ $penindakan->petugas_2 }}
+                </td>
+            </tr>
+        </table>
+    </main>
 </body>
 
 </html>
