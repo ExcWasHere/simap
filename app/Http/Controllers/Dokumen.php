@@ -7,6 +7,7 @@ use App\Models\Dokumen as DokumenModel;
 use App\Models\Intelijen as IntelijenModel;
 use App\Models\Penindakan as PenindakanModel;
 use App\Models\Penyidikan as PenyidikanModel;
+use Illuminate\Support\Facades\Storage;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -267,12 +268,26 @@ class Dokumen extends Controller
     {
         try {
             $document = DokumenModel::findOrFail($id);
+            
+            if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
+                Log::info("File ditemukan dan akan dihapus", [
+                    'id' => $id,
+                    'path' => $document->file_path
+                ]);
+            } else {
+                Log::warning("File tidak ditemukan", [
+                    'id' => $id,
+                    'path' => $document->file_path
+                ]);
+            }
+
             $document->delete();
             return redirect()->back()->with('success', 'Dokumen berhasil dihapus!');
         } catch (Exception $e) {
             Log::error('Kesalahan saat menghapus dokumen:', [
                 'id' => $id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus dokumen.');
         }

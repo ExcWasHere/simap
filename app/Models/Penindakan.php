@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class Penindakan extends Model
 {
@@ -87,21 +88,53 @@ class Penindakan extends Model
         parent::boot();
 
         static::deleting(function ($model) {
-            $model->dokumen()->each(function ($dokumen) {
-                $dokumen->delete(); 
-            });
-
-            $storage_path = 'dokumen/penindakan/' . $model->no_sbp;
-            if (Storage::disk('public')->exists($storage_path)) {
-                Storage::disk('public')->deleteDirectory($storage_path);
-            }
+            try {
+            Log::info('Mulai proses penghapusan dokumen terkait penindakan', [
+                'no_sbp' => $model->no_sbp
+            ]);
 
             $timestamp = now()->format('YmdHis');
             $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
             $suffix = "_deleted_{$timestamp}{$random}";
-
-            $model->no_sbp = $model->no_sbp . $suffix;
+            
+            $old_no_sbp = $model->no_sbp;
+            $model->no_sbp = $old_no_sbp . $suffix;
             $model->save();
+
+            $dokumen = $model->dokumen()->withTrashed()->get();
+            foreach ($dokumen as $doc) {
+                try {
+                $fullPath = storage_path('app/public/' . $doc->file_path);
+                if (file_exists($fullPath)) {
+                    unlink($fullPath);
+                    Log::info('File fisik berhasil dihapus', ['path' => $fullPath]);
+                }
+                
+                $doc->forceDelete();
+                Log::info('Record dokumen berhasil dihapus', ['id' => $doc->id]);
+                } catch (\Exception $e) {
+                Log::error('Gagal menghapus dokumen', [
+                    'id' => $doc->id,
+                    'error' => $e->getMessage()
+                ]);
+                }
+            }
+
+            $storage_path = storage_path('app/public/dokumen/penindakan/' . $old_no_sbp);
+            if (is_dir($storage_path)) {
+                array_map('unlink', glob("$storage_path/*.*"));
+                rmdir($storage_path);
+                Log::info('Direktori storage berhasil dihapus', ['path' => $storage_path]);
+            }
+
+            } catch (\Exception $e) {
+            Log::error('Error saat proses penghapusan dokumen', [
+                'no_sbp' => $model->no_sbp,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
+            }
         });
     }
 }

@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('module')->nullable();
             $table->foreignId('uploaded_by')->constrained('users');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
