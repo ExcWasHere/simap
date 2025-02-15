@@ -5,220 +5,192 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Berita Acara Pengambilan Dokumentasi</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         body {
-            font-family: "Times New Roman", Times, serif;
-            font-size: 12pt;
-            line-height: 1.5;
-            margin: 2.5cm;
-            color: #000;
-        }
-
-        .header {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .header table {
-            width: 100%;
-            border-spacing: 0;
-        }
-
-        .header .logo {
-            width: auto;
-            height: 90;
-            vertical-align: top;
-            margin-right: 15px;
-        }
-
-        .header-text {
-            text-align: center;
-            padding-left: 10px;
-            line-height: 1.2;
-        }
-
-        .header .bold-text {
-            font-weight: bold;
-            margin: 1px 0;
-            font-size: 12pt;
-        }
-
-        .header .small-text {
-            font-size: 9pt;
-            margin: 1px 0;
+            margin: 64px;
+            font-family: Arial, Helvetica, sans-serif;
             color: #333;
         }
-
-        .header-line {
-            border-bottom: 2px double #000;
-            margin: 6px 0 25px 0;
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .title {
+        header > img,
+        header > section {
+            display: inline-block;
+            vertical-align: top;
+        }
+        header > img {
+            margin-right: 1.5rem;
+            width: 20%;
+        }
+        header > section {
+            width: 75%;
             text-align: center;
+            line-height: 1.5;
+        }
+        header > section > h5 {
+            font-size: 14px;
             font-weight: bold;
-            margin: 30px 0;
         }
-
-        .title p {
-            margin: 5px 0;
-            font-size: 14pt;
+        header > section > h6 {
+            font-size: 10px;
+            font-weight: normal;
         }
-
-        .content {
-            text-align: justify;
-            margin: 30px 0;
-            line-height: 1.6;
+        hr {
+            margin: 8px 0;
         }
-
-        .content table {
-            margin: 15px 0;
+        main {
+            line-height: 1.5;
         }
-
-        .content td {
-            padding: 5px 3px;
-            vertical-align: top;
-        }
-
-        .signatures {
-            margin-top: 60px;
-        }
-
-        .signatures table {
-            width: 100%;
-        }
-
-        .signatures td {
-            width: 50%;
+        main > h6:first-child {
+            margin-bottom: 2px;
+            font-weight: bold;
             text-align: center;
-            vertical-align: top;
         }
-
-        .signatures img {
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table td {
+            vertical-align: top;
+            font-size: 12px;
+        }
+        .table td:first-child {
+            width: 5%;
+        }
+        .signature-img {
+            height: 60px;
             max-width: 150px;
-            margin: 10px 0;
-            height: auto;
+            display: block;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 
 <body>
-    <div class="header">
-        <table>
-            <tr>
-                <td style="width: 55px;">
-                    <img src="{{ public_path('img/logo-dokumen.png') }}" class="logo" alt="Logo">
-                </td>
-                <td class="header-text">
-                    <p class="bold-text">KEMENTERIAN KEUANGAN REPUBLIK INDONESIA</p>
-                    <p class="bold-text">DIREKTORAT JENDERAL BEA DAN CUKAI</p>
-                    <p class="bold-text">KANTOR WILAYAH DJBC JAWA TIMUR II</p>
-                    <p class="bold-text">KANTOR PENGAWASAN DAN PELAYANAN BEA DAN CUKAI</p>
-                    <p class="bold-text">TIPE MADYA PABEAN C BLITAR</p>
-                    <p class="small-text">JALAN SUDANCO SUPRIADI NO. 60 KOTAK POS 23 – Blitar</p>
-                    <p class="small-text">TELEPON (0342) 801655; FAKSIMILE (0342) 801546; SITUS www.beacukai.go.id</p>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div class="header-line"></div>
-
-    <div class="title">
-        <p>BERITA ACARA PENGAMBILAN DOKUMENTASI BARANG</p>
-        <p>Nomor : {{ $penindakan->no_print }}</p>
-    </div>
-
-    <div class="content">
-        <p>Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, berdasarkan Surat Perintah:
+    <header>
+        <img src="{{ public_path('img/logo-dokumen.png') }}" alt="Logo" />
+        <section>
+            <h5>KEMENTERIAN KEUANGAN REPUBLIK INDONESIA</h5>
+            <h5>DIREKTORAT JENDERAL BEA DAN CUKAI</h5>
+            <h5>KANTOR WILAYAH DJBC JAWA TIMUR II</h5>
+            <h5>KANTOR PENGAWASAN DAN PELAYANAN BEA DAN CUKAI</h5>
+            <h5>TIPE MADYA PABEAN C BLITAR</h5>
+            <h6>JALAN SUDANCO SUPRIADI NO. 60 KOTAK POS 23 – Blitar</h6>
+            <h6>TELEPON (0342) 801655; FAKSIMILE (0342) 801546; SITUS www.beacukai.go.id</h6>
+        </section>
+    </header>
+    <hr />
+    <main>
+        <h6>
+            BERITA ACARA PENGAMBILAN DOKUMENTASI BARANG
+            <br />
+            Nomor : {{ $penindakan->no_print }}
+        </h6>
+        <h6 class="font-normal" style="text-align: justify">
+            Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, berdasarkan Surat Perintah:
             {{ $penindakan->no_print }} tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, Kami yang bertanda
-            tangan di bawah ini, telah melakukan pengambilan dokumentasi barang atas:</p>
-
-        <table>
+            tangan di bawah ini, telah melakukan pengambilan dokumentasi barang atas:
+        </h6>
+        <table class="table">
             <tr>
-                <td width="200">Komoditas / Jenis Barang</td>
-                <td width="10">:</td>
-                <td>{{ $penindakan->jenis_barang }} sebanyak {{ $penindakan->jumlah }} {{ $penindakan->kemasan }}
-                    {{ $penindakan->uraian_bhp }}</td>
+                <td style="width: 35%">Komoditas / Jenis Barang</td>
+                <td style="width: 3%">:</td>
+                <td>{{ $penindakan->jenis_barang }} sebanyak {{ $penindakan->jumlah }} {{ $penindakan->kemasan }} {{ $penindakan->uraian_bhp }}</td>
             </tr>
             <tr>
-                <td>Pemilik/Yang Menguasai</td>
-                <td>:</td>
+                <td style="width: 35%">Pemilik/Yang Menguasai</td>
+                <td style="width: 3%">:</td>
                 <td>{{ $penindakan->nama_pemilik }}</td>
             </tr>
             <tr>
-                <td>Identitas (KTP)</td>
-                <td>:</td>
+                <td style="width: 35%">Identitas (KTP)</td>
+                <td style="width: 3%">:</td>
                 <td>{{ $penindakan->no_ktp }}</td>
             </tr>
             <tr>
-                <td>Jenis/Nomor dan Tgl Dokumen</td>
-                <td>:</td>
+                <td style="width: 35%">Jenis/Nomor dan Tgl Dokumen</td>
+                <td style="width: 3%">:</td>
                 <td>{{ $penindakan->no_sbp }}</td>
             </tr>
             <tr>
-                <td>Lokasi</td>
-                <td>:</td>
+                <td style="width: 35%">Lokasi</td>
+                <td style="width: 3%">:</td>
                 <td>{{ $penindakan->lokasi_penindakan }}</td>
             </tr>
         </table>
-
-        <p>Pengambilan dokumentasi disaksikan oleh Pemilik/Yang Menguasai:</p>
-
-        <table>
+        <h6>Pengambilan dokumentasi disaksikan oleh Pemilik/Yang Menguasai:</h6>
+        <table class="table">
             <tr>
-                <td width="200">Nama</td>
-                <td width="10">:</td>
+                <td style="width: 35%">Nama</td>
+                <td style="width: 3%">:</td>
                 <td>{{ $penindakan->nama_pemilik }}</td>
             </tr>
             <tr>
-                <td>Alamat Tempat Tinggal</td>
-                <td>:</td>
+                <td style="width: 35%">Alamat Tempat Tinggal</td>
+                <td style="width: 3%">:</td>
                 <td>{{ $penindakan->alamat }}</td>
             </tr>
             <tr>
-                <td>Pekerjaan</td>
-                <td>:</td>
+                <td style="width: 35%">Pekerjaan</td>
+                <td style="width: 3%">:</td>
                 <td>{{ $penindakan->pekerjaan }}</td>
             </tr>
             <tr>
-                <td>Identitas (KTP)</td>
-                <td>:</td>
+                <td style="width: 35%">>Identitas (KTP)</td>
+                <td style="width: 3%">:</td>
                 <td>{{ $penindakan->no_ktp }}</td>
             </tr>
         </table>
-
-        <p>Demikian Berita Acara ini dibuat dengan sebenarnya.</p>
-    </div>
-
-    <div class="signatures">
-        <p style="text-align: right">Blitar, {{ $penindakan->tanggal_print->format('d F Y') }}</p>
-        <table>
+        <h6 class="font-normal">
+            Demikian Berita Acara ini dibuat dengan sebenarnya.
+        </h6>
+        <h6 style="margin-top: 24px; text-align: right">Blitar, {{ $penindakan->tanggal_sbp->format('d F Y') }}</h6>
+        <table class="table">
             <tr>
-                <td>
-                    <p>Orang yang menyaksikan,</p>
-                    <br><br><br>
-                    <p>{{ $penindakan->nama_pemilik }}</p>
+                <td style="vertical-align: top; width: 50%; font-size: 12px">
+                    Pemilik/Yang Menguasai
+                    <br /><br /><br /><br /><br />
+                    {{ $penindakan->nama_pemilik }}
                 </td>
-                <td>
-                    <p>Pejabat yang mengambil dokumentasi,</p>
-                    @if ($penindakan->ttd_petugas_1)
-                        <img src="{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1" style="height: 60px;">
+                <td style="vertical-align: top; width: 50%; text-align: right; font-size: 12px">
+                    Yang Melakukan Pemeriksaan :
+                    <br />
+                    <br />
+                    @if($penindakan->ttd_petugas_1)
+                        <img src="{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1" class="signature-img" />
                     @else
-                        <br><br><br>
+                        <br /><br /><br />
                     @endif
-                    <p>{{ $penindakan->petugas_1 }}</p>
-                    <p>NIP {{ $penindakan->petugas_1 }}</p>
-                    <br>
-                    @if ($penindakan->ttd_petugas_2)
-                        <img src="{{ $penindakan->ttd_petugas_2 }}" alt="Tanda Tangan Petugas 2" style="height: 60px;">
-                    @else
-                        <br><br><br>
-                    @endif
-                    <p>{{ $penindakan->petugas_2 }}</p>
-                    <p>NIP {{ $penindakan->petugas_2 }}</p>
+                    <br />
+                    {{ $penindakan->petugas_1 }}
+                    <br />
+                    NIP {{ $penindakan->petugas_1 }}
                 </td>
             </tr>
         </table>
-    </div>
+        <table class="table" style="margin-top: 20px">
+            <tr>
+                <td style="vertical-align: top; text-align: right; font-size: 12px">
+                    @if($penindakan->ttd_petugas_2)
+                        <img src="{{ $penindakan->ttd_petugas_2 }}" alt="Tanda Tangan Petugas 2" class="signature-img" />
+                    @else
+                        <br /><br /><br />
+                    @endif
+                    <br />
+                    {{ $penindakan->petugas_2 }}
+                    <br />
+                    NIP {{ $penindakan->petugas_2 }}
+                </td>
+            </tr>
+        </table>
+    </main>
 </body>
 
 </html>

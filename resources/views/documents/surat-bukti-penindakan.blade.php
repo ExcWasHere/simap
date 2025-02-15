@@ -53,36 +53,22 @@
             font-weight: bold;
             text-align: center;
         }
-        .table-main {
+        .table {
             width: 100%;
             border-collapse: collapse;
         }
-        .table-main td {
+        .table td {
             vertical-align: top;
             font-size: 12px;
         }
-        .table-main td:first-child {
+        .table td:first-child {
             width: 5%;
         }
-        .table-indent {
-            margin-left: 32px;
-        }
-        .table-indent td {
-            vertical-align: top;
-            font-size: 12px;
-        }
         .signature-img {
-            position: absolute;
-            top: 690px;
             height: 60px;
             max-width: 150px;
-        }
-        .signature-img-2 {
-            position: absolute;
-            top: 830px;
-            right: 72px;
-            height: 60px;
-            max-width: 150px;
+            display: block;
+            margin-bottom: 10px;
         }
         .text-bold {
             font-weight: bold;
@@ -115,21 +101,21 @@
             <br />
             Nomor : {{ $penindakan->no_sbp }}
         </h6>
-        <table class="table-main">
+        <table class="table">
             <tr>
-                <td>1.</td>
+                <td style="width: 2.5%">1.</td>
                 <td>
                     Dasar penindakan, Surat Perintah Nomor : {{ $penindakan->no_print }} tanggal : {{ $penindakan->tanggal_print->format('d F Y') }}
                 </td>
             </tr>
             <tr>
-                <td>2.</td>
+                <td style="width: 2.5%">2.</td>
                 <td>
                     Perintah yang dilaksanakan : Penghentian, pemeriksaan, penegahan, penyegelan, penghentian pembongkaran dan/atau penegahan di bidang HKI*.
                 </td>
             </tr>
             <tr>
-                <td>3.</td>
+                <td style="width: 2.5%">3.</td>
                 <td>
                     <span class="text-bold">Obyek Penindakan:</span>
                     <br />
@@ -137,103 +123,122 @@
                 </td>
             </tr>
         </table>
-        <table class="table-indent">
+        <table class="table">
             <tr>
-                <td>Nama dan Jenis Sarana Pengangkut</td>
-                <td>: {{ $penindakan->nama_jenis_sarkut }}</td>
+                <td style="width: 2.5%"></td>
+                <td style="width: 25%">Nama dan Jenis Sarana Pengangkut</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->nama_jenis_sarkut }}</td>
             </tr>
             <tr>
-                <td>Nahkoda/Pilot/Pengemudi</td>
-                <td>: {{ $penindakan->pengemudi }}</td>
+                <td style="width: 2.5%"></td>
+                <td style="width: 25%">Nahkoda/Pilot/Pengemudi</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->pengemudi }}</td>
             </tr>
             <tr>
-                <td>Nomor Register/Polisi</td>
-                <td>: {{ $penindakan->no_polisi }}</td>
+                <td style="width: 2.5%"></td>
+                <td style="width: 25%">Nomor Register/Polisi</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->no_polisi }}</td>
             </tr>
             <tr>
+                <td style="width: 2.5%"></td>
                 <td class="text-bold">Barang:</td>
             </tr>
             <tr>
-                <td>Jumlah/Jenis Barang</td>
-                <td>: {{ $penindakan->jenis_barang }} sebanyak {{ $penindakan->jumlah }} {{ $penindakan->kemasan }}</td>
+                <td style="width: 2.5%"></td>
+                <td style="width: 25%">Jumlah/Jenis Barang</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->jenis_barang }} sebanyak {{ $penindakan->jumlah }} {{ $penindakan->kemasan }}</td>
             </tr>
         </table>
-        <table class="table-main">
+        <table class="table">
             <tr>
-                <td>4.</td>
-                <td>Lokasi Penindakan</td>
-                <td>: {{ $penindakan->lokasi_penindakan }}</td>
+                <td style="width: 2.5%">4.</td>
+                <td style="width: 25%">Lokasi Penindakan</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->lokasi_penindakan }}</td>
             </tr>
             <tr>
-                <td>5.</td>
-                <td>Uraian Penindakan</td>
-                <td>: {{ $penindakan->uraian_bhp }}</td>
+                <td style="width: 2.5%">5.</td>
+                <td style="width: 25%">Uraian Penindakan</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->uraian_bhp }}</td>
             </tr>
             <tr>
-                <td>6.</td>
-                <td>Alasan Penindakan</td>
-                <td>: {{ $penindakan->uraian_bhp }}</td>
+                <td style="width: 2.5%">6.</td>
+                <td style="width: 25%">Alasan Penindakan</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->uraian_bhp }}</td>
             </tr>
             <tr>
-                <td>7.</td>
-                <td>Jenis Pelanggaran</td>
-                <td>: {{ $penindakan->jenis_pelanggaran }}</td>
+                <td style="width: 2.5%">7.</td>
+                <td style="width: 25%">Jenis Pelanggaran</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->jenis_pelanggaran }}</td>
             </tr>
             <tr>
-                <td>8.</td>
-                <td>Tindakan yang diambil</td>
-                <td>: {{ $penindakan->pasal }}</td>
+                <td style="width: 2.5%">8.</td>
+                <td style="width: 25%">Tindakan yang diambil</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->pasal }}</td>
             </tr>
             <tr>
-                <td>9.</td>
+                <td style="width: 2.5%">9.</td>
                 <td>Waktu Penindakan</td>
             </tr>
         </table>
-        <table class="table-indent">
+        <table class="table">
             <tr>
-                <td>Dimulai Tanggal</td>
-                <td>: {{ $penindakan->waktu_awal_penindakan->format('d F Y') }} jam {{ $penindakan->waktu_awal_penindakan->format('H:i') }} WIB</td>
+                <td style="width: 30%">Dimulai Tanggal</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->waktu_awal_penindakan->format('d F Y') }} jam {{ $penindakan->waktu_awal_penindakan->format('H:i') }} WIB</td>
             </tr>
             <tr>
-                <td>Berakhir</td>
-                <td>: {{ $penindakan->waktu_akhir_penindakan->format('d F Y') }} jam {{ $penindakan->waktu_akhir_penindakan->format('H:i') }} WIB</td>
+                <td style="width: 30%">Berakhir</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->waktu_akhir_penindakan->format('d F Y') }} jam {{ $penindakan->waktu_akhir_penindakan->format('H:i') }} WIB</td>
             </tr>
             <tr>
-                <td>Hal yang terjadi</td>
-                <td>: {{ $penindakan->uraian_bhp }}</td>
+                <td style="width: 30%">Hal yang terjadi</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->uraian_bhp }}</td>
             </tr>
         </table>
         <h6 style="margin-top: 24px; text-align: right">Blitar, {{ $penindakan->tanggal_sbp->format('d F Y') }}</h6>
-        <table style="width: 100%">
+        <table class="table">
             <tr>
                 <td style="vertical-align: top; width: 50%; font-size: 12px">
                     Pemilik/Yang Menguasai
-                    <br /><br /><br />
+                    <br /><br /><br /><br /><br />
                     {{ $penindakan->nama_pemilik }}
                 </td>
                 <td style="vertical-align: top; width: 50%; text-align: right; font-size: 12px">
                     Yang Melakukan Pemeriksaan :
+                    <br />
+                    <br />
                     @if($penindakan->ttd_petugas_1)
                         <img src="{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1" class="signature-img" />
-                        <br /><br /><br /><br /><br />
                     @else
                         <br /><br /><br />
                     @endif
+                    <br />
                     {{ $penindakan->petugas_1 }}
                     <br />
                     NIP {{ $penindakan->petugas_1 }}
                 </td>
             </tr>
         </table>
-        <table style="margin-top: 8px; width: 100%">
+        <table class="table" style="margin-top: 20px">
             <tr>
-                <td colspan="2" style="vertical-align: top; text-align: right; font-size: 12px">
+                <td style="vertical-align: top; text-align: right; font-size: 12px">
                     @if($penindakan->ttd_petugas_2)
-                        <img src="{{ $penindakan->ttd_petugas_2 }}" alt="Tanda Tangan Petugas 2" class="signature-img-2" />
-                        <br /><br /><br /><br /><br />
+                        <img src="{{ $penindakan->ttd_petugas_2 }}" alt="Tanda Tangan Petugas 2" class="signature-img" />
                     @else
                         <br /><br /><br />
                     @endif
+                    <br />
                     {{ $penindakan->petugas_2 }}
                     <br />
                     NIP {{ $penindakan->petugas_2 }}

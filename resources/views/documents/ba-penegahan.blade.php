@@ -58,37 +58,26 @@
             font-weight: normal;
             text-align: justify;
         }
-        .table-main {
+        .table {
             width: 100%;
             border-collapse: collapse;
         }
-        .table-main td {
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table td {
             vertical-align: top;
             font-size: 12px;
         }
-        .table-main td:first-child {
+        .table td:first-child {
             width: 5%;
         }
-        .table-indent {
-            margin-left: 32px;
-        }
-        .table-indent td {
-            vertical-align: top;
-            font-size: 12px;
-        }
-        .signature-img-1 {
-            position: absolute;
-            top: 610px;
-            right: 68px;
+        .signature-img {
             height: 60px;
             max-width: 150px;
-        }
-        .signature-img-2 {
-            position: absolute;
-            top: 750px;
-            right: 72px;
-            height: 60px;
-            max-width: 150px;
+            display: block;
+            margin-bottom: 10px;
         }
         .text-right {
             text-align: right;
@@ -122,107 +111,119 @@
         <h6>
             BERITA ACARA PENEGAHAN
             <br />
-            Nomor : {{ $penindakan->no_sbp }}
+            Nomor : {{ $penindakan->no_print }}
         </h6>
         <h6>
             Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, berdasarkan Surat Perintah:
             {{ $penindakan->no_print }} tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, Kami yang bertanda
             tangan di bawah ini dalam rangka pengamanan hak-hak negara, telah melakukan penegahan terhadap*:
         </h6>
-        <table class="table-main">
+        <table class="table">
             <tr>
-                <td>a.</td>
+                <td style="width: 2.5%">a.</td>
                 <td class="text-bold">
                     Sarana Pengangkut:
                 </td>
             </tr>
-        </table>
-        <table class="table-indent">
             <tr>
-                <td>Nama dan Jenis Sarana Pengangkut</td>
-                <td>: {{ $penindakan->nama_jenis_sarkut }}</td>
+                <td style="width: 2.5%"></td>
+                <td style="width: 25%">Nama dan Jenis Sarana Pengangkut</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->nama_jenis_sarkut }}</td>
             </tr>
             <tr>
-                <td>Nahkoda/Pilot/Pengemudi</td>
-                <td>: {{ $penindakan->pengemudi }}</td>
+                <td style="width: 2.5%"></td>
+                <td style="width: 25%">Nahkoda/Pilot/Pengemudi</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->pengemudi }}</td>
             </tr>
             <tr>
-                <td>Nomor Register/Polisi</td>
-                <td>: {{ $penindakan->no_polisi }}</td>
+                <td style="width: 2.5%"></td>
+                <td style="width: 25%">Nomor Register/Polisi</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->no_polisi }}</td>
             </tr>
-        </table>
-        <table class="table-main">
             <tr>
-                <td>b.</td>
+                <td style="width: 2.5%">b.</td>
                 <td class="text-bold">
                     Barang:
                 </td>
             </tr>
-        </table>
-        <table class="table-indent">
             <tr>
-                <td>Jumlah/Jenis/Ukuran</td>
-                <td>: {{ $penindakan->jenis_barang }} sebanyak {{ $penindakan->jumlah }} {{ $penindakan->kemasan }}</td>
+                <td style="width: 2.5%"></td>
+                <td style="width: 25%">Jumlah/Jenis/Ukuran</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->jenis_barang }} sebanyak {{ $penindakan->jumlah }} {{ $penindakan->kemasan }}</td>
             </tr>
             <tr>
-                <td>Pemilik/Yang Menguasai</td>
-                <td>: {{ $penindakan->nama_pemilik }}</td>
+                <td style="width: 2.5%"></td>
+                <td style="width: 25%">Pemilik/Yang Menguasai</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->nama_pemilik }}</td>
             </tr>
             <tr>
-                <td>Nomor Identitas</td>
-                <td>: {{ $penindakan->no_ktp }}</td>
+                <td style="width: 2.5%"></td>
+                <td style="width: 25%">Nomor Identitas</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->no_ktp }}</td>
             </tr>
         </table>
         <h6>Penegahan disaksikan oleh Pemilik/Yang Menguasai:</h6>
-        <table class="table-main">
+        <table class="table">
             <tr>
-                <td style="width: 25%;">Nama</td>
-                <td>: {{ $penindakan->nama_pemilik }}</td>
+                <td style="width: 28%">Nama</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->nama_pemilik }}</td>
             </tr>
             <tr>
                 <td>Alamat Tempat Tinggal</td>
-                <td>: {{ $penindakan->alamat }}</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->alamat }}</td>
             </tr>
             <tr>
                 <td>Pekerjaan</td>
-                <td>: {{ $penindakan->pekerjaan }}</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->pekerjaan }}</td>
             </tr>
             <tr>
                 <td>Identitas (KTP)</td>
-                <td>: {{ $penindakan->no_ktp }}</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->no_ktp }}</td>
             </tr>
         </table>
-        <h6 class="text-right" style="margin-top: 24px;">Blitar, {{ $penindakan->tanggal_sbp->format('d F Y') }}</h6>
-        <table style="width: 100%">
+        <h6 style="margin-top: 24px; text-align: right">Blitar, {{ $penindakan->tanggal_sbp->format('d F Y') }}</h6>
+        <table class="table">
             <tr>
                 <td style="vertical-align: top; width: 50%; font-size: 12px">
                     Pemilik/Yang Menguasai
-                    <br /><br /><br />
+                    <br /><br /><br /><br /><br />
                     {{ $penindakan->nama_pemilik }}
                 </td>
                 <td style="vertical-align: top; width: 50%; text-align: right; font-size: 12px">
                     Yang Melakukan Pemeriksaan :
+                    <br />
+                    <br />
                     @if($penindakan->ttd_petugas_1)
-                        <img src="{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1" class="signature-img-1" />
-                        <br /><br /><br /><br /><br />
+                        <img src="{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1" class="signature-img" />
                     @else
                         <br /><br /><br />
                     @endif
+                    <br />
                     {{ $penindakan->petugas_1 }}
                     <br />
                     NIP {{ $penindakan->petugas_1 }}
                 </td>
             </tr>
         </table>
-        <table style="margin-top: 8px; width: 100%">
+        <table class="table" style="margin-top: 20px">
             <tr>
-                <td colspan="2" style="vertical-align: top; text-align: right; font-size: 12px">
+                <td style="vertical-align: top; text-align: right; font-size: 12px">
                     @if($penindakan->ttd_petugas_2)
-                        <img src="{{ $penindakan->ttd_petugas_2 }}" alt="Tanda Tangan Petugas 2" class="signature-img-2" />
-                        <br /><br /><br /><br /><br />
+                        <img src="{{ $penindakan->ttd_petugas_2 }}" alt="Tanda Tangan Petugas 2" class="signature-img" />
                     @else
                         <br /><br /><br />
                     @endif
+                    <br />
                     {{ $penindakan->petugas_2 }}
                     <br />
                     NIP {{ $penindakan->petugas_2 }}

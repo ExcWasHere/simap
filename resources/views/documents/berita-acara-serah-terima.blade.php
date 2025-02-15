@@ -1,186 +1,218 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Berita Acara Serah Terima</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         body {
-            font-family: "Times New Roman", Times, serif;
-            font-size: 12pt;
-            line-height: 1.5;
-            margin: 2.5cm;
-            color: #000;
-        }
-        .header {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        .header table {
-            width: 100%;
-            border-spacing: 0;
-        }
-        .header .logo {
-            width: auto;
-            height: 90;   
-            vertical-align: top;
-            margin-right: 15px;
-        }
-        .header-text {
-            text-align: center;
-            padding-left: 10px;
-            line-height: 1.2;   
-        }
-        .header .bold-text {
-            font-weight: bold;
-            margin: 1px 0;
-            font-size: 12pt;      
-        }
-        .header .small-text {
-            font-size: 9pt;
-            margin: 1px 0;
+            margin: 64px;
+            font-family: Arial, Helvetica, sans-serif;
             color: #333;
         }
-        .header-line {
-            border-bottom: 2px double #000;
-            margin: 6px 0 25px 0;
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .title {
-            text-align: center;
-            font-weight: bold;
-            margin: 30px 0;
-        }
-        .title p {
-            margin: 5px 0;
-            font-size: 14pt;
-        }
-        .content {
-            text-align: justify;
-            margin: 30px 0;
-            line-height: 1.6;
-        }
-        .content-section {
-            margin: 10px 0;
-        }
-        .signatures {
-            margin-top: 60px;
-        }
-        .signatures table {
-            width: 100%;
-        }
-        .signatures td {
-            width: 50%;
-            text-align: center;
+        header > img,
+        header > section {
+            display: inline-block;
             vertical-align: top;
         }
-        .footer-note {
-            margin-top: 20px;
-            font-style: italic;
-            font-size: 10pt;
+        header > img {
+            margin-right: 1.5rem;
+            width: 20%;
         }
-        .signatures img {
+        header > section {
+            width: 75%;
+            text-align: center;
+            line-height: 1.5;
+        }
+        header > section > h5 {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        header > section > h6 {
+            font-size: 10px;
+            font-weight: normal;
+        }
+        hr {
+            margin: 8px 0;
+        }
+        main {
+            line-height: 1.5;
+        }
+        main > h6:first-child {
+            margin-bottom: 2px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .font-bold {
+            font-weight: bold;
+        }
+        .font-normal {
+            font-weight: normal;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table td {
+            vertical-align: top;
+            font-size: 12px;
+        }
+        .table td:first-child {
+            width: 5%;
+        }
+        .signature-img {
+            height: 60px;
             max-width: 150px;
-            margin: 10px 0;
-            height: auto;
+            display: block;
+            margin-bottom: 10px;
+        }
+        main > h6:last-child {
+            margin-top: 12px;
+            font-style: italic;
+            font-weight: normal;
         }
     </style>
 </head>
+
 <body>
-    <div class="header">
-        <table>
+    <header>
+        <img src="{{ public_path('img/logo-dokumen.png') }}" alt="Logo" />
+        <section>
+            <h5>KEMENTERIAN KEUANGAN REPUBLIK INDONESIA</h5>
+            <h5>DIREKTORAT JENDERAL BEA DAN CUKAI</h5>
+            <h5>KANTOR WILAYAH DJBC JAWA TIMUR II</h5>
+            <h5>KANTOR PENGAWASAN DAN PELAYANAN BEA DAN CUKAI</h5>
+            <h5>TIPE MADYA PABEAN C BLITAR</h5>
+            <h6>JALAN SUDANCO SUPRIADI NO. 60 KOTAK POS 23 – Blitar</h6>
+            <h6>TELEPON (0342) 801655; FAKSIMILE (0342) 801546; SITUS www.beacukai.go.id</h6>
+        </section>
+    </header>
+    <hr />
+    <main>
+        <h6>
+            BERITA ACARA SERAH TERIMA
+            <br />
+            Nomor : {{ $penindakan->no_print }}
+        </h6>
+        <h6 class="font-normal">
+            Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, Saya/Kami* yang bertanda tangan di
+            bawah bertindak untuk/atas nama pemilik barang, telah menyerahkan:
+        </h6>
+        <table class="table">
             <tr>
-                <td style="width: 55px;">
-                    <img src="{{ public_path('img/logo-dokumen.png') }}" class="logo" alt="Logo">
-                </td>
-                <td class="header-text">
-                    <p class="bold-text">KEMENTERIAN KEUANGAN REPUBLIK INDONESIA</p>
-                    <p class="bold-text">DIREKTORAT JENDERAL BEA DAN CUKAI</p>
-                    <p class="bold-text">KANTOR WILAYAH DJBC JAWA TIMUR II</p>
-                    <p class="bold-text">KANTOR PENGAWASAN DAN PELAYANAN BEA DAN CUKAI</p>
-                    <p class="bold-text">TIPE MADYA PABEAN C BLITAR</p>
-                    <p class="small-text">JALAN SUDANCO SUPRIADI NO. 60 KOTAK POS 23 – Blitar</p>
-                    <p class="small-text">TELEPON (0342) 801655; FAKSIMILE (0342) 801546; SITUS www.beacukai.go.id</p>
-                </td>
+                <td style="width: 2.5%">1.</td>
+                <td class="font-bold">Sarana Pengangkut*</td>
+            </tr>
+            <tr>
+                <td style="width: 2.5%"></td>
+                <td>a. Jenis Sarana Pengangkut</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->nama_jenis_sarkut }}</td>
+            </tr>
+            <tr>
+                <td style="width: 2.5%"></td>
+                <td>b. No Reg/No Polisi</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->no_polisi }}</td>
+            </tr>
+            <tr>
+                <td style="width: 2.5%">2.</td>
+                <td class="font-bold">Barang*</td>
+            </tr>
+            <tr>
+                <td style="width: 2.5%"></td>
+                <td>a. Jml/No Petikemas/Kemasan</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->jenis_barang }} sebanyak {{ $penindakan->jumlah }} {{ $penindakan->kemasan }} {{ $penindakan->uraian_bhp }}</td>
+            </tr>
+            <tr>
+                <td style="width: 2.5%"></td>
+                <td>b. Jumlah/Jenis Barang</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->jumlah }} {{ $penindakan->kemasan }}</td>
+            </tr>
+            <tr>
+                <td style="width: 2.5%">3.</td>
+                <td class="font-bold">Dokumen*</td>
+            </tr>
+            <tr>
+                <td style="width: 2.5%"></td>
+                <td>a. Nama</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->nama_pemilik }}</td>
+            </tr>
+            <tr>
+                <td style="width: 2.5%"></td>
+                <td>b. No Identitas</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->no_ktp }}</td>
             </tr>
         </table>
-    </div>
-    <div class="header-line"></div>
-
-    <div class="title">
-        <p>BERITA ACARA SERAH TERIMA</p>
-        <p>Nomor : {{ $penindakan->no_print }}</p>
-    </div>
-
-    <div class="content">
-        <p>Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, Saya/Kami* yang bertanda tangan di bawah bertindak untuk/atas nama pemilik barang, telah menyerahkan:</p>
-
-        <div class="content-section">
-            <p>1. Sarana Pengangkut*</p>
-            <div style="margin-left: 20px;">
-                <p>a. Jenis Sarana Pengangkut : {{ $penindakan->nama_jenis_sarkut }}</p>
-                <p>b. No Reg/No Polisi : {{ $penindakan->no_polisi }}</p>
-            </div>
-        </div>
-
-        <div class="content-section">
-            <p>2. Barang*</p>
-            <div style="margin-left: 20px;">
-                <p>a. Jml/No Petikemas/Kemasan : {{ $penindakan->jenis_barang }} sebanyak {{ $penindakan->jumlah }} {{ $penindakan->kemasan }} {{ $penindakan->uraian_bhp }}</p>
-                <p>b. Jumlah/Jenis Barang : {{ $penindakan->jumlah }} {{ $penindakan->kemasan }}</p>
-            </div>
-        </div>
-
-        <div class="content-section">
-            <p>3. Dokumen*</p>
-            <div style="margin-left: 20px;">
-                <p>a. Jenis/No dan Tgl Dokumen : {{ $penindakan->no_sbp }}</p>
-            </div>
-        </div>
-
-        <div class="content-section">
-            <p>4. Orang*</p>
-            <div style="margin-left: 20px;">
-                <p>a. Nama : {{ $penindakan->nama_pemilik }}</p>
-                <p>b. No Identitas : {{ $penindakan->no_ktp }}</p>
-            </div>
-        </div>
-
-        <p>Diserahkan kepada :</p>
-        <div style="margin-left: 20px;">
-            <p>Nama : {{ $penindakan->petugas_1 }}</p>
-            <p>NIP/ No Identitas : {{ $penindakan->petugas_1 }}</p>
-        </div>
-
-        <p>Menerima penyerahan untuk/atas nama: -</p>
-        <p>Penyerahan dilaksanakan dalam rangka: {{ $penindakan->jenis_pelanggaran }}</p>
-
-        <p>Demikian Berita Acara ini dibuat dengan sebenarnya.</p>
-    </div>
-
-    <div class="signatures">
-        <p style="text-align: right">Blitar, {{ $penindakan->tanggal_print->format('d F Y') }}</p>
-        <table>
+        <h6 class="font-normal">Diserahkan kepada :</h6>
+        <table class="table">
             <tr>
-                <td>
-                    <p>Yang menerima,</p>
+                <td style="width: 25%">Nama</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->petugas_1 }}</td>
+            </tr>
+            <tr>
+                <td style="width: 25%">NIP/ No Identitas</td>
+                <td style="width: 2%">:</td>
+                <td>{{ $penindakan->petugas_1 }}</td>
+            </tr>
+        </table>
+        <h6 class="font-normal">
+            Menerima penyerahan untuk/atas nama: -
+            <br />
+            Penyerahan dilaksanakan dalam rangka: {{ $penindakan->jenis_pelanggaran }}
+            <br/>
+            Demikian Berita Acara ini dibuat dengan sebenarnya.
+        </h6>
+        <h6 class="font-normal" style="margin-top: 16px">
+            Blitar, {{ $penindakan->tanggal_print->format('d F Y') }}
+            <br />
+            Yang Menerima,
+        </h6>
+        <table class="table">
+            <tr>
+                <td style="vertical-align: top; width: 30%; font-size: 12px">
+                    <br />
                     @if($penindakan->ttd_petugas_1)
-                        <img src="{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1" style="height: 60px;">
+                        <img src="{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1" class="signature-img" />
                     @else
-                        <br><br><br>
+                        <br /><br /><br />
                     @endif
-                    <p>{{ $penindakan->petugas_1 }}</p>
-                    <p>NIP {{ $penindakan->petugas_1 }}</p>
+                    <br />
+                    {{ $penindakan->petugas_1 }}
+                    <br />
+                    NIP {{ $penindakan->petugas_1 }}
                 </td>
-                <td>
-                    <p>Yang menyerahkan,</p>
-                    <br><br><br>
-                    <p>{{ $penindakan->nama_pemilik }}</p>
+                <td style="vertical-align: top; width: 30%; font-size: 12px">
+                    <br />
+                    @if($penindakan->ttd_petugas_2)
+                        <img src="{{ $penindakan->ttd_petugas_2 }}" alt="Tanda Tangan Petugas 2" class="signature-img" />
+                    @else
+                        <br /><br /><br />
+                    @endif
+                    <br />
+                    {{ $penindakan->petugas_2 }}
+                    <br />
+                    NIP {{ $penindakan->petugas_2 }}
                 </td>
             </tr>
         </table>
-    </div>
-
-    <div class="footer-note">
-        <p>*Coret yang tidak perlu</p>
-    </div>
+        <h6>Coret yang tidak perlu</h6>
+    </main>
 </body>
+
 </html>

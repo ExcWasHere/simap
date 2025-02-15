@@ -107,7 +107,7 @@ class Penindakan extends Controller
 
             $validated['created_by'] = Auth::id();
             $penindakan = PenindakanModel::create($validated);
-            $this->generateSpPdf($penindakan);
+            $this->generate_sp_pdf($penindakan);
             DB::commit();
 
             return redirect()
@@ -125,7 +125,7 @@ class Penindakan extends Controller
         }
     }
 
-    protected function generateSpPdf(PenindakanModel $penindakan)
+    private function generate_sp_pdf(PenindakanModel $penindakan)
     {
         try {
             $penindakan->load('creator', 'updater');
@@ -291,9 +291,7 @@ class Penindakan extends Controller
         try {
             DB::beginTransaction();
             
-            if (!$no_sbp) {
-                throw new Exception('No SBP tidak valid');
-            }
+            if (!$no_sbp) throw new Exception('No. SBP tidak valid!');
 
             $penindakan = PenindakanModel::where('no_sbp', $no_sbp)->firstOrFail();
 
@@ -334,7 +332,7 @@ class Penindakan extends Controller
 
             $validated['updated_by'] = Auth::id();
             $penindakan->update($validated);
-            $this->documentUpdate($penindakan);
+            $this->update_document($penindakan);
             DB::commit();
 
             return response()->json([
@@ -354,9 +352,9 @@ class Penindakan extends Controller
         }
     }
 
-    public function documentUpdate(PenindakanModel $penindakan)
+    private function update_document(PenindakanModel $penindakan)
     {
         $penindakan->dokumen()->delete();
-        $this->generateSpPdf($penindakan);
+        $this->generate_sp_pdf($penindakan);
     }
 }
