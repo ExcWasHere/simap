@@ -14,9 +14,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class MonitoringBHP extends Controller
 {
-    /**
-     * Views
-     */
     public function show()
     {
         return view('pages.monitoring');
@@ -214,27 +211,29 @@ class MonitoringBHP extends Controller
         $end_date = now();
         $start_date = match ($range) {
             '30' => now()->subDays(29)->startOfDay(),
-            '3' => now()->subMonths(3)->startOfDay(),
-            '1' => now()->subYear()->startOfDay(),
+            '3' => now()->subMonths(2)->startOfDay(),
+            '1' => now()->subMonths(11)->startOfDay(),
             default => now()->subDays(6)->startOfDay(),
         };
 
+        $date_format = ($range === '3' || $range === '1') ? 'DATE_FORMAT(created_at, "%Y-%m-01")' : 'DATE(created_at)';
+
         $intelijen = DB::table('intelijen')
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->selectRaw($date_format . ' as date, COUNT(*) as count')
             ->whereBetween('created_at', [$start_date, $end_date])
             ->whereNull('deleted_at')
             ->groupBy('date')
             ->get();
 
         $penindakan = DB::table('penindakan')
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->selectRaw($date_format . ' as date, COUNT(*) as count')
             ->whereBetween('created_at', [$start_date, $end_date])
             ->whereNull('deleted_at')
             ->groupBy('date')
             ->get();
 
         $penyidikan = DB::table('penyidikan')
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->selectRaw($date_format . ' as date, COUNT(*) as count')
             ->whereBetween('created_at', [$start_date, $end_date])
             ->whereNull('deleted_at')
             ->groupBy('date')
@@ -252,8 +251,8 @@ class MonitoringBHP extends Controller
         $first_date = collect([$first_intelijen, $first_penindakan, $first_penyidikan])->filter()->min();
 
         if ($first_date) {
-            $months_diff = Carbon::parse($first_date)->diffInMonths(Carbon::now()) + 1; // +1 untuk mengikutsertakan bulan berjalan
-            $average_per_month = $months_diff > 0  ? round(($total_dokumen / $months_diff), 1) : $total_dokumen; 
+            $months_diff = Carbon::parse($first_date)->diffInMonths(Carbon::now()) + 1;
+            $average_per_month = $months_diff > 0  ? round(($total_dokumen / $months_diff), 1) : $total_dokumen;
         } else {
             $average_per_month = 0;
         }
@@ -289,13 +288,27 @@ class MonitoringBHP extends Controller
 
         $dates = collect();
         $current_date = $start_date->copy();
-        while ($current_date <= $end_date) {
-            $dates->push($current_date->format('Y-m-d'));
-            $current_date->addDay();
+        
+        if ($range === '3' || $range === '1') {
+            $current_date->startOfMonth();
+            while ($current_date <= $end_date) {
+                $dates->push($current_date->format('Y-m-01'));
+                $current_date->addMonth();
+            }
+        } else {
+            while ($current_date <= $end_date) {
+                $dates->push($current_date->format('Y-m-d'));
+                $current_date->addDay();
+            }
         }
 
         $chart_data = [
-            'labels' => $dates->map(fn($date) => Carbon::parse($date)->format('d M')),
+            'labels' => $dates->map(function($date) use ($range) {
+                $carbon_date = Carbon::parse($date);
+                return $range === '1' || $range === '3' ? 
+                    $carbon_date->format('M Y') : 
+                    $carbon_date->format('d M');
+            }),
             'datasets' => [
                 [
                     'label' => 'Intelijen',

@@ -110,22 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(url)
             .then((response) => response.json())
             .then((data) => {
-                if (range === "7" || range === "30") {
-                    chart_data = data;
-                } else {
-                    const monthlyData = {
-                        labels: [...new Set(data.labels.map(date => {
-                            const [day, month] = date.split(' ');
-                            return month;
-                        }))],
-                        datasets: data.datasets.map(dataset => ({
-                            ...dataset,
-                            data: groupDataByMonth(data.labels, dataset.data)
-                        })),
-                        stats: data.stats
-                    };
-                    chart_data = monthlyData;
-                }
+                chart_data = data;
                 perbarui_chart();
                 perbarui_statistik(data.stats);
             })
@@ -138,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const monthlyTotals = {};
         
         labels.forEach((label, index) => {
-            const month = label.split(' ')[1];
+            const month = label;
             monthlyTotals[month] = (monthlyTotals[month] || 0) + data[index];
         });
 
