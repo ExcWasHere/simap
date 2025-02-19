@@ -102,225 +102,316 @@
         @endif
 
         @if ($section === 'penindakan')
-            <div data-section="penindakan" class="space-y-4">
-                @include('shared.forms.input', [
-                    'label' => 'Tanggal Laporan',
-                    'name' => 'tanggal_laporan',
-                    'id' => 'edit_tanggal_laporan',
-                    'type' => 'date',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Jenis Barang',
-                    'name' => 'jenis_barang',
-                    'id' => 'edit_jenis_barang',
-                    'type' => 'text',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'No. SBP',
-                    'name' => 'no_sbp',
-                    'id' => 'edit_no_sbp',
-                    'type' => 'text',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Tanggal SBP',
-                    'name' => 'tanggal_sbp',
-                    'id' => 'edit_tanggal_sbp',
-                    'type' => 'date',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'No. PRINT',
-                    'name' => 'no_print',
-                    'id' => 'edit_no_print',
-                    'type' => 'text',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Tanggal PRINT',
-                    'name' => 'tanggal_print',
-                    'id' => 'edit_tanggal_print',
-                    'type' => 'date',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Nama dan Jenis Sarkut',
-                    'name' => 'nama_jenis_sarkut',
-                    'id' => 'edit_nama_jenis_sarkut',
-                    'type' => 'text',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Pengemudi',
-                    'name' => 'pengemudi',
-                    'id' => 'edit_pengemudi',
-                    'type' => 'text',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Nomor Polisi',
-                    'name' => 'no_polisi',
-                    'id' => 'edit_no_polisi',
-                    'type' => 'text',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Bangunan',
-                    'name' => 'bangunan',
-                    'id' => 'edit_bangunan',
-                    'type' => 'text',
-                    'data_required' => true,
-                ]) @include('shared.forms.input', [
-                    'label' => 'Pemilik Bangunan',
-                    'name' => 'nama_pemilik',
-                    'id' => 'edit_nama_pemilik',
-                    'type' => 'text',
-                    'data_required' => true,
-                ]) @include('shared.forms.input', [
-                    'label' => 'Nomor KTP',
-                    'name' => 'no_ktp',
-                    'id' => 'edit_no_ktp',
-                    'type' => 'number',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Pelaku',
-                    'name' => 'pelaku',
-                    'id' => 'edit_pelaku',
-                    'type' => 'text',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Nomor HP',
-                    'name' => 'no_hp',
-                    'id' => 'edit_no_hp',
-                    'type' => 'number',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Tempat Lahir',
-                    'name' => 'tempat_lahir',
-                    'id' => 'edit_tempat_lahir',
-                    'type' => 'text',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Tanggal Lahir',
-                    'name' => 'tanggal_lahir',
-                    'id' => 'edit_tanggal_lahir',
-                    'type' => 'date',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Pekerjaan',
-                    'name' => 'pekerjaan',
-                    'id' => 'edit_pekerjaan',
-                    'type' => 'text',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Alamat',
-                    'name' => 'alamat',
-                    'id' => 'edit_alamat',
-                    'type' => 'text',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.textarea', [
-                    'label' => 'Lokasi Penindakan',
-                    'name' => 'lokasi_penindakan',
-                    'id' => 'edit_lokasi_penindakan',
-                    'rows' => 3,
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Waktu Awal Penindakan',
-                    'name' => 'waktu_awal_penindakan',
-                    'id' => 'edit_waktu_awal_penindakan',
-                    'type' => 'datetime-local',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Waktu Akhir Penindakan',
-                    'name' => 'waktu_akhir_penindakan',
-                    'id' => 'edit_waktu_akhir_penindakan',
-                    'type' => 'datetime-local',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Jenis Pelanggaran',
-                    'name' => 'jenis_pelanggaran',
-                    'id' => 'edit_jenis_pelanggaran',
-                    'type' => 'text',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Pasal',
-                    'name' => 'pasal',
-                    'id' => 'edit_pasal',
-                    'type' => 'text',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.textarea', [
-                    'label' => 'Uraian BHP',
-                    'name' => 'uraian_bhp',
-                    'id' => 'edit_uraian_bhp',
-                    'rows' => 2,
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Jumlah',
-                    'name' => 'jumlah',
-                    'id' => 'edit_jumlah',
-                    'type' => 'number',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.select', [
-                    'label' => 'Kemasan',
-                    'name' => 'kemasan',
-                    'id' => 'edit_kemasan',
-                    'options' => [
-                        'batang' => 'Batang',
-                        'liter' => 'Liter',
-                    ],
-                ])
-                @include('shared.forms.mata-uang', [
-                    'label' => 'Perkiraan Nilai Barang',
-                    'name' => 'perkiraan_nilai_barang',
-                    'id' => 'edit_perkiraan_nilai_barang',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.mata-uang', [
-                    'label' => 'Potensi Kurang Bayar',
-                    'name' => 'potensi_kurang_bayar',
-                    'id' => 'edit_potensi_kurang_bayar',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Petugas 1',
-                    'name' => 'petugas_1',
-                    'id' => 'edit_petugas_1',
-                    'type' => 'name',
-                    'data_required' => true,
-                ])
-                @include('shared.forms.input', [
-                    'label' => 'Petugas 2',
-                    'name' => 'petugas_2',
-                    'id' => 'edit_petugas_2',
-                    'type' => 'name',
-                    'data_required' => true,
-                ])
+            <div data-section="penindakan" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Tanggal Laporan<span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" id="edit_tanggal_laporan" name="tanggal_laporan"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Jenis Barang<span class="text-red-500">*</span>
+                        </label>
+                        <select id="edit_jenis_barang" name="jenis_barang"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                            <option value="NPP">NPP</option>
+                            <option value="lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Nomor SBP<span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="edit_no_sbp" name="no_sbp"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Tanggal SBP<span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" id="edit_tanggal_sbp" name="tanggal_sbp"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Nomor PRINT<span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="edit_no_print" name="no_print"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Tanggal PRINT<span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" id="edit_tanggal_print" name="tanggal_print"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Nama dan Jenis Sarkut
+                        </label>
+                        <input type="text" id="edit_nama_jenis_sarkut" name="nama_jenis_sarkut"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Pengemudi
+                        </label>
+                        <input type="text" id="edit_pengemudi" name="pengemudi"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Nomor Polisi
+                        </label>
+                        <input type="text" id="edit_no_polisi" name="no_polisi"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Bangunan<span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="edit_bangunan" name="bangunan"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Pemilik Bangunan<span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="edit_nama_pemilik" name="nama_pemilik"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Nomor KTP<span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" id="edit_no_ktp" name="no_ktp"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Pelaku<span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="edit_pelaku" name="pelaku"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Nomor HP<span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" id="edit_no_hp" name="no_hp"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Tempat Lahir<span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="edit_tempat_lahir" name="tempat_lahir"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Tanggal Lahir<span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" id="edit_tanggal_lahir" name="tanggal_lahir"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Pekerjaan<span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="edit_pekerjaan" name="pekerjaan"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Alamat<span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="edit_alamat" name="alamat"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Lokasi Penindakan<span class="text-red-500">*</span>
+                        </label>
+                        <textarea id="edit_lokasi_penindakan" name="lokasi_penindakan" rows="3"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required></textarea>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Waktu Awal Penindakan<span class="text-red-500">*</span>
+                        </label>
+                        <input type="datetime-local" id="edit_waktu_awal_penindakan" name="waktu_awal_penindakan"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Waktu Akhir Penindakan<span class="text-red-500">*</span>
+                        </label>
+                        <input type="datetime-local" id="edit_waktu_akhir_penindakan" name="waktu_akhir_penindakan"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Jenis Pelanggaran<span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="edit_jenis_pelanggaran" name="jenis_pelanggaran"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Pasal<span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="edit_pasal" name="pasal"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Uraian BHP<span class="text-red-500">*</span>
+                        </label>
+                        <textarea id="edit_uraian_bhp" name="uraian_bhp" rows="2"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Jumlah<span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" id="edit_jumlah" name="jumlah"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Kemasan
+                        </label>
+                        <select id="edit_kemasan" name="kemasan"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            <option value="batang">Batang</option>
+                            <option value="liter">Liter</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Perkiraan Nilai Barang<span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="edit_perkiraan_nilai_barang" name="perkiraan_nilai_barang"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mata-uang"
+                            required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Potensi Kurang Bayar<span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="edit_potensi_kurang_bayar" name="potensi_kurang_bayar"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mata-uang"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Petugas 1<span class="text-red-500">*</span>
+                        </label>
+                        <select id="edit_petugas_1" name="petugas_1"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                            <option value="FREDI CANDRA SETIAWAN">FREDI CANDRA SETIAWAN</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Petugas 2<span class="text-red-500">*</span>
+                        </label>
+                        <select id="edit_petugas_2" name="petugas_2"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                            <option value="FREDI CANDRA SETIAWAN">FREDI CANDRA SETIAWAN</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-            @include('shared.forms.signature-pad', [
-                'label' => 'Tanda Tangan Pelapor',
-                'name' => 'ttd_petugas_1',
-                'index' => 1,
-            ])
+
             @include('shared.forms.signature-pad', [
                 'label' => 'Tanda Tangan Pelaku',
-                'name' => 'ttd_petugas_2',
-                'index' => 2,
+                'name' => 'ttd_pelaku',
+                'index' => 1,
             ])
         @endif
     </form>
@@ -386,11 +477,8 @@
                             if (typeof initializeAllSignaturePads === 'function') {
                                 initializeAllSignaturePads();
                             }
-                            if (recordData.ttd_petugas_1) {
-                                setSignatureData(1, recordData.ttd_petugas_1);
-                            }
-                            if (recordData.ttd_petugas_2) {
-                                setSignatureData(2, recordData.ttd_petugas_2);
+                            if (recordData.ttd_pelaku) {
+                                setSignatureData(1, recordData.ttd_pelaku);
                             }
                         }, 100);
                     }
@@ -527,11 +615,8 @@
                                 initializeAllSignaturePads();
                             }
 
-                            if (recordData.ttd_petugas_1) {
-                                setSignatureData(1, recordData.ttd_petugas_1);
-                            }
-                            if (recordData.ttd_petugas_2) {
-                                setSignatureData(2, recordData.ttd_petugas_2);
+                            if (recordData.ttd_pelaku) {
+                                setSignatureData(1, recordData.ttd_pelaku);
                             }
                         }, 100);
                     }
@@ -575,7 +660,6 @@
 
                         if (typeof saveSignature === 'function') {
                             saveSignature(1);
-                            saveSignature(2);
                         }
 
                         const formData = new FormData(this);

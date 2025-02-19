@@ -69,25 +69,37 @@ class Penindakan extends Controller
     {
         try {
             DB::beginTransaction();
+            Log::info('Mencoba untuk menambahkan data penindakan', $request->all());
 
             $validated = $request->validate([
+                // Data SBP (Surat Bukti Penindakan)
                 'no_sbp' => ['required', 'string', 'max:255', 'unique:penindakan,no_sbp'],
                 'tanggal_sbp' => ['required', 'date'],
                 'tanggal_laporan' => ['required', 'date'],
-                'lokasi_penindakan' => ['required', 'string'],
-                'pelaku' => ['required', 'string', 'max:255'],
+                'no_print' => ['required', 'string', 'max:255'],
+                'tanggal_print' => ['required', 'date'],
+
+                // Informasi Barang
+                'jenis_barang' => ['required', 'string', 'max:255'],
                 'uraian_bhp' => ['required', 'string'],
                 'jumlah' => ['required', 'integer', 'min:1'],
                 'kemasan' => ['required', 'string', 'max:255'],
                 'perkiraan_nilai_barang' => ['required', 'numeric', 'min:0'],
                 'potensi_kurang_bayar' => ['required', 'numeric', 'min:0'],
-                'jenis_barang' => ['required', 'string', 'max:255'],
-                'no_print' => ['required', 'string', 'max:255'],
-                'tanggal_print' => ['required', 'date'],
+
+                // Lokasi dan Waktu Penindakan
+                'lokasi_penindakan' => ['required', 'string'],
+                'waktu_awal_penindakan' => ['required', 'date'],
+                'waktu_akhir_penindakan' => ['required', 'date', 'after:waktu_awal_penindakan'],
+
+                // Informasi Sarana Pengangkut
                 'nama_jenis_sarkut' => ['required', 'string', 'max:255'],
                 'pengemudi' => ['required', 'string', 'max:255'],
                 'no_polisi' => ['required', 'string', 'max:255'],
                 'bangunan' => ['required', 'string', 'max:255'],
+
+                // Data Pelaku
+                'pelaku' => ['required', 'string', 'max:255'],
                 'nama_pemilik' => ['required', 'string', 'max:255'],
                 'no_ktp' => ['required', 'string', 'max:20'],
                 'no_hp' => ['required', 'string', 'max:20'],
@@ -95,10 +107,12 @@ class Penindakan extends Controller
                 'tanggal_lahir' => ['required', 'date'],
                 'pekerjaan' => ['required', 'string', 'max:255'],
                 'alamat' => ['required', 'string'],
-                'waktu_awal_penindakan' => ['required', 'date'],
-                'waktu_akhir_penindakan' => ['required', 'date', 'after:waktu_awal_penindakan'],
+
+                // Informasi Pelanggaran
                 'jenis_pelanggaran' => ['required', 'string', 'max:255'],
                 'pasal' => ['required', 'string', 'max:255'],
+
+                // Data Petugas
                 'petugas_1' => ['required', 'string', 'max:255'],
                 'petugas_2' => ['required', 'string', 'max:255'],
             ]);
@@ -113,8 +127,10 @@ class Penindakan extends Controller
                 ->with('success', 'Data penindakan berhasil disimpan!');
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Kesalahan dalam menyimpan data penindakan: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
+            Log::error('Gagal untuk menambahkan data penindakan', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
 
             return redirect()
                 ->back()
@@ -197,7 +213,7 @@ class Penindakan extends Controller
 
             usort($documents, fn($a, $b) => $a['priority'] <=> $b['priority']);
             $generatedDocuments = [];
-            $now = now(); 
+            $now = now();
 
             foreach ($documents as $doc) {
                 $pdf = Pdf::loadView($doc['view'], ['penindakan' => $penindakan]);
@@ -211,8 +227,8 @@ class Penindakan extends Controller
                     'reference_id' => $penindakan->no_sbp,
                     'uploaded_by' => Auth::id(),
                     'module' => 'penindakan',
-                    'created_at' => $now, 
-                    'updated_at' => $now 
+                    'created_at' => $now,
+                    'updated_at' => $now
                 ];
             }
 
@@ -223,7 +239,6 @@ class Penindakan extends Controller
                 'storage_path' => $storagePath,
                 'document_count' => count($documents)
             ]);
-
         } catch (Exception $e) {
             Log::error('Error generating PDFs: ' . $e->getMessage(), [
                 'no_sbp' => $penindakan->no_sbp,
@@ -288,29 +303,42 @@ class Penindakan extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
+            Log::info('Mencoba untuk mengupdate data penindakan', $request->all());
+
             if (!$no_sbp) throw new Exception('No. SBP tidak valid!');
 
             $penindakan = PenindakanModel::where('no_sbp', $no_sbp)->firstOrFail();
 
             $validated = $request->validate([
+                // Data SBP (Surat Bukti Penindakan)
                 'no_sbp' => ['required', 'string', 'max:255', 'unique:penindakan,no_sbp,' . $penindakan->id . ',id,deleted_at,NULL'],
                 'tanggal_sbp' => ['required', 'date'],
                 'tanggal_laporan' => ['required', 'date'],
-                'lokasi_penindakan' => ['required', 'string', 'max:255'],
-                'pelaku' => ['required', 'string', 'max:255'],
+                'no_print' => ['required', 'string', 'max:255'],
+                'tanggal_print' => ['required', 'date'],
+
+                // Informasi Barang
+                'jenis_barang' => ['required', 'string', 'max:255'],
                 'uraian_bhp' => ['required', 'string', 'max:255'],
                 'jumlah' => ['required', 'integer', 'min:1'],
                 'kemasan' => ['required', 'string', 'max:255'],
                 'perkiraan_nilai_barang' => ['required', 'numeric', 'min:0'],
                 'potensi_kurang_bayar' => ['required', 'numeric', 'min:0'],
-                'jenis_barang' => ['required', 'string', 'max:255'],
-                'no_print' => ['required', 'string', 'max:255'],
-                'tanggal_print' => ['required', 'date'],
+
+                // Lokasi dan Waktu Penindakan
+                'lokasi_penindakan' => ['required', 'string', 'max:255'],
+                'waktu_awal_penindakan' => ['required', 'date'],
+                'waktu_akhir_penindakan' => ['required', 'date', 'after:waktu_awal_penindakan'],
+
+                // Informasi Sarana Pengangkut
                 'nama_jenis_sarkut' => ['required', 'string', 'max:255'],
                 'pengemudi' => ['required', 'string', 'max:255'],
                 'no_polisi' => ['required', 'string', 'max:255'],
                 'bangunan' => ['required', 'string', 'max:255'],
+
+                // Data Pelaku
+                'pelaku' => ['required', 'string', 'max:255'],
                 'nama_pemilik' => ['required', 'string', 'max:255'],
                 'no_ktp' => ['required', 'string', 'max:20'],
                 'no_hp' => ['required', 'string', 'max:20'],
@@ -318,12 +346,17 @@ class Penindakan extends Controller
                 'tanggal_lahir' => ['required', 'date'],
                 'pekerjaan' => ['required', 'string', 'max:255'],
                 'alamat' => ['required', 'string'],
-                'waktu_awal_penindakan' => ['required', 'date'],
-                'waktu_akhir_penindakan' => ['required', 'date', 'after:waktu_awal_penindakan'],
+
+                // Informasi Pelanggaran
                 'jenis_pelanggaran' => ['required', 'string', 'max:255'],
                 'pasal' => ['required', 'string', 'max:255'],
+
+                // Data Petugas
                 'petugas_1' => ['required', 'string', 'max:255'],
                 'petugas_2' => ['required', 'string', 'max:255'],
+
+                // Tanda Tangan
+                'ttd_pelaku' => ['nullable', 'string'],
                 'ttd_petugas_1' => ['nullable', 'string'],
                 'ttd_petugas_2' => ['nullable', 'string'],
             ]);
@@ -340,8 +373,10 @@ class Penindakan extends Controller
             ]);
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Kesalahan dalam memperbarui data penindakan: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
+            Log::error('Gagal memperbarui data penindakan', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
 
             return response()->json([
                 'success' => false,

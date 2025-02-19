@@ -19,23 +19,34 @@ class Penindakan extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
+        // Data SBP (Surat Bukti Penindakan)
         'no_sbp',
         'tanggal_sbp',
         'tanggal_laporan',
-        'lokasi_penindakan',
-        'pelaku',
+        'no_print',
+        'tanggal_print',
+        
+        // Informasi Barang
+        'jenis_barang',
         'uraian_bhp',
         'jumlah',
         'kemasan',
         'perkiraan_nilai_barang',
         'potensi_kurang_bayar',
-        'jenis_barang',
-        'no_print',
-        'tanggal_print',
+        
+        // Lokasi dan Waktu Penindakan
+        'lokasi_penindakan',
+        'waktu_awal_penindakan',
+        'waktu_akhir_penindakan',
+        
+        // Informasi Sarana Pengangkut
         'nama_jenis_sarkut',
         'pengemudi',
         'no_polisi',
         'bangunan',
+        
+        // Data Pelaku
+        'pelaku',
         'nama_pemilik',
         'no_ktp',
         'no_hp',
@@ -43,14 +54,21 @@ class Penindakan extends Model
         'tanggal_lahir',
         'pekerjaan',
         'alamat',
-        'waktu_awal_penindakan',
-        'waktu_akhir_penindakan',
+        
+        // Informasi Pelanggaran
         'jenis_pelanggaran',
         'pasal',
+        
+        // Data Petugas
         'petugas_1',
         'petugas_2',
+        
+        // Tanda Tangan
+        'ttd_pelaku',
         'ttd_petugas_1',
         'ttd_petugas_2',
+        
+        // System Fields
         'status',
         'created_by',
         'updated_by'
