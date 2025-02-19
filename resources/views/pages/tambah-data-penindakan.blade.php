@@ -26,14 +26,12 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Tanggal Laporan<span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <input type="date" name="tanggal_laporan"
-                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                    placeholder="dd/mm/yyyy" required>
-                            </div>
+                            @include('shared.forms.input', [
+                                'name' => 'tanggal_laporan',
+                                'label' => 'Tanggal Laporan',
+                                'type' => 'date',
+                                'required' => true
+                            ])
                         </div>
 
                         <div>
@@ -41,151 +39,138 @@
                                 Jenis Barang<span class="text-red-500">*</span>
                             </label>
                             <select name="jenis_barang"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('jenis_barang') border-red-500 ring-1 ring-red-500 @enderror"
                                 required>
                                 <option value="NPP">NPP</option>
                                 <option value="lainnya">Lainnya</option>
                             </select>
+                            @error('jenis_barang')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Nomor SBP<span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="no_sbp"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                required>
+                            @include('shared.forms.input', [
+                                'name' => 'no_sbp',
+                                'label' => 'Nomor SBP',
+                                'required' => true
+                            ])
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Tanggal SBP<span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <input type="date" name="tanggal_sbp"
-                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                    placeholder="dd/mm/yyyy" required>
-                            </div>
+                            @include('shared.forms.input', [
+                                'name' => 'tanggal_sbp',
+                                'label' => 'Tanggal SBP',
+                                'type' => 'date',
+                                'required' => true
+                            ])
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Nomor PRINT<span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="no_print"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                required>
+                            @include('shared.forms.input', [
+                                'name' => 'no_print',
+                                'label' => 'Nomor PRINT',
+                                'required' => true
+                            ])
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Tanggal PRINT<span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <input type="date" name="tanggal_print"
-                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                    placeholder="dd/mm/yyyy" required>
-                            </div>
+                            @include('shared.forms.input', [
+                                'name' => 'tanggal_print',
+                                'label' => 'Tanggal PRINT',
+                                'type' => 'date',
+                                'required' => true
+                            ])
                         </div>
 
                         <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Nama dan Jenis Sarkut
-                                </label>
-                                <input type="text" name="nama_jenis_sarkut"
-                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                @include('shared.forms.input', [
+                                    'name' => 'nama_jenis_sarkut',
+                                    'label' => 'Nama dan Jenis Sarkut'
+                                ])
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Pengemudi
-                                </label>
-                                <input type="text" name="pengemudi"
-                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                @include('shared.forms.input', [
+                                    'name' => 'pengemudi',
+                                    'label' => 'Pengemudi'
+                                ])
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Nomor Polisi
-                                </label>
-                                <input type="text" name="no_polisi"
-                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                @include('shared.forms.input', [
+                                    'name' => 'no_polisi',
+                                    'label' => 'Nomor Polisi'
+                                ])
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Bangunan
-                            </label>
-                            <input type="text" name="bangunan"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            @include('shared.forms.input', [
+                                'name' => 'bangunan',
+                                'label' => 'Bangunan'
+                            ])
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Pemilik Bangunan
-                            </label>
-                            <input type="text" name="nama_pemilik"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            @include('shared.forms.input', [
+                                'name' => 'nama_pemilik',
+                                'label' => 'Pemilik Bangunan'
+                            ])
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Nomor KTP<span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="no_ktp"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                required>
+                            @include('shared.forms.input', [
+                                'name' => 'no_ktp',
+                                'label' => 'Nomor KTP',
+                                'required' => true
+                            ])
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Pemilik<span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="pelaku"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                required>
+                            @include('shared.forms.input', [
+                                'name' => 'pelaku',
+                                'label' => 'Pemilik',
+                                'required' => true
+                            ])
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Nomor HP<span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="no_hp"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                required>
+                            @include('shared.forms.input', [
+                                'name' => 'no_hp',
+                                'label' => 'Nomor HP',
+                                'required' => true
+                            ])
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Tempat Lahir<span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="tempat_lahir"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                required>
+                            @include('shared.forms.input', [
+                                'name' => 'tempat_lahir',
+                                'label' => 'Tempat Lahir',
+                                'required' => true
+                            ])
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Tanggal Lahir<span class="text-red-500">*</span>
-                            </label>
-                            <input type="date" name="tanggal_lahir"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                required>
+                            @include('shared.forms.input', [
+                                'name' => 'tanggal_lahir',
+                                'label' => 'Tanggal Lahir',
+                                'type' => 'date',
+                                'required' => true
+                            ])
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Pekerjaan<span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="pekerjaan"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                required>
+                            @include('shared.forms.input', [
+                                'name' => 'pekerjaan',
+                                'label' => 'Pekerjaan',
+                                'required' => true
+                            ])
                         </div>
                     </div>
 
@@ -195,8 +180,11 @@
                                 Alamat<span class="text-red-500">*</span>
                             </label>
                             <textarea name="alamat" rows="3"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                required></textarea>
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('alamat') border-red-500 ring-1 ring-red-500 @enderror"
+                                required>{{ old('alamat') }}</textarea>
+                            @error('alamat')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div>
@@ -204,28 +192,31 @@
                                 Lokasi Penindakan<span class="text-red-500">*</span>
                             </label>
                             <textarea name="lokasi_penindakan" rows="3"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                required></textarea>
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('lokasi_penindakan') border-red-500 ring-1 ring-red-500 @enderror"
+                                required>{{ old('lokasi_penindakan') }}</textarea>
+                            @error('lokasi_penindakan')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Waktu Awal Penindakan<span class="text-red-500">*</span>
-                            </label>
-                            <input type="datetime-local" name="waktu_awal_penindakan"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                required>
+                            @include('shared.forms.input', [
+                                'name' => 'waktu_awal_penindakan',
+                                'label' => 'Waktu Awal Penindakan',
+                                'type' => 'datetime-local',
+                                'required' => true
+                            ])
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Waktu Akhir Penindakan<span class="text-red-500">*</span>
-                            </label>
-                            <input type="datetime-local" name="waktu_akhir_penindakan"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                required>
+                            @include('shared.forms.input', [
+                                'name' => 'waktu_akhir_penindakan',
+                                'label' => 'Waktu Akhir Penindakan',
+                                'type' => 'datetime-local',
+                                'required' => true
+                            ])
                         </div>
                     </div>
 
@@ -235,11 +226,14 @@
                                 Jenis Pelanggaran<span class="text-red-500">*</span>
                             </label>
                             <select name="jenis_pelanggaran"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('jenis_pelanggaran') border-red-500 ring-1 ring-red-500 @enderror"
                                 required>
                                 <option value="DIDUGA MEMILIKI NARKOTIKA DAN/ATAU PSIKOTROPIKA">DIDUGA MEMILIKI NARKOTIKA
                                     DAN/ATAU PSIKOTROPIKA</option>
                             </select>
+                            @error('jenis_pelanggaran')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div>
@@ -247,59 +241,65 @@
                                 Pasal<span class="text-red-500">*</span>
                             </label>
                             <select name="pasal"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('pasal') border-red-500 ring-1 ring-red-500 @enderror"
                                 required>
                                 <option value="PASAL 62 UNDANG - UNDANG NOMOR 5 TAHUN 1997 TENTANG PSIKOTROPIKA">PASAL 62
                                     UNDANG - UNDANG NOMOR 5 TAHUN 1997 TENTANG PSIKOTROPIKA</option>
                             </select>
+                            @error('pasal')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Uraian BHP<span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" name="uraian_bhp"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                required>
+                            @include('shared.forms.input', [
+                                'name' => 'uraian_bhp',
+                                'label' => 'Uraian BHP',
+                                'required' => true
+                            ])
                         </div>
-
+                    
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Jumlah<span class="text-red-500">*</span>
-                            </label>
-                            <input type="number" name="jumlah"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                required>
+                            @include('shared.forms.input', [
+                                'name' => 'jumlah',
+                                'label' => 'Jumlah',
+                                'type' => 'number',
+                                'required' => true
+                            ])
                         </div>
-
+                    
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">
                                 Kemasan<span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="kemasan"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            <select name="kemasan"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('kemasan') border-red-500 ring-1 ring-red-500 @enderror"
                                 required>
+                                <option value="Batang">Batang</option>
+                                <option value="Liter">Liter</option>
+                            </select>
+                            @error('kemasan')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Perkiraan Nilai Barang<span class="text-red-500">*</span>
-                            </label>
-                            <input type="number" name="perkiraan_nilai_barang"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                required>
+                            @include('shared.forms.mata-uang', [
+                                'name' => 'perkiraan_nilai_barang',
+                                'label' => 'Perkiraan Nilai Barang',
+                                'required' => true
+                            ])
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">
-                                Potensi Kurang Bayar
-                            </label>
-                            <input type="number" name="potensi_kurang_bayar"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            @include('shared.forms.mata-uang', [
+                                'name' => 'potensi_kurang_bayar',
+                                'label' => 'Potensi Kurang Bayar'
+                            ])
                         </div>
                     </div>
 
@@ -317,10 +317,13 @@
                                 Petugas 1<span class="text-red-500">*</span>
                             </label>
                             <select name="petugas_1"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('petugas_1') border-red-500 ring-1 ring-red-500 @enderror"
                                 required>
                                 <option value="FREDI CANDRA SETIAWAN">FREDI CANDRA SETIAWAN</option>
                             </select>
+                            @error('petugas_1')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div>
@@ -328,10 +331,13 @@
                                 Petugas 2<span class="text-red-500">*</span>
                             </label>
                             <select name="petugas_2"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('petugas_2') border-red-500 ring-1 ring-red-500 @enderror"
                                 required>
                                 <option value="FREDI CANDRA SETIAWAN">FREDI CANDRA SETIAWAN</option>
                             </select>
+                            @error('petugas_2')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
@@ -350,4 +356,3 @@
         </div>
     </main>
 @endsection
-
