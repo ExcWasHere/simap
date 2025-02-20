@@ -38,10 +38,10 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
 
-        $this->call([
-            IntelijenSeeder::class,
-            PenindakanSeeder::class,
-            PenyidikanSeeder::class,
-        ]);
+        // $this->call([
+        //     IntelijenSeeder::class,
+        //     PenindakanSeeder::class,
+        //     PenyidikanSeeder::class,
+        // ]);
     }
 }

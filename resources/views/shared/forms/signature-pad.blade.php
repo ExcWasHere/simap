@@ -256,7 +256,9 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const signatureInput = document.getElementById(`signature-input-${index}`);
-                if (signatureInput) signatureInput.value = e.target.result;
+                if (signatureInput) {
+                    signatureInput.value = e.target.result.replace(/^data:image\/(png|jpg);base64,/, '');
+                }
 
                 uploadWrapper.innerHTML = `
                     <div class="border rounded-lg p-2 bg-white">
@@ -324,7 +326,7 @@
                 inputElement.value = '';
             } else {
                 const dataURL = signaturePad.toDataURL();
-                inputElement.value = dataURL;
+                inputElement.value = dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
                 console.log(`Signature ${index} saved:`, inputElement.value.substring(0, 100) + '...');
             }
         }

@@ -658,13 +658,16 @@
                         const buttonText = submitButton.querySelector('span');
                         if (buttonText) buttonText.textContent = 'Menyimpan...';
 
+                        // Pastikan signature data tersimpan
                         if (typeof saveSignature === 'function') {
-                            saveSignature(1);
+                            saveSignature(1); // Save pelaku signature
                         }
 
                         const formData = new FormData(this);
-                        const section = window.location.pathname.split('/')[1];
                         const jsonData = Object.fromEntries(formData);
+
+                        // Debug log untuk memastikan ttd_pelaku terkirim
+                        console.log('TTD Pelaku:', jsonData.ttd_pelaku?.substring(0, 100));
 
                         const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
                         if (!token) throw new Error('CSRF token not found');

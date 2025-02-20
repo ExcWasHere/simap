@@ -55,7 +55,7 @@ return new class extends Migration {
             $table->string('petugas_2');
             
             // Tanda Tangan
-            $table->string('ttd_pelaku')->nullable();
+            $table->text('ttd_pelaku')->nullable();
             $table->text('ttd_petugas_1')->nullable();
             $table->text('ttd_petugas_2')->nullable();
             

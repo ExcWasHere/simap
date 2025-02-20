@@ -112,9 +112,15 @@ class Penindakan extends Controller
                 'jenis_pelanggaran' => ['required', 'string', 'max:255'],
                 'pasal' => ['required', 'string', 'max:255'],
 
+
                 // Data Petugas
                 'petugas_1' => ['required', 'string', 'max:255'],
                 'petugas_2' => ['required', 'string', 'max:255'],
+
+                // Tanda Tangan
+                'ttd_pelaku' => ['nullable', 'string'],
+                'ttd_petugas_1' => ['nullable', 'string'],
+                'ttd_petugas_2' => ['nullable', 'string'],
             ]);
 
             $validated['created_by'] = Auth::id();
@@ -142,6 +148,13 @@ class Penindakan extends Controller
     private function generate_sp_pdf(PenindakanModel $penindakan)
     {
         try {
+            // Add debug logging untuk ttd
+            Log::info('TTD Pelaku data:', [
+                'ttd_exists' => !empty($penindakan->ttd_pelaku),
+                'ttd_length' => strlen($penindakan->ttd_pelaku ?? ''),
+                'ttd_preview' => substr($penindakan->ttd_pelaku ?? '', 0, 100)
+            ]);
+
             $penindakan->load('creator', 'updater');
             $storagePath = sprintf('dokumen/penindakan/%s/modul_penindakan', rawurlencode($penindakan->no_sbp));
 
