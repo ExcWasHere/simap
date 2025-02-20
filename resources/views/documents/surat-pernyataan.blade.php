@@ -40,6 +40,12 @@
             font-weight: normal;
             text-align: right;
         }
+        .signature-img {
+            height: 60px;
+            max-width: 150px;
+            display: block;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
@@ -88,7 +94,11 @@
     <footer>
         <h6>{{ $penindakan->lokasi_penindakan }}, {{ $penindakan->tanggal_sbp->format('d F Y') }}</h6>
         <h6>Yang membuat pernyataan</h6>
-        <br /><br /><br /><br /><br />
+        @if($penindakan->ttd_pelaku)
+            <img src="data:image/png;base64,{{ $penindakan->ttd_pelaku }}" alt="Tanda Tangan Pelaku" class="signature-img" />
+        @else
+            <br /><br /><br /><br />
+        @endif
         <h6>{{ $penindakan->pelaku }}</h6>
     </footer>
 </body>

@@ -138,7 +138,7 @@
                 <td style="vertical-align: top; width: 30%; font-size: 12px">
                     <br />
                     @if($penindakan->ttd_petugas_1)
-                        <img src="{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1" class="signature-img" />
+                        <img src="data:image/png;base64,{{ $penindakan->ttd_petugas_1 }}" alt="Tanda Tangan Petugas 1" class="signature-img" />
                     @else
                         <br /><br /><br />
                     @endif
@@ -150,7 +150,7 @@
                 <td style="vertical-align: top; width: 30%; font-size: 12px">
                     <br />
                     @if($penindakan->ttd_petugas_2)
-                        <img src="{{ $penindakan->ttd_petugas_2 }}" alt="Tanda Tangan Petugas 2" class="signature-img" />
+                        <img src="data:image/png;base64,{{ $penindakan->ttd_petugas_2 }}" alt="Tanda Tangan Petugas 2" class="signature-img" />
                     @else
                         <br /><br /><br />
                     @endif

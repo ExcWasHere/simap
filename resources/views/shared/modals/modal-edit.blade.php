@@ -438,51 +438,27 @@
                     }
 
                     editModal.classList.remove('hidden');
+                    window.currentRecordId = id;
+
                     const editForm = document.getElementById('edit-form');
                     if (editForm) {
                         editForm.reset();
                     }
-
-                    window.currentRecordId = id;
-
-                    const formFields = {
-                        intelijen: ['no_nhi', 'tanggal_nhi', 'tempat', 'jenis_barang', 'jumlah_barang', 'kemasan', 'keterangan'],
-                        penyidikan: ['no_spdp', 'tanggal_spdp', 'pelaku', 'keterangan'],
-                        penindakan: ['tanggal_laporan', 'jenis_barang', 'no_sbp', 'tanggal_sbp', 'no_print', 'tanggal_print', 
-                            'nama_jenis_sarkut', 'pengemudi', 'no_polisi', 'bangunan', 'nama_pemilik', 'no_ktp', 'pelaku', 
-                            'no_hp', 'tempat_lahir', 'tanggal_lahir', 'pekerjaan', 'alamat', 'lokasi_penindakan', 
-                            'waktu_awal_penindakan', 'waktu_akhir_penindakan', 'jenis_pelanggaran', 'pasal', 'uraian_bhp', 
-                            'jumlah', 'kemasan', 'perkiraan_nilai_barang', 'potensi_kurang_bayar', 'petugas_1', 'petugas_2']
-                    };
-
-                    const fields = formFields[section] || [];
-                    fields.forEach(field => {
-                        const value = recordData[field];
-                        if (value !== undefined) {
-                            const element = document.getElementById(`edit_${field}`);
-                            if (element) {
-                                if (element.type === 'datetime-local' && value) {
-                                    element.value = new Date(value).toISOString().slice(0, 16);
-                                } else if (element.type === 'date' && value) {
-                                    element.value = value.split('T')[0];
-                                } else {
-                                    element.value = value;
-                                }
-                            }
-                        }
-                    });
-
+                    
                     if (section === 'penindakan') {
                         setTimeout(() => {
                             if (typeof initializeAllSignaturePads === 'function') {
                                 initializeAllSignaturePads();
                             }
+                            
                             if (recordData.ttd_pelaku) {
-                                setSignatureData(1, recordData.ttd_pelaku);
+                                const signatureData = recordData.ttd_pelaku.includes('data:image') 
+                                    ? recordData.ttd_pelaku 
+                                    : `data:image/png;base64,${recordData.ttd_pelaku}`;
+                                setSignatureData(1, signatureData);
                             }
                         }, 100);
                     }
-
                 } catch (error) {
                     console.error('Error:', error);
                     alert('Gagal mengambil data: ' + error.message);
@@ -639,6 +615,8 @@
                 editForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
                     
+                    const section = window.location.pathname.split('/')[1];
+                    
                     if (!window.currentRecordId) {
                         showNotification('ID data tidak valid', 'error');
                         return;
@@ -658,16 +636,18 @@
                         const buttonText = submitButton.querySelector('span');
                         if (buttonText) buttonText.textContent = 'Menyimpan...';
 
-                        // Pastikan signature data tersimpan
                         if (typeof saveSignature === 'function') {
-                            saveSignature(1); // Save pelaku signature
+                            saveSignature(1); 
                         }
 
                         const formData = new FormData(this);
-                        const jsonData = Object.fromEntries(formData);
+                        
+                        const signatureInput = document.getElementById('signature-input-1');
+                        if (signatureInput && signatureInput.value) {
+                            formData.set('ttd_pelaku', signatureInput.value);
+                        }
 
-                        // Debug log untuk memastikan ttd_pelaku terkirim
-                        console.log('TTD Pelaku:', jsonData.ttd_pelaku?.substring(0, 100));
+                        const jsonData = Object.fromEntries(formData);
 
                         const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
                         if (!token) throw new Error('CSRF token not found');

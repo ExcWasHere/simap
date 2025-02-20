@@ -57,7 +57,7 @@ class Penindakan extends Controller
 
         return view('pages.penindakan', [
             'rows' => $rows,
-            'penindakan' => $penindakan
+            'penindakan' => $penindakan,
         ]);
     }
 
