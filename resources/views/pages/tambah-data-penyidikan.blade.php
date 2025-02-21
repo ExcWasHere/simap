@@ -58,11 +58,29 @@
                     <a href="{{ url()->previous() }}" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Batal
                     </a>
-                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Simpan
+                    <button type="submit" id="submit-button" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <span id="submit-text">Simpan</span>
+                        <span id="submit-spinner" class="hidden"><i class="fas fa-spinner fa-spin"></i></span>
                     </button>
                 </span>
             </form>
         </section>
     </main>
+
+    @push('skrip')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const form = document.getElementById('formulir-tambah-data');
+                const submitButton = document.getElementById('submit-button');
+                const submitText = document.getElementById('submit-text');
+                const submitSpinner = document.getElementById('submit-spinner');
+
+                form.addEventListener('submit', function() {
+                    submitButton.disabled = true;
+                    submitText.classList.add('hidden');
+                    submitSpinner.classList.remove('hidden');
+                });
+            });
+        </script>
+    @endpush
 @endsection

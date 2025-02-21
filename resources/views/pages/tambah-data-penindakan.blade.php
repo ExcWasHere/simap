@@ -15,7 +15,7 @@
                         <div class="flex items-center">
                             <svg class="w-5 h-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293 1.293a1 1 001.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 101.414 1.414L10 11.414l1.293 1.293a1 1 001.414-1.414L11.414 10l1.293-1.293a1 1 00-1.414-1.414L10 8.586 8.707 7.293z"
                                     clip-rule="evenodd" />
                             </svg>
                             <ul class="text-red-700">
@@ -27,7 +27,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('penindakan.store') }}" class="space-y-6">
+                <form method="POST" action="{{ route('penindakan.store') }}" class="space-y-6" id="penindakan-form">
                     @csrf
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
@@ -360,13 +360,14 @@
                             Debug Autofill
                         </button>
                         @endif
-                        <button type="button"
+                        <a href="{{ url()->previous() }}"
                             class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                             Batal
-                        </button>
-                        <button type="submit"
+                        </a>
+                        <button type="submit" id="submit-button"
                             class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Simpan
+                            <span id="submit-text">Simpan</span>
+                            <span id="submit-spinner" class="hidden"><i class="fas fa-spinner fa-spin"></i></span>
                         </button>
                     </div>
                 </form>
@@ -377,6 +378,17 @@
     @push('skrip')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                const form = document.getElementById('penindakan-form');
+                const submitButton = document.getElementById('submit-button');
+                const submitText = document.getElementById('submit-text');
+                const submitSpinner = document.getElementById('submit-spinner');
+
+                form.addEventListener('submit', function() {
+                    submitButton.disabled = true;
+                    submitText.classList.add('hidden');
+                    submitSpinner.classList.remove('hidden');
+                });
+
                 const petugas1Select = document.getElementById('petugas_1');
                 const petugas2Select = document.getElementById('petugas_2');
                 const ttdPetugas1Input = document.getElementById('ttd_petugas_1');
@@ -412,6 +424,8 @@
         </script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                const form = document.getElementById('penindakan-form');
+                const submitButton
 
                 const debugButton = document.getElementById('debug-autofill');
                 if (debugButton) {
