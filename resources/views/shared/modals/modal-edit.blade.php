@@ -421,6 +421,16 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             window.showEditModal = async function(id) {
+                const loadingOverlay = document.createElement('div');
+                loadingOverlay.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+                loadingOverlay.innerHTML = `
+                    <div class="bg-white p-4 rounded-lg flex items-center space-x-3">
+                        <i class="fas fa-spinner fa-spin text-blue-500"></i>
+                        <span>Memuat data...</span>
+                    </div>
+                `;
+                document.body.appendChild(loadingOverlay);
+
                 try {
                     const section = window.location.pathname.split('/')[1];
                     const response = await fetch(`/${section}/${id}/edit`);
@@ -437,31 +447,47 @@
                         throw new Error('Modal tidak ditemukan');
                     }
 
-                    editModal.classList.remove('hidden');
-                    window.currentRecordId = id;
-
                     const editForm = document.getElementById('edit-form');
                     if (editForm) {
                         editForm.reset();
                     }
-                    
+
+                    await new Promise(resolve => setTimeout(resolve, 100));
+
+                    const fields = formFields[section] || [];
+                    fields.forEach(field => {
+                        const value = recordData[field];
+                        if (value !== undefined) {
+                            setFormValue(`edit_${field}`, value);
+                        }
+                    });
+
                     if (section === 'penindakan') {
-                        setTimeout(() => {
-                            if (typeof initializeAllSignaturePads === 'function') {
-                                initializeAllSignaturePads();
-                            }
-                            
-                            if (recordData.ttd_pelaku) {
-                                const signatureData = recordData.ttd_pelaku.includes('data:image') 
-                                    ? recordData.ttd_pelaku 
-                                    : `data:image/png;base64,${recordData.ttd_pelaku}`;
-                                setSignatureData(1, signatureData);
-                            }
-                        }, 100);
+                        await new Promise(resolve => {
+                            setTimeout(() => {
+                                if (typeof initializeAllSignaturePads === 'function') {
+                                    initializeAllSignaturePads();
+                                }
+                                
+                                if (recordData.ttd_pelaku) {
+                                    const signatureData = recordData.ttd_pelaku.includes('data:image') 
+                                        ? recordData.ttd_pelaku 
+                                        : `data:image/png;base64,${recordData.ttd_pelaku}`;
+                                    setSignatureData(1, signatureData);
+                                }
+                                resolve();
+                            }, 100);
+                        });
                     }
+
+                    window.currentRecordId = id;
+                    editModal.classList.remove('hidden');
+
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('Gagal mengambil data: ' + error.message);
+                    showNotification('Gagal mengambil data: ' + error.message, 'error');
+                } finally {
+                    loadingOverlay.remove();
                 }
             };
 
@@ -517,24 +543,26 @@
                 }
 
                 try {
-                    if (element.type === 'datetime-local' && value) {
-                        const date = new Date(value);
-                        const formattedDate = date.toISOString().slice(0, 16);
-                        element.value = formattedDate;
-                    } else if (element.type === 'date' && value) {
-                        element.value = value.split('T')[0];
-                    } else if (element.type === 'number') {
-                        element.value = value || 0;
-                    } else if (element.classList.contains('mata-uang')) {
-                        element.value = value || 0;
-                        element.dispatchEvent(new Event('change'));
-                    } else if (element.tagName === 'SELECT') {
-                        if (value) element.value = value;
-                    } else {
-                        element.value = value || '';
-                    }
-
-                    debugLog(`Set ${id} to:`, element.value);
+                    setTimeout(() => {
+                        if (element.type === 'datetime-local' && value) {
+                            const date = new Date(value);
+                            const formattedDate = date.toISOString().slice(0, 16);
+                            element.value = formattedDate;
+                        } else if (element.type === 'date' && value) {
+                            element.value = value.split('T')[0];
+                        } else if (element.type === 'number') {
+                            element.value = value || 0;
+                        } else if (element.classList.contains('mata-uang')) {
+                            element.value = value || 0;
+                            element.dispatchEvent(new Event('change'));
+                        } else if (element.tagName === 'SELECT') {
+                            if (value) element.value = value;
+                            element.dispatchEvent(new Event('change'));
+                        } else {
+                            element.value = value || '';
+                        }
+                        debugLog(`Set ${id} to:`, element.value);
+                    }, 0);
                 } catch (error) {
                     debugLog(`Error setting value for ${id}:`, error);
                 }
