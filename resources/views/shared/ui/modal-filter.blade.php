@@ -1,5 +1,6 @@
 @php
     $active_tab = old('entity_type', request('entity_type', 'all'));
+    $current_sort = request('sort', 'abjad');
 @endphp
 
 @component('shared.ui.modal-base', [
@@ -9,6 +10,41 @@
     <form id="formulir-filter" class="space-y-6" method="GET">
         <input type="hidden" name="search" value="{{ request('search') }}">
         
+        @if(request()->segment(1) === 'intelijen')
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">
+                    Urutkan Berdasarkan
+                </label>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" onclick="setSort('abjad')" 
+                        class="px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200 
+                        {{ $current_sort === 'abjad' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700' }} 
+                        hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        A-Z (No. NHI)
+                    </button>
+                    <button type="button" onclick="setSort('latest')" 
+                        class="px-4 py-2 text-sm font-medium rounded-full transition-colors duration-200 
+                        {{ $current_sort === 'latest' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700' }} 
+                        hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Terbaru
+                    </button>
+                </div>
+            </div>
+            
+            <input type="hidden" name="sort" id="sort_type" value="{{ $current_sort }}">
+
+            <div class="relative">
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-gray-200"></div>
+                </div>
+                <div class="relative flex justify-center">
+                    <span class="px-3 bg-white text-sm text-gray-500">filter tanggal</span>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <div class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-3">
@@ -63,6 +99,17 @@
 
     @push('skrip')
     <script>
+        function setSort(sortType) {
+            document.getElementById('sort_type').value = sortType;
+            document.querySelectorAll('[onclick^="setSort"]').forEach(btn => {
+                btn.classList.remove('bg-blue-100', 'text-blue-700');
+                btn.classList.add('bg-gray-100', 'text-gray-700');
+            });
+            event.target.classList.remove('bg-gray-100', 'text-gray-700');
+            event.target.classList.add('bg-blue-100', 'text-blue-700');
+
+        }
+
         function setDateRange(period) {
             const today = new Date();
             let fromDate = new Date();
@@ -93,4 +140,4 @@
         }
     </script>
     @endpush
-@endcomponent 
+@endcomponent

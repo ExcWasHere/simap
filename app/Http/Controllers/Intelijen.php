@@ -33,6 +33,13 @@ class Intelijen extends Controller
         if ($date_from = $request->input('date_from')) $query->whereDate('tanggal_nhi', '>=', $date_from);
         if ($date_to = $request->input('date_to')) $query->whereDate('tanggal_nhi', '<=', $date_to);
 
+        $sort = $request->input('sort', 'abjad');
+        if ($sort === 'abjad') {
+            $query->orderBy('no_nhi', 'asc');
+        } else if ($sort === 'latest') {
+            $query->latest(); 
+        }
+
         $perPage = $request->input('per_page', 5);
         $intelijen = $query->orderBy('no_nhi')->paginate($perPage)->appends($request->query());
 
@@ -55,6 +62,53 @@ class Intelijen extends Controller
         ]);
     }
 
+    public function show(Request $request)
+    {
+        $query = IntelijenModel::query();
+        
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('no_nhi', 'like', "%{$search}%")
+                  ->orWhere('tempat', 'like', "%{$search}%")
+                  ->orWhere('jenis_barang', 'like', "%{$search}%");
+            });
+        }
+    
+        if ($date_from = $request->input('date_from')) {
+            $query->whereDate('tanggal_nhi', '>=', $date_from);
+        }
+        if ($date_to = $request->input('date_to')) {
+            $query->whereDate('tanggal_nhi', '<=', $date_to);
+        }
+    
+        $sort = $request->input('sort', 'abjad');
+        if ($sort === 'abjad') {
+            $query->orderBy('no_nhi', 'asc');
+        } else if ($sort === 'latest') {
+            $query->latest(); 
+        }
+    
+        $perPage = $request->input('per_page', 5);
+        $intelijen = $query->paginate($perPage)->appends($request->query());
+    
+        $rows = collect($intelijen->items())->map(function ($item, $index) use ($intelijen) {
+            return [
+                ($intelijen->currentPage() - 1) * $intelijen->perPage() + $index + 1,
+                $item->no_nhi,
+                $item->tanggal_nhi->format('d-m-Y'),
+                $item->tempat,
+                $item->jenis_barang,
+                $item->jumlah_barang,
+                $item->kemasan,
+                $item->keterangan,
+            ];
+        })->toArray();
+    
+        return view('pages.intelijen', [
+            'rows' => $rows,
+            'intelijen' => $intelijen
+        ]);
+    }
 
     /**
      * Controllers
