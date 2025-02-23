@@ -1,7 +1,5 @@
 <?php
 
-namespace App\Controllers;
-
 use App\Http\Controllers\Autentikasi;
 use App\Http\Controllers\Dokumen;
 use App\Http\Controllers\Ekspor;
@@ -77,7 +75,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('tambah-data')->group(function () {
         Route::get('/intelijen', fn() => view('pages.tambah-data-intelijen'))->name('tambah-data-intelijen');
         Route::get('/penindakan', fn() => view('pages.tambah-data-penindakan'))->name('tambah-data-penindakan');
-        Route::get('/penyidikan', fn() => view('pages.dokumen-penyidikan'))->name('tambah-data-penyidikan');
+        Route::get('/penyidikan', fn() => view('pages.tambah-data-penyidikan'))->name('tambah-data-penyidikan');
     });
 
     //  Autentikasi dan Data
