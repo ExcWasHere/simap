@@ -28,6 +28,13 @@ class Penyidikan extends Controller
         if ($date_from = $request->input('date_from')) $query->whereDate('tanggal_spdp', '>=', $date_from);
         if ($date_to = $request->input('date_to')) $query->whereDate('tanggal_spdp', '<=', $date_to);
 
+        $sort = $request->input('sort', 'abjad');
+        if ($sort === 'abjad') {
+            $query->orderBy('no_spdp', 'asc');
+        } else if ($sort === 'latest') {
+            $query->latest();
+        }
+
         $perPage = $request->input('per_page', 5);
         $penyidikan = $query->orderBy('no_spdp')->paginate($perPage)->appends($request->query());
 

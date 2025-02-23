@@ -10,7 +10,7 @@
     <form id="formulir-filter" class="space-y-6" method="GET">
         <input type="hidden" name="search" value="{{ request('search') }}">
         
-        @if(request()->segment(1) === 'intelijen')
+        @if(request()->segment(1) === 'intelijen' || request()->segment(1) === 'penyidikan')
         <div class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-3">
