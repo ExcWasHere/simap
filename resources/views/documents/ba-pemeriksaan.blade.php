@@ -95,7 +95,7 @@
         <h6>
             BERITA ACARA PEMERIKSAAN
             <br />
-            Nomor : {{ $penindakan->no_sbp }}
+            Nomor : BA-{{ $penindakan->no_sbp }}/Riksa/KBC.120302/2025
         </h6>
         <h6>
             Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, berdasarkan Surat Perintah / Surat

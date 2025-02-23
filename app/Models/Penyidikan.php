@@ -45,22 +45,11 @@ class Penyidikan extends Model
     protected static function boot()
     {
         parent::boot();
-
         static::deleting(function ($model) {
-            $model->dokumen()->each(function ($dokumen) {
-                $dokumen->delete(); 
-            });
-
+            $model->dokumen()->each(fn($dokumen) => $dokumen->delete());
             $storage_path = 'dokumen/penyidikan/' . $model->no_spdp;
-            if (Storage::disk('public')->exists($storage_path)) {
-                Storage::disk('public')->deleteDirectory($storage_path);
-            }
-
-            $timestamp = now()->format('YmdHis');
-            $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
-            $suffix = "_deleted_{$timestamp}{$random}";
-
-            $model->no_spdp = $model->no_spdp . $suffix;
+            if (Storage::disk('public')->exists($storage_path)) Storage::disk('public')->deleteDirectory($storage_path);
+            $model->no_spdp .= "_deleted_" . now()->format('YmdHis') . str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
             $model->save();
         });
     }

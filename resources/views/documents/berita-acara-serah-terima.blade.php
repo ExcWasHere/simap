@@ -102,7 +102,7 @@
         <h6>
             BERITA ACARA SERAH TERIMA
             <br />
-            Nomor : {{ $penindakan->no_print }}
+            Nomor : BAST-{{ $penindakan->no_print }}/KBC.120302/2025
         </h6>
         <h6 class="font-normal">
             Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, Saya/Kami* yang bertanda tangan di

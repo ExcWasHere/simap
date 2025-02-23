@@ -13,29 +13,18 @@ class User extends Authenticatable
     /**
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'nip',
-        'email',
-        'password',
-    ];
+    protected $fillable = ['name', 'nip', 'email', 'password'];
 
     /**
      * @var array<int, string>
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = ['password', 'remember_token'];
 
     /**
      * @return array<string, string>
      */
     protected function casts(): array
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return ['email_verified_at' => 'datetime', 'password' => 'hashed'];
     }
 }

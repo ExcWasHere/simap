@@ -10,24 +10,11 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class MonitoringBHP extends Controller
 {
-    public function show()
-    {
-        return view('pages.monitoring');
-    }
-
-    public function show_chart()
-    {
-        return view('pages.monitoring-chart');
-    }
-
-
-    /**
-     * Controllers
-     */
     public function ekspor_excel($type)
     {
         $spreadsheet = new Spreadsheet();
@@ -50,7 +37,6 @@ class MonitoringBHP extends Controller
             case 'rekap-tahunan':
                 $query->whereYear('tanggal_nhi', now()->year);
                 break;
-            case 'semua-data':
             default:
                 break;
         }
@@ -70,10 +56,7 @@ class MonitoringBHP extends Controller
 
         $sheet->getStyle('A1:G1')->applyFromArray([
             'font' => ['bold' => true],
-            'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startColor' => ['rgb' => 'E5E7EB']
-            ]
+            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'E5E7EB']]
         ]);
 
         // Sheet 2: Penyidikan
@@ -94,7 +77,6 @@ class MonitoringBHP extends Controller
             case 'rekap-tahunan':
                 $query->whereYear('tanggal_spdp', now()->year);
                 break;
-            case 'semua-data':
             default:
                 break;
         }
@@ -112,10 +94,7 @@ class MonitoringBHP extends Controller
 
         $sheet->getStyle('A1:E1')->applyFromArray([
             'font' => ['bold' => true],
-            'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startColor' => ['rgb' => 'E5E7EB']
-            ]
+            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'E5E7EB']]
         ]);
 
         // Sheet 3: Penindakan
@@ -136,7 +115,6 @@ class MonitoringBHP extends Controller
             case 'rekap-tahunan':
                 $query->whereYear('tanggal_sbp', now()->year);
                 break;
-            case 'semua-data':
             default:
                 break;
         }
@@ -156,7 +134,7 @@ class MonitoringBHP extends Controller
             $sheet->setCellValue('J' . $row, $item->potensi_kurang_bayar ? number_format($item->potensi_kurang_bayar, 0, ',', '.') : '-');
             $sheet->setCellValue('K' . $row, $item->jenis_barang);
             $sheet->setCellValue('L' . $row, $item->no_print);
-            $sheet->setCellValue('M' . $row, $item->tanggal_print ? \Carbon\Carbon::parse($item->tanggal_print)->format('d-m-Y') : '-');
+            $sheet->setCellValue('M' . $row, $item->tanggal_print ? Carbon::parse($item->tanggal_print)->format('d-m-Y') : '-');
             $sheet->setCellValue('N' . $row, $item->nama_jenis_sarkut);
             $sheet->setCellValue('O' . $row, $item->pengemudi);
             $sheet->setCellValue('P' . $row, $item->no_polisi);
@@ -181,31 +159,22 @@ class MonitoringBHP extends Controller
 
         $sheet->getStyle('A1:I1')->applyFromArray([
             'font' => ['bold' => true],
-            'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startColor' => ['rgb' => 'E5E7EB']
-            ]
+            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'E5E7EB']]
         ]);
 
         $spreadsheet->setActiveSheetIndex(0);
-
-        $writer = new Xlsx($spreadsheet);
-        $file_name = 'monitoring-bhp-' . $type . '-' . now()->format('Y-m-d') . '.xlsx';
-
         return response()->stream(
-            function () use ($writer) {
-                $writer->save('php://output');
-            },
+            fn() => (new Xlsx($spreadsheet))->save('php://output'),
             200,
             [
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition' => 'attachment; filename="' . $file_name . '"',
+                'Content-Disposition' => 'attachment; filename="' . 'monitoring-bhp-' . $type . '-' . now()->format('Y-m-d') . '.xlsx' . '"',
                 'Cache-Control' => 'max-age=0'
             ]
         );
     }
 
-    public function get_chart_data(Request $request)
+    public function mendapatkan_data_grafik(Request $request)
     {
         $range = $request->input('range', '7');
         $end_date = now();
@@ -247,17 +216,15 @@ class MonitoringBHP extends Controller
         $first_intelijen = DB::table('intelijen')->whereNull('deleted_at')->min('created_at');
         $first_penindakan = DB::table('penindakan')->whereNull('deleted_at')->min('created_at');
         $first_penyidikan = DB::table('penyidikan')->whereNull('deleted_at')->min('created_at');
-
         $first_date = collect([$first_intelijen, $first_penindakan, $first_penyidikan])->filter()->min();
 
         if ($first_date) {
             $months_diff = Carbon::parse($first_date)->diffInMonths(Carbon::now()) + 1;
-            $average_per_month = $months_diff > 0  ? round(($total_dokumen / $months_diff), 1) : $total_dokumen;
+            $average_per_month = $months_diff > 0 ? round($total_dokumen / $months_diff, 1) : $total_dokumen;
         } else {
             $average_per_month = 0;
         }
 
-        // Hitung pertumbuhan
         $last_month_count = DB::table('intelijen')
             ->whereMonth('created_at', now()->subMonth()->month)
             ->whereNull('deleted_at')
@@ -285,54 +252,44 @@ class MonitoringBHP extends Controller
                 ->count();
 
         $pertumbuhan = $last_month_count > 0 ? round((($this_month_count - $last_month_count) / $last_month_count) * 100, 1) : 0;
-
-        $dates = collect();
         $current_date = $start_date->copy();
-        
+
         if ($range === '3' || $range === '1') {
             $current_date->startOfMonth();
             while ($current_date <= $end_date) {
-                $dates->push($current_date->format('Y-m-01'));
+                collect()->push($current_date->format('Y-m-01'));
                 $current_date->addMonth();
             }
         } else {
             while ($current_date <= $end_date) {
-                $dates->push($current_date->format('Y-m-d'));
+                collect()->push($current_date->format('Y-m-d'));
                 $current_date->addDay();
             }
         }
 
-        $chart_data = [
-            'labels' => $dates->map(function($date) use ($range) {
+        return response()->json([
+            'labels' => collect()->map(function ($date) use ($range) {
                 $carbon_date = Carbon::parse($date);
-                return $range === '1' || $range === '3' ? 
-                    $carbon_date->format('M Y') : 
-                    $carbon_date->format('d M');
+                return $range === '1' || $range === '3' ? $carbon_date->format('M Y') : $carbon_date->format('d M');
             }),
             'datasets' => [
                 [
                     'label' => 'Intelijen',
-                    'data' => $dates->map(function ($date) use ($intelijen) {
-                        return $intelijen->firstWhere('date', $date)?->count ?? 0;
-                    }),
+                    'data' => collect()->map(fn($date) => $intelijen->firstWhere('date', $date))->count() ?? 0,
                     'borderColor' => '#3B82F6',
                     'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
                     'fill' => true
                 ],
                 [
                     'label' => 'Penindakan',
-                    'data' => $dates->map(function ($date) use ($penindakan) {
-                        return $penindakan->firstWhere('date', $date)?->count ?? 0;
-                    }),
+                    'data' => collect()->map(fn($date) => $penindakan->firstWhere('date', $date))->count() ?? 0,
                     'borderColor' => '#10B981',
                     'backgroundColor' => 'rgba(16, 185, 129, 0.1)',
                     'fill' => true
                 ],
                 [
                     'label' => 'Penyidikan',
-                    'data' => $dates->map(function ($date) use ($penyidikan) {
-                        return $penyidikan->firstWhere('date', $date)?->count ?? 0;
-                    }),
+                    'data' => collect()->map(fn($date) => $penyidikan->firstWhere('date', $date))?->count() ?? 0,
                     'borderColor' => '#F59E0B',
                     'backgroundColor' => 'rgba(245, 158, 11, 0.1)',
                     'fill' => true
@@ -343,8 +300,6 @@ class MonitoringBHP extends Controller
                 'pertumbuhan' => $pertumbuhan,
                 'average_per_month' => $average_per_month
             ]
-        ];
-
-        return response()->json($chart_data);
+        ]);
     }
 }

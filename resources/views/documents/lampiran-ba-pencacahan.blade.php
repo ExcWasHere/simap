@@ -51,7 +51,7 @@
         <tr>
             <td style="width: 15%">Nomor</td>
             <td style="width: 2%">:</td>
-            <td>{{ str_replace('PRINT', 'Riksa', $penindakan->no_print) }}</td>
+            <td>BA-{{ str_replace('PRINT', 'Riksa', $penindakan->no_print) }}/KBC.120302/CACAH/2025</td>
         </tr>
         <tr>
             <td style="width: 15%">Tanggal</td>

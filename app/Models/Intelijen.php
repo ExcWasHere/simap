@@ -53,20 +53,11 @@ class Intelijen extends Model
         parent::boot();
 
         static::deleting(function ($model) {
-            $model->dokumen()->each(function ($dokumen) {
-                $dokumen->delete(); 
-            });
-
+            $model->dokumen()->each(fn($dokumen) => $dokumen->delete());
             $storage_path = 'dokumen/intelijen/' . $model->no_nhi;
-            if (Storage::disk('public')->exists($storage_path)) {
-                Storage::disk('public')->deleteDirectory($storage_path);
-            }
+            if (Storage::disk('public')->exists($storage_path)) Storage::disk('public')->deleteDirectory($storage_path);
 
-            $timestamp = now()->format('YmdHis');
-            $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
-            $suffix = "_deleted_{$timestamp}{$random}";
-
-            $model->no_nhi = $model->no_nhi . $suffix;
+            $model->no_nhi .= "_deleted_" . now()->format('YmdHis') . str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);;
             $model->save();
         });
     }

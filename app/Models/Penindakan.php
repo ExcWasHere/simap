@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,7 +26,7 @@ class Penindakan extends Model
         'tanggal_laporan',
         'no_print',
         'tanggal_print',
-        
+
         // Informasi Barang
         'jenis_barang',
         'uraian_bhp',
@@ -33,18 +34,18 @@ class Penindakan extends Model
         'kemasan',
         'perkiraan_nilai_barang',
         'potensi_kurang_bayar',
-        
+
         // Lokasi dan Waktu Penindakan
         'lokasi_penindakan',
         'waktu_awal_penindakan',
         'waktu_akhir_penindakan',
-        
+
         // Informasi Sarana Pengangkut
         'nama_jenis_sarkut',
         'pengemudi',
         'no_polisi',
         'bangunan',
-        
+
         // Data Pelaku
         'pelaku',
         'nama_pemilik',
@@ -54,20 +55,20 @@ class Penindakan extends Model
         'tanggal_lahir',
         'pekerjaan',
         'alamat',
-        
+
         // Informasi Pelanggaran
         'jenis_pelanggaran',
         'pasal',
-        
+
         // Data Petugas
         'petugas_1',
         'petugas_2',
-        
+
         // Tanda Tangan
         'ttd_pelaku',
         'ttd_petugas_1',
         'ttd_petugas_2',
-        
+
         // System Fields
         'status',
         'created_by',
@@ -104,55 +105,41 @@ class Penindakan extends Model
     protected static function boot()
     {
         parent::boot();
+        static::deleting(fn($model) => self::hapus_dokumen_terkait($model));
+    }
 
-        static::deleting(function ($model) {
-            try {
-            Log::info('Mulai proses penghapusan dokumen terkait penindakan', [
-                'no_sbp' => $model->no_sbp
-            ]);
-
-            $timestamp = now()->format('YmdHis');
-            $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
-            $suffix = "_deleted_{$timestamp}{$random}";
-            
-            $old_no_sbp = $model->no_sbp;
-            $model->no_sbp = $old_no_sbp . $suffix;
-            $model->save();
-
-            $dokumen = $model->dokumen()->withTrashed()->get();
-            foreach ($dokumen as $doc) {
-                try {
-                $fullPath = storage_path('app/public/' . $doc->file_path);
-                if (file_exists($fullPath)) {
-                    unlink($fullPath);
-                    Log::info('File fisik berhasil dihapus', ['path' => $fullPath]);
-                }
-                
-                $doc->forceDelete();
-                Log::info('Record dokumen berhasil dihapus', ['id' => $doc->id]);
-                } catch (\Exception $e) {
-                Log::error('Gagal menghapus dokumen', [
-                    'id' => $doc->id,
-                    'error' => $e->getMessage()
-                ]);
-                }
-            }
-
-            $storage_path = storage_path('app/public/dokumen/penindakan/' . $old_no_sbp);
-            if (is_dir($storage_path)) {
-                array_map('unlink', glob("$storage_path/*.*"));
-                rmdir($storage_path);
-                Log::info('Direktori storage berhasil dihapus', ['path' => $storage_path]);
-            }
-
-            } catch (\Exception $e) {
-            Log::error('Error saat proses penghapusan dokumen', [
-                'no_sbp' => $model->no_sbp,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
+    private static function hapus_dokumen_terkait($model)
+    {
+        try {
+            Log::info('Menghapus dokumen terkait penindakan', ['no_sbp' => $model->no_sbp]);
+            $model->update(['no_sbp' => $model->no_sbp . "_deleted_" . now()->format('YmdHis') . "_" . str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT)]);
+            $model->dokumen()->withTrashed()->each(fn($doc) => self::hapus_berkas_dokumen($doc));
+            self::hapus_direktori("dokumen/penindakan/{$model->no_sbp}");
+        } catch (Exception $e) {
+            Log::error('Error saat menghapus dokumen', ['no_sbp' => $model->no_sbp, 'error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             throw $e;
+        }
+    }
+
+    private static function hapus_berkas_dokumen($docs)
+    {
+        try {
+            if ($docs->file_path && Storage::disk('public')->exists($docs->file_path)) {
+                Storage::disk('public')->delete($docs->file_path);
+                Log::info('File berhasil dihapus', ['path' => $docs->file_path]);
             }
-        });
+            $docs->forceDelete();
+            Log::info('Record dokumen berhasil dihapus', ['id' => $docs->id]);
+        } catch (Exception $e) {
+            Log::error('Gagal menghapus dokumen', [ 'id' => $docs->id, 'error' => $e->getMessage()]);
+        }
+    }
+
+    private static function hapus_direktori($path)
+    {
+        if (Storage::disk('public')->exists($path) && empty(Storage::disk('public')->files($path))) {
+            Storage::disk('public')->deleteDirectory($path);
+            Log::info('Direktori berhasil dihapus', ['path' => $path]);
+        }
     }
 }

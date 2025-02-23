@@ -111,7 +111,7 @@
         <h6>
             BERITA ACARA PENEGAHAN
             <br />
-            Nomor : {{ $penindakan->no_print }}
+            Nomor : BA-{{ $penindakan->no_print }}/Tegah/KBC.120302/2025
         </h6>
         <h6>
             Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, berdasarkan Surat Perintah:

@@ -34,15 +34,10 @@ class Intelijen extends Controller
         if ($date_to = $request->input('date_to')) $query->whereDate('tanggal_nhi', '<=', $date_to);
 
         $sort = $request->input('sort', 'abjad');
-        if ($sort === 'abjad') {
-            $query->orderBy('no_nhi', 'asc');
-        } else if ($sort === 'latest') {
-            $query->latest(); 
-        }
+        if ($sort === 'abjad') $query->orderBy('no_nhi', 'asc');
+        else if ($sort === 'latest') $query->latest();
 
-        $perPage = $request->input('per_page', 5);
-        $intelijen = $query->orderBy('no_nhi')->paginate($perPage)->appends($request->query());
-
+        $intelijen = $query->orderBy('no_nhi')->paginate($request->input('per_page', 5))->appends($request->query());
         $rows = collect($intelijen->items())->map(function ($item, $index) use ($intelijen) {
             return [
                 ($intelijen->currentPage() - 1) * $intelijen->perPage() + $index + 1,
@@ -56,58 +51,7 @@ class Intelijen extends Controller
             ];
         })->toArray();
 
-        return view('pages.intelijen', [
-            'rows' => $rows,
-            'intelijen' => $intelijen
-        ]);
-    }
-
-    public function show(Request $request)
-    {
-        $query = IntelijenModel::query();
-        
-        if ($search = $request->input('search')) {
-            $query->where(function($q) use ($search) {
-                $q->where('no_nhi', 'like', "%{$search}%")
-                  ->orWhere('tempat', 'like', "%{$search}%")
-                  ->orWhere('jenis_barang', 'like', "%{$search}%");
-            });
-        }
-    
-        if ($date_from = $request->input('date_from')) {
-            $query->whereDate('tanggal_nhi', '>=', $date_from);
-        }
-        if ($date_to = $request->input('date_to')) {
-            $query->whereDate('tanggal_nhi', '<=', $date_to);
-        }
-    
-        $sort = $request->input('sort', 'abjad');
-        if ($sort === 'abjad') {
-            $query->orderBy('no_nhi', 'asc');
-        } else if ($sort === 'latest') {
-            $query->latest(); 
-        }
-    
-        $perPage = $request->input('per_page', 5);
-        $intelijen = $query->paginate($perPage)->appends($request->query());
-    
-        $rows = collect($intelijen->items())->map(function ($item, $index) use ($intelijen) {
-            return [
-                ($intelijen->currentPage() - 1) * $intelijen->perPage() + $index + 1,
-                $item->no_nhi,
-                $item->tanggal_nhi->format('d-m-Y'),
-                $item->tempat,
-                $item->jenis_barang,
-                $item->jumlah_barang,
-                $item->kemasan,
-                $item->keterangan,
-            ];
-        })->toArray();
-    
-        return view('pages.intelijen', [
-            'rows' => $rows,
-            'intelijen' => $intelijen
-        ]);
+        return view('pages.intelijen', ['rows' => $rows, 'intelijen' => $intelijen]);
     }
 
     /**
@@ -135,18 +79,12 @@ class Intelijen extends Controller
             IntelijenModel::create($validated);
             DB::commit();
 
-            return redirect()
-                ->route('intelijen')
-                ->with('success', 'Data intelijen berhasil disimpan!');
+            return redirect()->route('intelijen')->with('success', 'Data intelijen berhasil disimpan!');
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Kesalahan dalam menyimpan data intelijen: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
-
-            return redirect()
-                ->back()
-                ->withInput()
-                ->withErrors(['error' => 'Gagal menyimpan data intelijen: ' . $e->getMessage()]);
+            Log::error('Terjadi kesalahan pada sistem: ' . $e->getTraceAsString());
+            return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menyimpan data intelijen: ' . $e->getMessage()]);
         }
     }
 
@@ -156,41 +94,26 @@ class Intelijen extends Controller
             DB::beginTransaction();
             Log::info('Mencoba menghapus catatan intelijen dengan No. NHI: ' . $no_nhi);
 
-            $intelijen = IntelijenModel::whereNull('deleted_at')
-                ->where('no_nhi', $no_nhi)
-                ->firstOrFail();
-
-            $timestamp = now()->format('YmdHis');
-            $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
-            $suffix = "_deleted_{$timestamp}{$random}";
-
-            $intelijen->no_nhi = $intelijen->no_nhi . $suffix;
+            $intelijen = IntelijenModel::whereNull('deleted_at')->where('no_nhi', $no_nhi)->firstOrFail();
+            $intelijen->no_nhi .= "_deleted_" . now()->format('YmdHis') . str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
             $intelijen->save();
             $intelijen->delete();
 
             Log::info('Berhasil menghapus catatan intelijen!');
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Data intelijen berhasil dihapus!'
-            ]);
+            return response()->json(['success' => true, 'message' => 'Data intelijen berhasil dihapus!']);
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Kesalahan dalam menghapus data intelijen: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menghapus data intelijen: ' . $e->getMessage()
-            ], 500);
+            Log::error('Terjadi kesalahan pada sistem: ' . $e->getTraceAsString());
+            return response()->json(['success' => false, 'message' => 'Gagal menghapus data intelijen: ' . $e->getMessage()], 500);
         }
     }
 
     public function edit($no_nhi)
     {
-        $intelijen = IntelijenModel::where('no_nhi', $no_nhi)->firstOrFail();
-        return response()->json($intelijen);
+        return response()->json(IntelijenModel::where('no_nhi', $no_nhi)->firstOrFail());
     }
 
     public function update(Request $request, $no_nhi)
@@ -212,21 +135,12 @@ class Intelijen extends Controller
             $validated['updated_by'] = Auth::id();
             $intelijen->update($validated);
             DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data intelijen berhasil diperbarui!',
-                'data' => $intelijen
-            ]);
+            return response()->json(['success' => true, 'message' => 'Data intelijen berhasil diperbarui!', 'data' => $intelijen]);
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Kesalahan dalam memperbarui data intelijen: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal memperbarui data intelijen: ' . $e->getMessage()
-            ], 500);
+            Log::error('Terjadi kesalahan pada sistem: ' . $e->getTraceAsString());
+            return response()->json(['success' => false, 'message' => 'Gagal memperbarui data intelijen: ' . $e->getMessage()], 500);
         }
     }
 }

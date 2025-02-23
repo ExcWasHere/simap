@@ -5,10 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tombol_radio.forEach((radio) => {
         radio.addEventListener("change", () => {
             if (this.checked) {
-                tombol_unduh.classList.remove(
-                    "cursor-not-allowed",
-                    "opacity-50",
-                );
+                tombol_unduh.classList.remove("cursor-not-allowed", "opacity-50");
                 tombol_unduh.removeAttribute("disabled");
             }
         });
@@ -17,9 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tombol_unduh.addEventListener("click", async function (e) {
         e.preventDefault();
 
-        const opsi_yang_dipilih = document.querySelector(
-            'input[name="data-excel"]:checked',
-        ).id;
+        const opsi_yang_dipilih = document.querySelector('input[name="data-excel"]:checked',).id;
         const tombol_unduh = this;
 
         tombol_unduh.disabled = true;
@@ -27,25 +22,18 @@ document.addEventListener("DOMContentLoaded", () => {
         tombol_unduh.textContent = "Mengunduh...";
 
         try {
-            const response = await fetch(
-                `/monitoring/export/${opsi_yang_dipilih}`,
-                {
-                    method: "GET",
-                    headers: {
-                        "X-Requested-With": "XMLHttpRequest",
-                        Accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    },
+            const response = await fetch(`/monitoring/ekspor/${opsi_yang_dipilih}`, {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    Accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 },
-            );
+            });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error with status: ${response.status}.`);
-            }
+            if (!response.ok) throw new Error(`HTTP error with status: ${response.status}.`);
 
             const contentType = response.headers.get("content-type");
-            if (!contentType || !contentType.includes("spreadsheetml.sheet")) {
-                throw new Error("Invalid file format received");
-            }
+            if (!contentType || !contentType.includes("spreadsheetml.sheet")) throw new Error("Invalid file format received");
 
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
@@ -57,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.error("Download error:", error);
+            console.error("Mengalami kesalahan saat mengunduh: ", error);
             alert("Gagal mengunduh berkas Excel, silahkan coba lagi.");
         } finally {
             tombol_unduh.disabled = false;

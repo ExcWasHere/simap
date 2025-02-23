@@ -99,7 +99,7 @@
         <h6>
             SURAT BUKTI PENINDAKAN
             <br />
-            Nomor : {{ $penindakan->no_sbp }}
+            Nomor : SBP-{{ $penindakan->no_sbp }}/Mandiri/KBC.120302/2025
         </h6>
         <table class="table">
             <tr>

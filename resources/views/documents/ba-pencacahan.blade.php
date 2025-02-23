@@ -97,7 +97,7 @@
         <h6>
             BERITA ACARA PENCACAHAN
             <br />
-            Nomor : {{ $penindakan->no_print }}
+            Nomor : BA-{{ $penindakan->no_print }}/KBC.120302/CACAH/2025
         </h6>
         <h6 class="font-normal">
             Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }} bertempat di KPPBC Tipe Madya Pabean

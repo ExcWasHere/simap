@@ -91,7 +91,7 @@
         <h6>
             BERITA ACARA PENGAMBILAN DOKUMENTASI BARANG
             <br />
-            Nomor : {{ $penindakan->no_print }}
+            Nomor : BA-{{ $penindakan->no_print }}/Dokumentasi/KBC.120302/2025
         </h6>
         <h6 class="font-normal" style="text-align: justify">
             Pada hari ini tanggal {{ $penindakan->tanggal_print->format('d F Y') }}, berdasarkan Surat Perintah:

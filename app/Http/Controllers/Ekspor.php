@@ -7,22 +7,20 @@ use App\Models\Penindakan as PenindakanModel;
 use App\Models\Penyidikan as PenyidikanModel;
 use Illuminate\Routing\Controller as BaseController;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Ekspor extends BaseController
 {
-    public function export($section)
+    public function ekspor($section)
     {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-
         switch ($section) {
             case 'intelijen':
-                return $this->ekspor_intelijen($spreadsheet, $sheet);
+                return $this->ekspor_intelijen(new Spreadsheet(), (new Spreadsheet())->getActiveSheet());
             case 'penindakan':
-                return $this->ekspor_penindakan($spreadsheet, $sheet);
+                return $this->ekspor_penindakan(new Spreadsheet(), (new Spreadsheet())->getActiveSheet());
             case 'penyidikan':
-                return $this->ekspor_penyidikan($spreadsheet, $sheet);
+                return $this->ekspor_penyidikan(new Spreadsheet(), (new Spreadsheet())->getActiveSheet());
             default:
                 abort(404);
         }
@@ -32,7 +30,6 @@ class Ekspor extends BaseController
     {
         $headers = ['No', 'No NHI', 'Tanggal NHI', 'Tempat', 'Jenis Barang', 'Jumlah Barang', 'Keterangan'];
         $this->set_headers($sheet, $headers);
-
         $data = IntelijenModel::orderBy('tanggal_nhi', 'desc')->get();
         $row = 2;
 
@@ -54,7 +51,6 @@ class Ekspor extends BaseController
     {
         $headers = ['No', 'No SBP', 'Tanggal SBP', 'Lokasi', 'Pelaku', 'Uraian BHP', 'Jumlah', 'Nilai Barang', 'Potensi Kurang Bayar'];
         $this->set_headers($sheet, $headers);
-
         $data = PenindakanModel::orderBy('tanggal_sbp', 'desc')->get();
         $row = 2;
 
@@ -78,7 +74,6 @@ class Ekspor extends BaseController
     {
         $headers = ['No', 'No SPDP', 'Tanggal SPDP', 'Pelaku', 'Keterangan'];
         $this->set_headers($sheet, $headers);
-
         $data = PenyidikanModel::orderBy('tanggal_spdp', 'desc')->get();
         $row = 2;
 
@@ -103,26 +98,18 @@ class Ekspor extends BaseController
 
         $sheet->getStyle('A1:' . chr(64 + count($headers)) . '1')->applyFromArray([
             'font' => ['bold' => true],
-            'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startColor' => ['rgb' => 'E5E7EB']
-            ]
+            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'e5e7eb']]
         ]);
     }
 
     private function unduh_excel($spreadsheet, $section)
     {
-        $writer = new Xlsx($spreadsheet);
-        $file_name = $section . '-' . date('Y-m-d') . '.xlsx';
-
         return response()->stream(
-            function () use ($writer) {
-                $writer->save('php://output');
-            },
+            fn() => (new Xlsx($spreadsheet))->save('php://output'),
             200,
             [
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition' => 'attachment; filename="' . $file_name . '"',
+                'Content-Disposition' => 'attachment; filename="' . $section . '-' . date('Y-m-d') . '.xlsx' . '"',
                 'Cache-Control' => 'max-age=0',
             ]
         );

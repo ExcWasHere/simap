@@ -12,7 +12,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -38,9 +37,7 @@ class Penindakan extends Controller
         if ($date_from = $request->input('date_from')) $query->whereDate('tanggal_sbp', '>=', $date_from);
         if ($date_to = $request->input('date_to')) $query->whereDate('tanggal_sbp', '<=', $date_to);
 
-        $perPage = $request->input('per_page', default: 5);
-        $penindakan = $query->orderBy('no_sbp')->paginate($perPage)->appends($request->query());
-
+        $penindakan = $query->orderBy('no_sbp')->paginate($request->input('per_page', default: 5))->appends($request->query());
         $rows = collect($penindakan->items())->map(function ($item, $index) use ($penindakan) {
             return [
                 ($penindakan->currentPage() - 1) * $penindakan->perPage() + $index + 1,
@@ -55,12 +52,8 @@ class Penindakan extends Controller
             ];
         })->toArray();
 
-        return view('pages.penindakan', [
-            'rows' => $rows,
-            'penindakan' => $penindakan,
-        ]);
+        return view('pages.penindakan', ['rows' => $rows, 'penindakan' => $penindakan]);
     }
-
 
     /**
      * Controllers
@@ -112,7 +105,6 @@ class Penindakan extends Controller
                 'jenis_pelanggaran' => ['required', 'string', 'max:255'],
                 'pasal' => ['required', 'string', 'max:255'],
 
-
                 // Data Petugas
                 'petugas_1' => ['required', 'string', 'max:255'],
                 'petugas_2' => ['required', 'string', 'max:255'],
@@ -125,30 +117,19 @@ class Penindakan extends Controller
 
             $validated['created_by'] = Auth::id();
             $penindakan = PenindakanModel::create($validated);
-            $this->generate_sp_pdf($penindakan);
+            $this->membuat_pdf_surat_penindakan($penindakan);
             DB::commit();
-
-            return redirect()
-                ->route('penindakan')
-                ->with('success', 'Data penindakan berhasil disimpan!');
+            return redirect()->route('penindakan')->with('success', 'Data penindakan berhasil disimpan!');
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Gagal untuk menambahkan data penindakan', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            return redirect()
-                ->back()
-                ->withInput()
-                ->withErrors(['error' => 'Gagal menyimpan data penindakan: ' . $e->getMessage()]);
+            Log::error('Gagal untuk menambahkan data penindakan', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menyimpan data penindakan: ' . $e->getMessage()]);
         }
     }
 
-    private function generate_sp_pdf(PenindakanModel $penindakan)
+    private function membuat_pdf_surat_penindakan(PenindakanModel $penindakan)
     {
         try {
-            // Add debug logging untuk ttd
             Log::info('TTD Pelaku data:', [
                 'ttd_exists' => !empty($penindakan->ttd_pelaku),
                 'ttd_length' => strlen($penindakan->ttd_pelaku ?? ''),
@@ -156,8 +137,7 @@ class Penindakan extends Controller
             ]);
 
             $penindakan->load('creator', 'updater');
-            $storagePath = sprintf('dokumen/penindakan/%s/modul_penindakan', rawurlencode($penindakan->no_sbp));
-
+            $storage_path = sprintf('dokumen/penindakan/%s/modul_penindakan', rawurlencode($penindakan->no_sbp));
             setlocale(LC_TIME, 'id_ID.utf8', 'id_ID', 'id');
             Carbon::setLocale('id');
 
@@ -225,18 +205,18 @@ class Penindakan extends Controller
             ];
 
             usort($documents, fn($a, $b) => $a['priority'] <=> $b['priority']);
-            $generatedDocuments = [];
+            $generated_documents = [];
             $now = now();
 
             foreach ($documents as $doc) {
                 $pdf = Pdf::loadView($doc['view'], ['penindakan' => $penindakan]);
                 $fileName = sprintf('%s_%s.pdf', $doc['tipe'], str_replace(['/', '\\'], '_', $penindakan->no_sbp));
-                Storage::disk('public')->put($storagePath . '/' . $fileName, $pdf->output());
+                Storage::disk('public')->put($storage_path . '/' . $fileName, $pdf->output());
 
-                $generatedDocuments[] = [
+                $generated_documents[] = [
                     'tipe' => $doc['tipe'],
                     'deskripsi' => $doc['deskripsi'],
-                    'file_path' => $storagePath . '/' . $fileName,
+                    'file_path' => $storage_path . '/' . $fileName,
                     'reference_id' => $penindakan->no_sbp,
                     'uploaded_by' => Auth::id(),
                     'module' => 'penindakan',
@@ -245,18 +225,14 @@ class Penindakan extends Controller
                 ];
             }
 
-            DokumenModel::insert($generatedDocuments);
-
+            DokumenModel::insert($generated_documents);
             Log::info('PDFs generated and stored successfully', [
                 'no_sbp' => $penindakan->no_sbp,
-                'storage_path' => $storagePath,
+                'storage_path' => $storage_path,
                 'document_count' => count($documents)
             ]);
         } catch (Exception $e) {
-            Log::error('Error generating PDFs: ' . $e->getMessage(), [
-                'no_sbp' => $penindakan->no_sbp,
-                'trace' => $e->getTraceAsString()
-            ]);
+            Log::error('Error generating PDFs: ' . $e->getMessage(), ['no_sbp' => $penindakan->no_sbp, 'trace' => $e->getTraceAsString()]);
             throw $e;
         }
     }
@@ -266,49 +242,28 @@ class Penindakan extends Controller
         try {
             DB::beginTransaction();
             Log::info('Mencoba menghapus catatan penindakan dengan No. SBP: ' . $no_sbp);
-
-            $penindakan = PenindakanModel::whereNull('deleted_at')
-                ->where('no_sbp', $no_sbp)
-                ->firstOrFail();
-
-            $timestamp = now()->format('YmdHis');
-            $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
-            $suffix = "_deleted_{$timestamp}{$random}";
-
-            $penindakan->no_sbp .= $suffix;
+            $penindakan = PenindakanModel::whereNull('deleted_at')->where('no_sbp', $no_sbp)->firstOrFail();
+            $penindakan->no_sbp .= "_deleted_" . now()->format('YmdHis') . str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
             $penindakan->save();
             $penindakan->delete();
-
             Log::info('Berhasil menghapus catatan penindakan.');
             DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data penindakan berhasil dihapus!'
-            ]);
+            return response()->json(['success' => true, 'message' => 'Data penindakan berhasil dihapus!']);
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Kesalahan saat menghapus data penindakan: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menghapus data penindakan: ' . $e->getMessage()
-            ], 500);
+            Log::error('Terjadi kesalahan pada sistem: ' . $e->getTraceAsString());
+            return response()->json(['success' => false, 'message' => 'Gagal menghapus data penindakan: ' . $e->getMessage()], 500);
         }
     }
 
     public function edit($no_sbp)
     {
         try {
-            $penindakan = PenindakanModel::where('no_sbp', $no_sbp)->firstOrFail();
-            return response()->json($penindakan);
+            return response()->json(PenindakanModel::where('no_sbp', $no_sbp)->firstOrFail());
         } catch (Exception $e) {
             Log::error('Kesalahan mengambil data penindakan: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal mengambil data penindakan.'
-            ], 500);
+            return response()->json(['success' => false, 'message' => 'Gagal mengambil data penindakan.'], 500);
         }
     }
 
@@ -316,11 +271,8 @@ class Penindakan extends Controller
     {
         try {
             DB::beginTransaction();
-
             Log::info('Mencoba untuk mengupdate data penindakan', $request->all());
-
             if (!$no_sbp) throw new Exception('No. SBP tidak valid!');
-
             $penindakan = PenindakanModel::where('no_sbp', $no_sbp)->firstOrFail();
 
             $validated = $request->validate([
@@ -376,31 +328,19 @@ class Penindakan extends Controller
 
             $validated['updated_by'] = Auth::id();
             $penindakan->update($validated);
-            $this->update_document($penindakan);
+            $this->perbarui_dokumen($penindakan);
             DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data penindakan berhasil diperbarui!',
-                'data' => $penindakan
-            ]);
+            return response()->json(['success' => true, 'message' => 'Data penindakan berhasil diperbarui!', 'data' => $penindakan]);
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Gagal memperbarui data penindakan', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal memperbarui data penindakan: ' . $e->getMessage()
-            ], 500);
+            Log::error('Gagal memperbarui data penindakan', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['success' => false, 'message' => 'Gagal memperbarui data penindakan: ' . $e->getMessage()], 500);
         }
     }
 
-    private function update_document(PenindakanModel $penindakan)
+    private function perbarui_dokumen(PenindakanModel $penindakan)
     {
         $penindakan->dokumen()->delete();
-        $this->generate_sp_pdf($penindakan);
+        $this->membuat_pdf_surat_penindakan($penindakan);
     }
 }

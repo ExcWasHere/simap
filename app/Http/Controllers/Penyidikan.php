@@ -29,15 +29,10 @@ class Penyidikan extends Controller
         if ($date_to = $request->input('date_to')) $query->whereDate('tanggal_spdp', '<=', $date_to);
 
         $sort = $request->input('sort', 'abjad');
-        if ($sort === 'abjad') {
-            $query->orderBy('no_spdp', 'asc');
-        } else if ($sort === 'latest') {
-            $query->latest();
-        }
+        if ($sort === 'abjad') $query->orderBy('no_spdp', 'asc');
+        else if ($sort === 'latest') $query->latest();
 
-        $perPage = $request->input('per_page', 5);
-        $penyidikan = $query->orderBy('no_spdp')->paginate($perPage)->appends($request->query());
-
+        $penyidikan = $query->orderBy('no_spdp')->paginate($request->input('per_page', 5))->appends($request->query());
         $rows = collect($penyidikan->items())->map(function ($item, $index) use ($penyidikan) {
             return [
                 ($penyidikan->currentPage() - 1) * $penyidikan->perPage() + $index + 1,
@@ -48,10 +43,7 @@ class Penyidikan extends Controller
             ];
         })->toArray();
 
-        return view('pages.penyidikan', [
-            'rows' => $rows,
-            'penyidikan' => $penyidikan
-        ]);
+        return view('pages.penyidikan', ['rows' => $rows, 'penyidikan' => $penyidikan]);
     }
 
     public function store(Request $request)
@@ -73,18 +65,12 @@ class Penyidikan extends Controller
             PenyidikanModel::create($validated);
             DB::commit();
 
-            return redirect()
-                ->route('penyidikan')
-                ->with('success', 'Data penyidikan berhasil disimpan!');
+            return redirect()->route('penyidikan')->with('success', 'Data penyidikan berhasil disimpan!');
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Kesalahan dalam menyimpan data penyidikan: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
-
-            return redirect()
-                ->back()
-                ->withInput()
-                ->withErrors(['error' => 'Gagal menyimpan data penyidikan: ' . $e->getMessage()]);
+            Log::error('Terjadi kesalahan pada sistem: ' . $e->getTraceAsString());
+            return redirect()->back()->withInput()->withErrors(['error' => 'Gagal menyimpan data penyidikan: ' . $e->getMessage()]);
         }
     }
 
@@ -92,44 +78,24 @@ class Penyidikan extends Controller
     {
         try {
             DB::beginTransaction();
-
-            $penyidikan = PenyidikanModel::whereNull('deleted_at')
-                ->where('no_spdp', $no_spdp)
-                ->firstOrFail();
-
-            $timestamp = now()->format('YmdHis');
-            $random = str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
-            $suffix = "_deleted_{$timestamp}{$random}";
-
-            $penyidikan->no_spdp = $penyidikan->no_spdp . $suffix;
+            $penyidikan = PenyidikanModel::whereNull('deleted_at')->where('no_spdp', $no_spdp)->firstOrFail();
+            $penyidikan->no_spdp .= "_deleted_" . now()->format('YmdHis') . str_pad(random_int(0, 999), 3, '0', STR_PAD_LEFT);
             $penyidikan->save();
             $penyidikan->delete();
-
             DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Data penyidikan berhasil dihapus!'
-            ]);
+            return response()->json(['success' => true, 'message' => 'Data penyidikan berhasil dihapus!']);
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error deleting penyidikan: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal menghapus data penyidikan: ' . $e->getMessage()
-            ], 500);
+            Log::error('Terjadi kesalahan pada sistem: ' . $e->getTraceAsString());
+            return response()->json(['success' => false, 'message' => 'Gagal menghapus data penyidikan: ' . $e->getMessage()], 500);
         }
     }
 
     public function edit($no_spdp)
     {
         try {
-            Log::info('Mulai mengedit untuk data penyidikan: ', [
-                'no_spdp' => $no_spdp,
-                'type' => gettype($no_spdp)
-            ]);
+            Log::info('Mulai mengedit untuk data penyidikan: ', ['no_spdp' => $no_spdp, 'type' => gettype($no_spdp)]);
 
             if (is_numeric($no_spdp)) {
                 Log::info('Mencoba mencari berdasarkan ID...');
@@ -139,33 +105,16 @@ class Penyidikan extends Controller
             
             if (!isset($penyidikan) || !$penyidikan) {
                 Log::info('Mencoba mencari dengan No. SPDP atau pola unik...');
-                $penyidikan = PenyidikanModel::withTrashed()
-                    ->where(function ($query) use ($no_spdp) {
-                        $query->where('no_spdp', $no_spdp)->orWhere('no_spdp', 'LIKE', $no_spdp . '%');
-                    })
-                    ->first();
+                $penyidikan = PenyidikanModel::withTrashed()->where(fn($query) => $query->where('no_spdp', $no_spdp)->orWhere('no_spdp', 'LIKE', $no_spdp . '%'))->first();
             }
 
             if (!$penyidikan) {
-                Log::error('Catatan penyidikan tidak ditemukan: ', [
-                    'no_spdp' => $no_spdp,
-                    'search_type' => is_numeric($no_spdp) ? 'id' : 'no_spdp'
-                ]);
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Data penyidikan tidak ditemukan!'
-                ], 404);
+                Log::error('Catatan penyidikan tidak ditemukan: ', ['no_spdp' => $no_spdp, 'search_type' => is_numeric($no_spdp) ? 'id' : 'no_spdp']);
+                return response()->json(['success' => false, 'message' => 'Data penyidikan tidak ditemukan!'], 404);
             }
 
-            Log::info('Berhasil menemukan catatan penyidikan: ', [
-                'id' => $penyidikan->id,
-                'no_spdp' => $penyidikan->no_spdp
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'data' => $penyidikan
-            ]);
+            Log::info('Berhasil menemukan catatan penyidikan: ', [ 'id' => $penyidikan->id, 'no_spdp' => $penyidikan->no_spdp]);
+            return response()->json(['success' => true, 'data' => $penyidikan]);
         } catch (Exception $e) {
             Log::error('Kesalahan dalam mengedit data penyidikan: ', [
                 'no_spdp' => $no_spdp,
@@ -178,10 +127,7 @@ class Penyidikan extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mengambil data penyidikan: ' . $e->getMessage(),
-                'debug_info' => config('app.debug') ? [
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine()
-                ] : null
+                'debug_info' => config('app.debug') ? ['file' => $e->getFile(), 'line' => $e->getLine()] : null
             ], 500);
         }
     }
@@ -194,13 +140,11 @@ class Penyidikan extends Controller
             $penyidikan = is_numeric($no_spdp) ? PenyidikanModel::withTrashed()->find($no_spdp) : null;
 
             if (!$penyidikan) {
-                $penyidikan = PenyidikanModel::withTrashed()
-                    ->where(function ($query) use ($no_spdp) {
-                        $baseNoSpdp = preg_replace('/_deleted_.*$/', '', $no_spdp);
-                        $query->where('no_spdp', $no_spdp)
-                            ->orWhere('no_spdp', 'LIKE', $baseNoSpdp . '_deleted_%');
-                    })
-                    ->first();
+                $penyidikan = PenyidikanModel::withTrashed()->where(function ($query) use ($no_spdp) {
+                    $baseNoSpdp = preg_replace('/_deleted_.*$/', '', $no_spdp);
+                    $query->where('no_spdp', $no_spdp)->orWhere('no_spdp', 'LIKE', $baseNoSpdp . '_deleted_%');
+                })
+                ->first();
             }
 
             if (!$penyidikan) {
@@ -217,11 +161,7 @@ class Penyidikan extends Controller
             $no_spdp_baru = $request->input('no_spdp');
             Log::info('Meminta No. SPDP baru yang diminta: ' . $no_spdp_baru);
 
-            $duplicate_exists = PenyidikanModel::where('no_spdp', $no_spdp_baru)
-                ->where('id', '!=', $penyidikan->id)
-                ->whereNull('deleted_at')
-                ->exists();
-
+            $duplicate_exists = PenyidikanModel::where('no_spdp', $no_spdp_baru)->where('id', '!=', $penyidikan->id)->whereNull('deleted_at')->exists();
             if ($duplicate_exists) throw new Exception('Nomor SPDP sudah digunakan.');
 
             $validated = $request->validate([
@@ -253,12 +193,8 @@ class Penyidikan extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Kesalahan dalam memperbarui data penyidikan: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal memperbarui data penyidikan: ' . $e->getMessage()
-            ], 500);
+            Log::error('Terjadi kesalahan pada sistem: ' . $e->getTraceAsString());
+            return response()->json(['success' => false, 'message' => 'Gagal memperbarui data penyidikan: ' . $e->getMessage()], 500);
         }
     }
 }
