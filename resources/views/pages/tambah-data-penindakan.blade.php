@@ -502,6 +502,27 @@
                 }
             });
         </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const noSbpInput = document.querySelector('input[name="no_sbp"]');
+                if (noSbpInput) {
+                    noSbpInput.addEventListener('input', function(e) {
+                        const inputValue = e.target.value.trim();
+                        if (/^\d+$/.test(inputValue)) {
+                            const currentYear = new Date().getFullYear();
+                            const formattedValue = `SBP-${inputValue}/Mandiri/KBC.120302/${currentYear}`;
+                            e.target.value = formattedValue;
+                        }
+                    });
+                    noSbpInput.addEventListener('blur', function(e) {
+                        const inputValue = e.target.value.trim(); 
+                        if (/^\d+$/.test(inputValue)) {
+                            const currentYear = new Date().getFullYear();
+                            e.target.value = `SBP-${inputValue}/Mandiri/KBC.120302/${currentYear}`;
+                        }
+                    });
+                }
+            });
+        </script>
     @endpush
 @endsection
-
