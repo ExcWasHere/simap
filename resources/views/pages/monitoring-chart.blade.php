@@ -10,7 +10,7 @@
 
 @section('konten')
     <main class="container mx-auto min-h-screen h-full px-4 py-6">
-        @include('shared.navigation.back')
+        @include('shared.navigation.monitoring-back')
         @include('components.monitoring.display-chart')
     </main>
 @endsection
