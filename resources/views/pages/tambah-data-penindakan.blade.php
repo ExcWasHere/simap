@@ -354,11 +354,11 @@
                     </div>
 
                     <div class="flex justify-end space-x-4 mt-8">
-                        @if(config('app.debug'))
-                        <button type="button" id="debug-autofill"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Debug Autofill
-                        </button>
+                        @if (config('app.debug'))
+                            <button type="button" id="debug-autofill"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Debug Autofill
+                            </button>
                         @endif
                         <a href="{{ url()->previous() }}"
                             class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
@@ -430,11 +430,12 @@
                 const debugButton = document.getElementById('debug-autofill');
                 if (debugButton) {
                     debugButton.addEventListener('click', function() {
-                        const randomString = (length = 8) => Math.random().toString(36).substring(2, length + 2);
-                        
+                        const randomString = (length = 8) => Math.random().toString(36).substring(2, length +
+                            2);
+
                         const today = new Date().toISOString().split('T')[0];
                         const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
-                        
+
                         const randomTime = () => {
                             const hours = String(Math.floor(Math.random() * 24)).padStart(2, '0');
                             const minutes = String(Math.floor(Math.random() * 60)).padStart(2, '0');
@@ -506,23 +507,31 @@
             document.addEventListener('DOMContentLoaded', function() {
                 const noSbpInput = document.querySelector('input[name="no_sbp"]');
                 if (noSbpInput) {
-                    noSbpInput.addEventListener('input', function(e) {
-                        const inputValue = e.target.value.trim();
-                        if (/^\d+$/.test(inputValue)) {
-                            const currentYear = new Date().getFullYear();
-                            const formattedValue = `SBP-${inputValue}/Mandiri/KBC.120302/${currentYear}`;
-                            e.target.value = formattedValue;
-                        }
-                    });
                     noSbpInput.addEventListener('blur', function(e) {
-                        const inputValue = e.target.value.trim(); 
+                        const inputValue = e.target.value.trim();
                         if (/^\d+$/.test(inputValue)) {
                             const currentYear = new Date().getFullYear();
                             e.target.value = `SBP-${inputValue}/Mandiri/KBC.120302/${currentYear}`;
                         }
+                    });
+                    noSbpInput.dataset.rawNumber = '';
+                    noSbpInput.addEventListener('input', function(e) {
+                        const inputValue = e.target.value;
+                        if (/^\d+$/.test(inputValue)) {
+                            noSbpInput.dataset.rawNumber = inputValue;
+                        }
+                    });
+                }
+            });
+            document.addEventListener('DOMContentLoaded', function() {
+                const noSbpInput = document.querySelector('input[name="no_sbp"]');
+                if (noSbpInput) {
+                    noSbpInput.addEventListener('input', function(e) {
+                        e.target.value = e.target.value.replace(/\D/g, '');
                     });
                 }
             });
         </script>
     @endpush
 @endsection
+

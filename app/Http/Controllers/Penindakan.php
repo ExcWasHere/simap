@@ -37,7 +37,9 @@ class Penindakan extends Controller
         if ($date_from = $request->input('date_from')) $query->whereDate('tanggal_sbp', '>=', $date_from);
         if ($date_to = $request->input('date_to')) $query->whereDate('tanggal_sbp', '<=', $date_to);
 
-        $penindakan = $query->orderBy('no_sbp')->paginate($request->input('per_page', default: 5))->appends($request->query());
+        $penindakan = $query->orderByRaw('CAST(REGEXP_SUBSTR(no_sbp, "[0-9]+") AS UNSIGNED)')
+            ->paginate($request->input('per_page', default: 5))
+            ->appends($request->query());
         $rows = collect($penindakan->items())->map(function ($item, $index) use ($penindakan) {
             return [
                 ($penindakan->currentPage() - 1) * $penindakan->perPage() + $index + 1,
@@ -63,6 +65,13 @@ class Penindakan extends Controller
         try {
             DB::beginTransaction();
             Log::info('Mencoba untuk menambahkan data penindakan', $request->all());
+
+            if (is_numeric($request->no_sbp)) {
+                $currentYear = date('Y');
+                $request->merge([
+                    'no_sbp' => "SBP-{$request->no_sbp}/Mandiri/KBC.120302/{$currentYear}"
+                ]);
+            }
 
             $validated = $request->validate([
                 // Data SBP (Surat Bukti Penindakan)
@@ -274,6 +283,13 @@ class Penindakan extends Controller
             Log::info('Mencoba untuk mengupdate data penindakan', $request->all());
             if (!$no_sbp) throw new Exception('No. SBP tidak valid!');
             $penindakan = PenindakanModel::where('no_sbp', $no_sbp)->firstOrFail();
+
+            if (is_numeric($request->no_sbp)) {
+                $currentYear = date('Y');
+                $request->merge([
+                    'no_sbp' => "SBP-{$request->no_sbp}/Mandiri/KBC.120302/{$currentYear}"
+                ]);
+            }
 
             $validated = $request->validate([
                 // Data SBP (Surat Bukti Penindakan)
