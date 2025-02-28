@@ -180,8 +180,8 @@ class MonitoringBHP extends Controller
         $end_date = now();
         $start_date = match ($range) {
             '30' => now()->subDays(29)->startOfDay(),
-            '3' => now()->subMonths(2)->startOfDay(),
-            '1' => now()->subMonths(11)->startOfDay(),
+            '3' => now()->subMonths(2)->startOfMonth(),
+            '1' => now()->subMonths(11)->startOfMonth(),
             default => now()->subDays(6)->startOfDay(),
         };
 
@@ -227,69 +227,92 @@ class MonitoringBHP extends Controller
 
         $last_month_count = DB::table('intelijen')
             ->whereMonth('created_at', now()->subMonth()->month)
+            ->whereYear('created_at', now()->subMonth()->year)
             ->whereNull('deleted_at')
             ->count() +
             DB::table('penindakan')
                 ->whereMonth('created_at', now()->subMonth()->month)
+                ->whereYear('created_at', now()->subMonth()->year)
                 ->whereNull('deleted_at')
                 ->count() +
             DB::table('penyidikan')
                 ->whereMonth('created_at', now()->subMonth()->month)
+                ->whereYear('created_at', now()->subMonth()->year)
                 ->whereNull('deleted_at')
                 ->count();
 
         $this_month_count = DB::table('intelijen')
             ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
             ->whereNull('deleted_at')
             ->count() +
             DB::table('penindakan')
                 ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
                 ->whereNull('deleted_at')
                 ->count() +
             DB::table('penyidikan')
                 ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
                 ->whereNull('deleted_at')
                 ->count();
 
         $pertumbuhan = $last_month_count > 0 ? round((($this_month_count - $last_month_count) / $last_month_count) * 100, 1) : 0;
+        
+        $dates = [];
         $current_date = $start_date->copy();
-
         if ($range === '3' || $range === '1') {
-            $current_date->startOfMonth();
             while ($current_date <= $end_date) {
-                collect()->push($current_date->format('Y-m-01'));
+                $dates[] = $current_date->format('Y-m-01');
                 $current_date->addMonth();
             }
         } else {
             while ($current_date <= $end_date) {
-                collect()->push($current_date->format('Y-m-d'));
+                $dates[] = $current_date->format('Y-m-d');
                 $current_date->addDay();
             }
         }
 
+        $labels = array_map(function ($date) use ($range) {
+            $carbon_date = Carbon::parse($date);
+            return $range === '1' || $range === '3' ? $carbon_date->format('M Y') : $carbon_date->format('d M');
+        }, $dates);
+
+        $intelijen_data = [];
+        $penindakan_data = [];
+        $penyidikan_data = [];
+
+        foreach ($dates as $date) {
+            $intelijen_item = $intelijen->firstWhere('date', $date);
+            $intelijen_data[] = $intelijen_item ? $intelijen_item->count : 0;
+
+            $penindakan_item = $penindakan->firstWhere('date', $date);
+            $penindakan_data[] = $penindakan_item ? $penindakan_item->count : 0;
+
+            $penyidikan_item = $penyidikan->firstWhere('date', $date);
+            $penyidikan_data[] = $penyidikan_item ? $penyidikan_item->count : 0;
+        }
+
         return response()->json([
-            'labels' => collect()->map(function ($date) use ($range) {
-                $carbon_date = Carbon::parse($date);
-                return $range === '1' || $range === '3' ? $carbon_date->format('M Y') : $carbon_date->format('d M');
-            }),
+            'labels' => $labels,
             'datasets' => [
                 [
                     'label' => 'Intelijen',
-                    'data' => collect()->map(fn($date) => $intelijen->firstWhere('date', $date))->count() ?? 0,
+                    'data' => $intelijen_data,
                     'borderColor' => '#3B82F6',
                     'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
                     'fill' => true
                 ],
                 [
                     'label' => 'Penindakan',
-                    'data' => collect()->map(fn($date) => $penindakan->firstWhere('date', $date))->count() ?? 0,
+                    'data' => $penindakan_data,
                     'borderColor' => '#10B981',
                     'backgroundColor' => 'rgba(16, 185, 129, 0.1)',
                     'fill' => true
                 ],
                 [
                     'label' => 'Penyidikan',
-                    'data' => collect()->map(fn($date) => $penyidikan->firstWhere('date', $date))?->count() ?? 0,
+                    'data' => $penyidikan_data,
                     'borderColor' => '#F59E0B',
                     'backgroundColor' => 'rgba(245, 158, 11, 0.1)',
                     'fill' => true

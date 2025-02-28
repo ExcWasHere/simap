@@ -74,6 +74,8 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("average_per_month").textContent = stats.average_per_month.toLocaleString();
 
         const statistik_pertumbuhan = document.getElementById("pertumbuhan");
+        statistik_pertumbuhan.className = '';
+        statistik_pertumbuhan.classList.add("text-xl", "font-semibold", "text-gray-900");
         if (stats.pertumbuhan > 0) statistik_pertumbuhan.classList.add("text-green-600");
         else if (stats.pertumbuhan < 0) statistik_pertumbuhan.classList.add("text-red-600");
     }
@@ -84,7 +86,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!chart_data) return;
 
-        const dataset_terbarukan = chart_data.datasets.filter((dataset) => kategori_yang_dipilih === "all" || dataset.label.toLowerCase() === kategori_yang_dipilih).map((dataset) => ({
+        const dataset_terbarukan = chart_data.datasets.filter((dataset) => 
+            kategori_yang_dipilih === "all" || dataset.label.toLowerCase() === kategori_yang_dipilih
+        ).map((dataset) => ({
             ...dataset,
             fill: tipe_yang_dipilih === "area",
         }));
@@ -110,39 +114,13 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(url)
             .then((response) => response.json())
             .then((data) => {
-                if (range === "7" || range === "30") {
-                    chart_data = data;
-                } else {
-                    const monthlyData = {
-                        labels: [...new Set(data.labels.map(date => {
-                            const [day, month] = date.split(' ');
-                            return month;
-                        }))],
-                        datasets: data.datasets.map(dataset => ({
-                            ...dataset,
-                            data: groupDataByMonth(data.labels, dataset.data)
-                        })),
-                        stats: data.stats
-                    };
-                    chart_data = monthlyData;
-                }
+                chart_data = data;
                 perbarui_chart();
                 perbarui_statistik(data.stats);
             })
             .catch((error) => {
                 console.error("Error fetching chart data:", error);
             });
-    }
-
-    const groupDataByMonth = (labels, data) => {
-        const monthlyTotals = {};
-        
-        labels.forEach((label, index) => {
-            const month = label.split(' ')[1];
-            monthlyTotals[month] = (monthlyTotals[month] || 0) + data[index];
-        });
-
-        return Object.values(monthlyTotals);
     }
 
     document.querySelector('select[name="chart-type"]').value = "line";
